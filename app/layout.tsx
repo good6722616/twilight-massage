@@ -1,12 +1,11 @@
 import "./globals.css"
 import { siteConfig } from "@/config/site"
-import { Inter, Urbanist } from "next/font/google"
+import { Urbanist } from "next/font/google"
 import Navbar from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { settings } from "@/config/settings"
 
-const inter = Inter({ subsets: ["latin"] })
 const urbanist = Urbanist({ subsets: ["latin"] })
 export const metadata = {
   metadataBase: new URL(siteConfig.url.base),
@@ -70,11 +69,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         {settings.themeToggleEnabled ? (
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Navbar />
             {children}
             <Footer />
           </ThemeProvider>
         ) : (
           <ThemeProvider attribute="class" forcedTheme="light" enableSystem>
+            <Navbar />
             {children}
             <Footer />
           </ThemeProvider>
