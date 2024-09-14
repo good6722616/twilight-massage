@@ -9,6 +9,7 @@ import { settings } from "@/config/settings"
 
 export default function Navbar() {
   const [navbar, setNavbar] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   const handleClick = async () => {
     setNavbar(false)
@@ -22,13 +23,32 @@ export default function Navbar() {
     }
   }, [navbar])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
   return (
-    <header className="select-none">
-      <nav className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
-        <div>
-          <div className="flex items-center justify-between py-3 md:block md:py-5">
+    <header
+      className={`fixed top-0 z-20 h-[100px] w-full select-none transition-colors duration-300 ${
+        scrolled ? "bg-white shadow-md" : "bg-transparent"
+      }`}
+    >
+      <nav className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-8 lg:max-w-7xl">
+        <div className="h-auto w-full">
+          <div className="flex w-full items-center justify-between py-3 md:block md:py-5">
             <Link href="/" onClick={handleClick}>
-              <h1 className="text-2xl font-bold duration-200 lg:hover:scale-[1.10]">
+              <h1 className="w-fit text-2xl font-bold duration-200 lg:hover:scale-[1.10]">
                 {siteConfig.name}
               </h1>
             </Link>

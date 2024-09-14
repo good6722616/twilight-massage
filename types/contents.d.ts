@@ -10,6 +10,8 @@ export type Content = {
   text: string
   subtext: string
   icon?: IconKeys
+  price?: string
+  image?: string
 }
 
 export type ContentSection = {
@@ -17,4 +19,5 @@ export type ContentSection = {
   subheader: string
   image?: string
   content: Array<Content>
+  price?: string
 }

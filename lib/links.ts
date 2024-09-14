@@ -4,15 +4,15 @@ export const navLinks = [
     path: "/",
   },
   {
-    route: "Features",
-    path: "/#features",
+    route: "Service",
+    path: "/service",
   },
   {
     route: "Contact",
     path: "/contact",
   },
   {
-    route: "Github",
-    path: "https://github.com/redpangilinan/next-shadcn-landing",
+    route: "Location",
+    path: "/location",
   },
 ]

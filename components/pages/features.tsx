@@ -5,7 +5,7 @@ import { Icons } from "@/components/icons"
 
 export default function Features() {
   return (
-    <section className="container space-y-8 py-12 lg:py-20" id="features">
+    <section className="bg container space-y-8 py-12 lg:py-20" id="features">
       {features.header || features.subheader ? (
         <HeadingText subtext={features.subheader} className="text-center">
           {features.header}
@@ -31,6 +31,7 @@ export default function Features() {
                   <p className="font-light text-muted-foreground md:text-lg">
                     {cards.subtext}
                   </p>
+                  <p>{cards.price}</p>
                 </div>
               </div>
             )
@@ -39,9 +40,10 @@ export default function Features() {
         <div
           className="md:border"
           style={{
-            backgroundImage: `url(${features.image})`,
+            backgroundImage: `url("/swedish_massage.png")`,
             backgroundRepeat: `no-repeat`,
             backgroundSize: `cover`,
+            height: "500px",
           }}
         ></div>
       </div>

@@ -8,52 +8,59 @@ import { HeroHeader, ContentSection } from "@/types/contents"
  ==================== */
 
 export const heroHeader: HeroHeader = {
-  header: `Landing pages made easy`,
-  subheader: `Easy to setup. Customizable. Quick. Responsive.`,
-  image: `/hero-img.webp`,
+  header: `Twilight Massage&SPA`,
+  subheader: `Your sanctuary for relaxation and renewal.`,
+  image: ``, // {{ edit_1 }} Add the required image property
 }
 
 export const featureCards: ContentSection = {
-  header: `Powered by`,
-  subheader: `What makes Next Landing possible`,
+  header: `Discover Our Treatments`,
+  subheader: `Always Better than Seven Falls`,
   content: [
     {
-      text: `Next.js`,
-      subtext: `The React Framework`,
+      text: `Swedish Massage`,
+      subtext: `A classic massage designed to relax the entire body, improve circulation, and relieve muscle tension.`,
       icon: "nextjs",
+      price: `Price: $100 for 60 minutes`,
+      image: `/swedish_massage.png`,
     },
     {
-      text: `shadcn/ui`,
-      subtext: `Beautifully designed components`,
+      text: `Deep Tissue Massage`,
+      subtext: `A focused, therapeutic massage to relieve muscle tension, reduce pain, and improve mobility`,
       icon: "shadcnUi",
+      price: `Price: $100 for 60 minutes`,
+      image: `/deep-tissue-massage.png`,
     },
     {
-      text: `Vercel`,
-      subtext: `Develop. Preview. Ship.`,
+      text: `Foot Massage`,
+      subtext: `Targeted pressure point massage to relieve tension and stress in the feet, promoting full-body relaxation.`,
       icon: "vercel",
+      price: `Price: $100 for 60 minutes`,
+      image: `/foot_massage.png`,
     },
   ],
 }
 
 export const features: ContentSection = {
-  header: `Features`,
-  subheader: `Why use Next Landing?`,
-  image: `/features-img.webp`,
+  header: ``,
+  subheader: ``,
+  image: ``,
   content: [
     {
-      text: `SEO Optimized`,
-      subtext: `Improved website visibility on search engines`,
+      text: `Swedish Massage`,
+      subtext: `The massage combination includes 60 minutes of Swedish full-body massage`,
+      price: `Price: $100 for 60 minutes`,
       icon: "fileSearch",
     },
-    {
-      text: `Highly Performant`,
-      subtext: `Fast loading times and smooth performance`,
-      icon: "barChart",
-    },
-    {
-      text: `Easy Customizability`,
-      subtext: `Change your content and layout with little effort`,
-      icon: "settings",
-    },
+    // {
+    //   text: `Highly Performant`,
+    //   subtext: `Fast loading times and smooth performance`,
+    //   icon: "barChart",
+    // },
+    // {
+    //   text: `Easy Customizability`,
+    //   subtext: `Change your content and layout with little effort`,
+    //   icon: "settings",
+    // },
   ],
 }
