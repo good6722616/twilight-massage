@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import GoogleMap from "@/components/pages/googlemap"
 import LocationHero from "@/components/pages/location-hero"
-
+import Image from "next/image"
 export default function LocationPage() {
   const location = "23805 El Toro Rd, Lake Forest, CA 92630"
 
@@ -53,10 +53,12 @@ export default function LocationPage() {
                 </Button>
               </div>
               <div className="relative h-64 md:h-full">
-                <img
-                  src="/massage-parlor-entrance.jpg"
+                <Image
+                  src="/entrance.png"
                   alt="Twilight Massage Entrance"
-                  className="h-full w-full rounded-lg object-cover shadow-md"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg shadow-md"
                 />
               </div>
             </CardContent>

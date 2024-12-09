@@ -55,7 +55,11 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
   return (
     <div className="text-white">
       <h2 className="mb-2 text-xl font-semibold">Opening in:</h2>
-      {timerComponents.length ? timerComponents : <span>We're now open!</span>}
+      {timerComponents.length ? (
+        timerComponents
+      ) : (
+        <span>We&apos;re now open!</span>
+      )}
     </div>
   )
 }

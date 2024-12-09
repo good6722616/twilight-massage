@@ -16,8 +16,9 @@ export default function ContactPage() {
                 Get In Touch
               </h2>
               <p className="text-lg text-gray-600">
-                We're here to answer any questions you may have about our
-                services. Reach out to us and we'll respond as soon as we can.
+                We&apos;re here to answer any questions you may have about our
+                services. Reach out to us and we&apos;ll respond as soon as we
+                can.
               </p>
             </CardHeader>
 

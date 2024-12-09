@@ -117,7 +117,7 @@ export default function ContactForm() {
             exit={{ opacity: 0, y: -50 }}
             className="mt-4 rounded-md bg-green-100 p-4 text-green-700"
           >
-            Thank you for your message. We'll get back to you soon!
+            Thank you for your message. We&apos;ll get back to you soon!
           </motion.div>
         )}
       </AnimatePresence>
