@@ -15,42 +15,49 @@ export const heroHeader: HeroHeader = {
 
 export const featureCards: ContentSection = {
   header: `Discover Our Treatments`,
-  subheader: `Always Better than Seven Falls`,
+  subheader: `Step into a world of relaxation and rejuvenation with our wide range of treatments.`,
   content: [
     {
       text: `Swedish Massage`,
       subtext: `A classic massage designed to relax the entire body, improve circulation, and relieve muscle tension.`,
-      icon: "nextjs",
+
       price: `Price: $100 for 60 minutes`,
       image: `/swedish_massage.png`,
     },
     {
       text: `Deep Tissue Massage`,
       subtext: `A focused, therapeutic massage to relieve muscle tension, reduce pain, and improve mobility`,
-      icon: "shadcnUi",
+
       price: `Price: $100 for 60 minutes`,
       image: `/deep-tissue-massage.png`,
     },
     {
       text: `Foot Massage`,
       subtext: `Targeted pressure point massage to relieve tension and stress in the feet, promoting full-body relaxation.`,
-      icon: "vercel",
+
       price: `Price: $100 for 60 minutes`,
       image: `/foot_massage.png`,
+    },
+    {
+      text: `Combo Massage`,
+      subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
+
+      price: `Price: $120 for 60 minutes`,
+      image: `/swedish_massage.png`,
     },
   ],
 }
 
-export const features: ContentSection = {
+export const giftCards: ContentSection = {
   header: ``,
   subheader: ``,
   image: ``,
   content: [
     {
-      text: `Swedish Massage`,
-      subtext: `The massage combination includes 60 minutes of Swedish full-body massage`,
+      text: `Give the Gift of Relaxation`,
+      subtext: `Transform any occasion into a memorable experience with our massage gift cards. Perfect for birthdays, anniversaries, or showing appreciation to someone special.`,
       price: `Price: $100 for 60 minutes`,
-      icon: "fileSearch",
+      icon: "giftCard",
     },
     // {
     //   text: `Highly Performant`,

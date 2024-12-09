@@ -8,10 +8,9 @@ import { SiteConfig, ContactConfig } from "@/types"
 const baseUrl = "localhost:3000"
 
 export const siteConfig: SiteConfig = {
-  name: "Twilight SPA&Massage",
+  name: "Twilight Massage & Spa",
   author: "Charles Zhang",
-  description:
-    "Easy to setup, customizable, quick, and responsive landing page starter built with Next.js and shadcn/ui.",
+  description: "Step into Twilight, Step into Relaxation",
   keywords: [
     "Next.js",
     "React",

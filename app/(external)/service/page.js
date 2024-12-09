@@ -1,7 +1,11 @@
-import React from "react"
+import ServiceHero from "@/components/pages/service-hero"
+import ServiceCards from "@/components/pages/service-cards"
 
-const page = () => {
-  return <div>page</div>
+export default function ServicePage() {
+  return (
+    <main>
+      <ServiceHero />
+      <ServiceCards />
+    </main>
+  )
 }
-
-export default page

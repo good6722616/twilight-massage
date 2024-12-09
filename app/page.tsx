@@ -1,13 +1,14 @@
 import Hero from "@/components/pages/hero"
 import FeatureCards from "@/components/pages/feature-cards"
-import Features from "@/components/pages/features"
-
+import GiftCard from "@/components/pages/giftcard"
+import ImageCarousel from "@/components/pages/image-carousel"
 export default function Home() {
   return (
     <main>
       <Hero />
       <FeatureCards />
-      <Features />
+      <GiftCard />
+      <ImageCarousel />
     </main>
   )
 }

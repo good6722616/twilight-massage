@@ -40,21 +40,27 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 z-20 h-[100px] w-full select-none transition-colors duration-300 ${
+      className={`fixed top-0 z-50 h-[100px] w-full select-none transition-colors duration-300 ${
         scrolled ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-8 lg:max-w-7xl">
+      <nav className="h-30 container flex items-center justify-between">
         <div className="h-auto w-full">
           <div className="flex w-full items-center justify-between py-3 md:block md:py-5">
             <Link href="/" onClick={handleClick}>
-              <h1 className="w-fit text-2xl font-bold duration-200 lg:hover:scale-[1.10]">
+              <h1
+                className={`w-fit text-2xl font-bold transition-colors duration-300 ${
+                  scrolled ? "text-black" : "text-white"
+                }`}
+              >
                 {siteConfig.name}
               </h1>
             </Link>
             <div className="flex gap-1 md:hidden">
               <button
-                className="rounded-md p-2 text-primary outline-none focus:border focus:border-primary"
+                className={`rounded-md p-2 outline-none transition-colors duration-300 focus:border focus:border-primary ${
+                  scrolled ? "text-black" : "text-white"
+                }`}
                 aria-label="Hamburger Menu"
                 onClick={() => setNavbar(!navbar)}
               >
@@ -88,22 +94,24 @@ export default function Navbar() {
                   </svg>
                 )}
               </button>
-              <ModeToggle />
+              {/* <ModeToggle /> */}
             </div>
           </div>
         </div>
         <div>
           <div
-            className={`absolute left-0 right-0 z-10 m-auto justify-self-center rounded-md border bg-background p-4 md:static md:mt-0 md:block md:border-none md:p-0 ${
+            className={`absolute left-0 right-0 z-50 m-auto justify-self-center rounded-md border p-4 md:static md:mt-0 md:block md:border-none md:p-0 ${
               navbar ? "block" : "hidden"
             }`}
             style={{ width: "100%", maxWidth: "20rem" }}
           >
-            <ul className="flex flex-col items-center space-y-4 text-primary opacity-60 md:flex-row md:space-x-6 md:space-y-0">
+            <ul className="flex flex-col items-center space-y-4 md:flex-row md:space-x-6 md:space-y-0">
               {navLinks.map((link) => (
                 <li key={link.route}>
                   <Link
-                    className="hover:underline"
+                    className={`transition-colors duration-300 hover:underline ${
+                      scrolled ? "text-black" : "text-white"
+                    }`}
                     href={link.path}
                     onClick={handleClick}
                   >
@@ -114,11 +122,11 @@ export default function Navbar() {
             </ul>
           </div>
         </div>
-        {settings.themeToggleEnabled && (
+        {/* {settings.themeToggleEnabled && (
           <div className="hidden md:block">
             <ModeToggle />
           </div>
-        )}
+        )} */}
       </nav>
     </header>
   )
