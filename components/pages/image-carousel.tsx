@@ -98,7 +98,7 @@ export default function ImageCarousel() {
                   <Image
                     src={image.src}
                     alt={image.title}
-                    fill
+                    fill={true}
                     className="object-cover"
                     priority={index === 0}
                   />

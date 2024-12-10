@@ -1,5 +1,6 @@
 import BookingWidget from "@/components/pages/booking-widget"
 import { Button } from "@/components/ui/button"
+import BookingHero from "@/components/pages/booking-hero"
 
 export const metadata = {
   title: "Book Your Massage | Twilight Massage",
@@ -10,32 +11,7 @@ export const metadata = {
 export default function BookingPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      <section className="relative h-[40vh] w-full">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("/booking.png")',
-          }}
-        >
-          <div className="absolute inset-0 bg-black opacity-70" />
-        </div>
-
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">
-          <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-            Book Your Relaxation Journey
-          </h1>
-          <p className="max-w-2xl text-lg md:text-xl">
-            Choose your preferred massage service and schedule a time that works
-            best for you. Your path to tranquility begins here.
-          </p>
-          <Button
-            className="mt-6 bg-orange-600 text-white hover:bg-orange-700"
-            size="lg"
-          >
-            View Services
-          </Button>
-        </div>
-      </section>
+      <BookingHero />
 
       <section className="container mx-auto px-4 py-16">
         <div className="space-y-12">

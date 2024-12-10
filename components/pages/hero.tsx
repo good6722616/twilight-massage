@@ -34,6 +34,7 @@ export default function HeroHeader() {
               quality={100}
               width={600}
               height={600}
+              priority={true}
               className="mx-auto"
             />
           </div>

@@ -2,34 +2,22 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
+import { motion, AnimatePresence } from "framer-motion"
 import { siteConfig } from "@/config/site"
 import { navLinks } from "@/lib/links"
-import { settings } from "@/config/settings"
+import { Menu, X } from "lucide-react"
 
 export default function Navbar() {
   const [navbar, setNavbar] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  const handleClick = async () => {
+  const handleClick = () => {
     setNavbar(false)
   }
 
   useEffect(() => {
-    if (navbar) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "auto"
-    }
-  }, [navbar])
-
-  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true)
-      } else {
-        setScrolled(false)
-      }
+      setScrolled(window.scrollY > 50)
     }
 
     window.addEventListener("scroll", handleScroll)
@@ -40,80 +28,30 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 z-50 h-[100px] w-full select-none transition-colors duration-300 ${
+      className={`fixed top-0 z-50 w-full select-none transition-colors duration-300 ${
         scrolled ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >
-      <nav className="h-30 container flex items-center justify-between">
-        <div className="h-auto w-full">
-          <div className="flex w-full items-center justify-between py-3 md:block md:py-5">
-            <Link href="/" onClick={handleClick}>
-              <h1
-                className={`w-fit text-2xl font-bold transition-colors duration-300 ${
-                  scrolled ? "text-black" : "text-white"
-                }`}
-              >
-                {siteConfig.name}
-              </h1>
-            </Link>
-            <div className="flex gap-1 md:hidden">
-              <button
-                className={`rounded-md p-2 outline-none transition-colors duration-300 focus:border focus:border-primary ${
-                  scrolled ? "text-black" : "text-white"
-                }`}
-                aria-label="Hamburger Menu"
-                onClick={() => setNavbar(!navbar)}
-              >
-                {navbar ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 "
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 "
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </button>
-              {/* <ModeToggle /> */}
-            </div>
-          </div>
-        </div>
-        <div>
-          <div
-            className={`absolute left-0 right-0 z-50 m-auto justify-self-center rounded-md border p-4 md:static md:mt-0 md:block md:border-none md:p-0 ${
-              navbar ? "block" : "hidden"
-            }`}
-            style={{ width: "100%", maxWidth: "20rem" }}
-          >
-            <ul className="flex flex-col items-center space-y-4 md:flex-row md:space-x-6 md:space-y-0">
+      <nav className="container mx-auto px-4">
+        <div className="flex items-center justify-between py-4">
+          <Link href="/" onClick={handleClick}>
+            <h1
+              className={`text-2xl font-bold transition-colors duration-300 ${
+                scrolled ? "text-orange-800" : "text-white"
+              }`}
+            >
+              {siteConfig.name}
+            </h1>
+          </Link>
+          <div className="hidden md:block">
+            <ul className="flex space-x-6">
               {navLinks.map((link) => (
                 <li key={link.route}>
                   <Link
-                    className={`transition-colors duration-300 hover:underline ${
-                      scrolled ? "text-black" : "text-white"
+                    className={`transition-colors duration-300 hover:text-orange-500 ${
+                      scrolled ? "text-gray-800" : "text-white"
                     }`}
                     href={link.path}
-                    onClick={handleClick}
                   >
                     {link.route}
                   </Link>
@@ -121,13 +59,62 @@ export default function Navbar() {
               ))}
             </ul>
           </div>
+          <button
+            className={`rounded-md p-2 transition-colors duration-300 md:hidden ${
+              scrolled ? "text-orange-800" : "text-white"
+            }`}
+            aria-label="Toggle Menu"
+            onClick={() => setNavbar(!navbar)}
+          >
+            {navbar ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
-        {/* {settings.themeToggleEnabled && (
-          <div className="hidden md:block">
-            <ModeToggle />
-          </div>
-        )} */}
       </nav>
+      <AnimatePresence>
+        {navbar && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg md:hidden"
+          >
+            <div className="flex h-full flex-col justify-between p-6">
+              <ul className="space-y-4">
+                {navLinks.map((link) => (
+                  <motion.li
+                    key={link.route}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <Link
+                      className="text-lg font-medium text-gray-800 transition-colors hover:text-orange-500"
+                      href={link.path}
+                      onClick={handleClick}
+                    >
+                      {link.route}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+              <div className="text-sm text-gray-500">
+                © {new Date().getFullYear()} {siteConfig.name}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {navbar && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black bg-opacity-50 md:hidden"
+          onClick={handleClick}
+        />
+      )}
     </header>
   )
 }

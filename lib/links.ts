@@ -1,6 +1,6 @@
 export const navLinks = [
   {
-    route: "Home",
+    route: "",
     path: "/",
   },
   {
@@ -14,6 +14,10 @@ export const navLinks = [
   {
     route: "Contact",
     path: "/contact",
+  },
+  {
+    route: "GiftCard",
+    path: "/giftcard",
   },
   {
     route: "Location",
