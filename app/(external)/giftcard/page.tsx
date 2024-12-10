@@ -28,14 +28,14 @@ export default function GiftCardPage() {
             </h2>
             <form className="space-y-6">
               <div>
-                <Label htmlFor="recipient-name">Recipient's Name</Label>
+                <Label htmlFor="recipient-name">Recipient&apos;s Name</Label>
                 <Input
                   id="recipient-name"
                   placeholder="Enter recipient's name"
                 />
               </div>
               <div>
-                <Label htmlFor="recipient-email">Recipient's Email</Label>
+                <Label htmlFor="recipient-email">Recipient&apos;s Email</Label>
                 <Input
                   id="recipient-email"
                   type="email"
