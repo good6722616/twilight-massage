@@ -12,6 +12,7 @@ export type Content = {
   icon?: IconKeys
   price?: string
   image?: string
+  bookingLink?: string
 }
 
 export type ContentSection = {

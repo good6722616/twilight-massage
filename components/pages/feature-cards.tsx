@@ -48,8 +48,9 @@ export default function FeatureCards() {
                       <Image
                         src={card.image || "/default-image.png"}
                         alt={card.text}
-                        layout="fill"
-                        objectFit="cover"
+                        fill={true}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        style={{ objectFit: "cover" }}
                         className="transition-transform duration-300 group-hover:scale-110"
                         priority={index === 0}
                       />
@@ -63,7 +64,10 @@ export default function FeatureCards() {
                     <p className="text-gray-600">{card.subtext}</p>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">
-                    <Button className="w-full bg-orange-600 text-white transition-colors hover:bg-orange-700">
+                    <Button
+                      className="w-full bg-orange-600 text-white transition-colors hover:bg-orange-700"
+                      onClick={() => window.open(card.bookingLink, "_blank")}
+                    >
                       Book Now
                       <Spa className="ml-2 h-4 w-4" />
                     </Button>
@@ -82,6 +86,12 @@ export default function FeatureCards() {
               size="lg"
               variant="outline"
               className="mt-8 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+              onClick={() =>
+                window.open(
+                  "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
+                  "_blank"
+                )
+              }
             >
               Discover More Treatments
               <ArrowRight className="ml-2 h-4 w-4" />

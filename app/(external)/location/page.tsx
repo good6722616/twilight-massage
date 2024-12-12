@@ -56,8 +56,8 @@ export default function LocationPage() {
                 <Image
                   src="/entrance.png"
                   alt="Twilight Massage Entrance"
-                  layout="fill"
-                  objectFit="cover"
+                  fill={true}
+                  style={{ objectFit: "cover" }}
                   className="rounded-lg shadow-md"
                 />
               </div>

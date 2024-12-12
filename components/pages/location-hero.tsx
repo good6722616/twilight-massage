@@ -10,8 +10,8 @@ export default function LocationHero() {
       <Image
         src="/location-hero.jpg"
         alt="Our Location"
-        layout="fill"
-        objectFit="cover"
+        fill={true}
+        style={{ objectFit: "cover" }}
         className="z-0"
         priority
       />

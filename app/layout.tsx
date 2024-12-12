@@ -46,7 +46,7 @@ export const metadata = {
     creator: "@_rdev7",
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/twilight_logo_black_wotext.png",
   },
 }
 

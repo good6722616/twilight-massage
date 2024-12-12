@@ -9,9 +9,9 @@ export default function GiftCardHero() {
       <Image
         src="/giftcard_sample.jpg"
         alt="Massage Gift Card"
-        layout="fill"
-        objectFit="cover"
-        priority
+        fill={true}
+        style={{ objectFit: "cover" }}
+        priority={true}
         className="z-0"
       />
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 to-black/30" />

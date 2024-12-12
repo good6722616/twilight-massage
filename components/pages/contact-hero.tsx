@@ -10,10 +10,10 @@ export default function ContactHero() {
       <Image
         src="/contact-hero.png"
         alt="Contact Us"
-        layout="fill"
-        objectFit="cover"
+        fill={true}
+        style={{ objectFit: "cover" }}
         className="z-0"
-        priority
+        priority={true}
       />
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 to-black/30" />
       <div className="container relative z-20 mx-auto flex h-full items-center px-4">
