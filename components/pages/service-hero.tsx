@@ -2,19 +2,34 @@
 
 import { motion } from "framer-motion"
 import { SpadeIcon as Spa, Info } from "lucide-react"
-import Image from "next/image"
+import { useState, useRef, useEffect } from "react"
 
 export default function ServiceHero() {
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 3) {
+      setIsVideoLoaded(true)
+    }
+  }, [])
+
   return (
     <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
-      <Image
-        src="/service-hero.png"
-        alt="Our Services"
-        fill={true}
-        style={{ objectFit: "cover" }}
-        className="z-0"
-        priority={true}
-      />
+      <div className="absolute inset-0">
+        <video
+          ref={videoRef}
+          src="/massage-2-short.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          onLoadedData={() => setIsVideoLoaded(true)}
+          className={`h-full w-full object-cover transition-opacity duration-700 ${
+            isVideoLoaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      </div>
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 to-black/30" />
       <div className="container relative z-20 mx-auto flex h-full items-center px-4">
         <motion.div

@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 import HeadingText from "@/components/heading-text"
 import { featureCards } from "@/config/contents"
@@ -33,7 +35,12 @@ export default function ServiceCards() {
               <p className="text-xl font-semibold text-primary">
                 {service.price}
               </p>
-              <Button className="w-fit">Book Now</Button>
+              <Button
+                className="w-fit"
+                onClick={() => window.open(service.bookingLink, "_blank")}
+              >
+                Book Now
+              </Button>
             </div>
           </div>
         ))}
