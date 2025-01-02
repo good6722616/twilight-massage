@@ -65,11 +65,11 @@ export default function FeatureCards() {
                   </CardContent>
                   <CardFooter className="p-6 pt-0">
                     <Button
-                      className="w-full bg-orange-600 text-white transition-colors hover:bg-orange-700"
+                      className="w-full bg-orange-800 text-white transition-colors hover:bg-orange-900"
                       onClick={() => window.open(card.bookingLink, "_blank")}
+                      aria-label="Discover more massage treatments"
                     >
                       Book Now
-                      <Spa className="ml-2 h-4 w-4" />
                     </Button>
                   </CardFooter>
                 </Card>
@@ -85,7 +85,7 @@ export default function FeatureCards() {
             <Button
               size="lg"
               variant="outline"
-              className="mt-8 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+              className="mt-8 border-orange-800 text-orange-800 hover:bg-orange-800 hover:text-white"
               onClick={() =>
                 window.open(
                   "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",

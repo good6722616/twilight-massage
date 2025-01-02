@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { contactConfig } from "@/config/site"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 

@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion"
 import Image from "next/image"
-
+import { useState } from "react"
 export default function GiftCardHero() {
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
   return (
     <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
       <Image
@@ -12,7 +13,10 @@ export default function GiftCardHero() {
         fill={true}
         style={{ objectFit: "cover" }}
         priority={true}
-        className="z-0"
+        className={`z-0 transition-opacity duration-700 ${
+          isImageLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        onLoad={() => setIsImageLoaded(true)}
       />
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 to-black/30" />
       <div className="container relative z-20 mx-auto flex h-full items-center px-4">

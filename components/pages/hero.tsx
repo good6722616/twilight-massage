@@ -1,6 +1,5 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import Navbar from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
@@ -46,9 +45,11 @@ export default function HeroHeader() {
               src="/twilight_white_crop.png"
               alt="Twilight Massage & Spa Logo"
               quality={100}
-              width={600}
-              height={600}
-              priority={true}
+              width={400}
+              height={150}
+              priority
+              loading="eager"
+              sizes="(max-width: 768px) 90vw, 400px"
               className={`mx-auto h-auto w-auto transition-opacity duration-500 ${
                 isImageLoaded ? "opacity-100" : "opacity-0"
               }`}

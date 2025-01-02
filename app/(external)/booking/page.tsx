@@ -1,5 +1,4 @@
 import BookingWidget from "@/components/pages/booking-widget"
-import { Button } from "@/components/ui/button"
 import BookingHero from "@/components/pages/booking-hero"
 
 export const metadata = {
