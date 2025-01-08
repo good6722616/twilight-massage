@@ -134,11 +134,9 @@ export default function ImageCarousel() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <Spa className="h-6 w-6" />
           <p className="text-lg font-medium">
             Experience blissful relaxation at our tranquil oasis
           </p>
-          <Spa className="h-6 w-6" />
         </motion.div>
         <motion.div
           className="mt-8 flex items-center justify-center space-x-1 text-yellow-500"

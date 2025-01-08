@@ -51,15 +51,17 @@ export default function ContactHero() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <a
-              href="#contact-form"
+              href="mailto:twilightmassagespa@gmail.com"
               className="inline-flex items-center rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
+              aria-label="Email us at twilightmassagespa@gmail.com"
             >
               <Mail className="mr-2" />
               Email Us
             </a>
             <a
-              href="tel:+1234567890"
-              className="inline-flex items-center rounded-full bg-white px-6 py-3 font-bold text-orange-600 transition duration-300 hover:bg-orange-100"
+              href="tel:+19496973888"
+              className="inline-flex items-center rounded-full bg-white px-6 py-3 font-bold text-orange-800 transition duration-300 hover:bg-orange-100"
+              aria-label="Call us at (949) 697-3888"
             >
               <Phone className="mr-2" />
               Call Now

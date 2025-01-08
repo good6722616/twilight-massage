@@ -65,15 +65,7 @@ export default function ServiceHero() {
               href="#service-list"
               className="inline-flex items-center rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
             >
-              <Spa className="mr-2" />
               Explore Services
-            </a>
-            <a
-              href="#about-us"
-              className="inline-flex items-center rounded-full bg-white px-6 py-3 font-bold text-orange-600 transition duration-300 hover:bg-orange-100"
-            >
-              <Info className="mr-2" />
-              About Us
             </a>
           </motion.div>
         </motion.div>

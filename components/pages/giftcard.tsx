@@ -25,16 +25,20 @@ export default function Features() {
                   className="flex flex-col items-center gap-2 text-center md:flex-row md:gap-8 md:text-left"
                 >
                   <div className="flex">
-                    <Icon className="h-[6rem] w-[6rem]" />
+                    <Icon className="h-[6rem] w-[6rem] text-orange-800" />
                   </div>
                   <div className="flex-1">
-                    <p className="md:text4xl text-2xl font-semibold">
+                    <p className="text-2xl font-semibold text-orange-800 md:text-4xl">
                       {cards.text}
                     </p>
                     <p className="font-light text-muted-foreground md:text-lg">
                       {cards.subtext}
                     </p>
-                    <Button className="mt-4" size="xl">
+                    <Button
+                      className="mt-4 bg-orange-800 text-white hover:bg-orange-900"
+                      size="xl"
+                      aria-label="Purchase a gift card"
+                    >
                       Buy a Gift Card
                     </Button>
                   </div>

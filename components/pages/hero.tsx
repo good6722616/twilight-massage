@@ -58,13 +58,14 @@ export default function HeroHeader() {
           </div>
         </div>
         <Button
-          className="mb-2 me-2 rounded-lg bg-white px-10 py-6 text-center text-2xl font-medium text-gray-900 hover:bg-gray-200 dark:focus:ring-blue-800"
+          className="mb-2 me-2 rounded-lg bg-orange-600 px-10 py-6 text-center text-2xl font-medium text-white hover:bg-orange-700 dark:focus:ring-blue-800"
           onClick={() =>
             window.open(
               "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
               "_blank"
             )
           }
+          aria-label="Book a massage appointment"
         >
           Book Now
         </Button>
