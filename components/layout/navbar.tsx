@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { siteConfig } from "@/config/site"
 import { navLinks } from "@/lib/links"
 import { Menu, X } from "lucide-react"
-
+import Image from "next/image"
 export default function Navbar() {
   const [navbar, setNavbar] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -34,14 +34,38 @@ export default function Navbar() {
     >
       <nav className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
-          <Link href="/" onClick={handleClick}>
-            <h1
+          <Link
+            href="/"
+            onClick={handleClick}
+            className="flex items-center gap-2"
+          >
+            <div className="relative h-8 w-8">
+              <Image
+                src="/twilight_white_crop.png"
+                alt="Logo"
+                fill
+                className={`object-contain transition-opacity duration-300 ${
+                  scrolled ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <Image
+                src="/twilight_white_crop.png"
+                alt="Logo"
+                fill
+                className={`object-contain transition-opacity duration-300 ${
+                  scrolled
+                    ? "opacity-100 brightness-0 hue-rotate-[335deg] saturate-[80] sepia-[.75]"
+                    : "opacity-0"
+                }`}
+              />
+            </div>
+            <span
               className={`text-2xl font-bold transition-colors duration-300 ${
                 scrolled ? "text-orange-800" : "text-white"
               }`}
             >
               {siteConfig.name}
-            </h1>
+            </span>
           </Link>
           <div className="hidden md:block">
             <ul className="flex space-x-6">

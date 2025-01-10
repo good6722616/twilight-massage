@@ -24,34 +24,21 @@ const images = [
     description: "Revitalize your feet with our specialized foot massage",
   },
   {
-    src: "/swedish_massage.png",
+    src: "/deep-tissue-massage.png",
     title: "Deep Tissue Massage",
     description: "Release tension with our deep tissue massage",
   },
+
   {
-    src: "/foot_massage.png",
-    title: "Hot Stone Massage",
-    description: "Experience warmth and relaxation with hot stone therapy",
-  },
-  {
-    src: "/swedish_massage.png",
+    src: "/aromatherapy_massage.jpg",
     title: "Aromatherapy Massage",
     description: "Indulge your senses with our aromatherapy massage",
   },
   {
-    src: "/foot_massage.png",
-    title: "Couples Massage",
-    description: "Share a relaxing experience with our couples massage",
-  },
-  {
-    src: "/swedish_massage.png",
-    title: "Sports Massage",
-    description: "Enhance performance with our targeted sports massage",
-  },
-  {
-    src: "/foot_massage.png",
-    title: "Prenatal Massage",
-    description: "Nurture yourself with our gentle prenatal massage",
+    src: "/thai-massage-therapy.jpg",
+    title: "Thai Massage",
+    description:
+      "Experience traditional Thai massage techniques for full-body wellness",
   },
 ]
 
@@ -81,6 +68,11 @@ export default function ImageCarousel() {
         </div>
         <Carousel
           className="w-full"
+          opts={{
+            align: "start",
+            slidesToScroll: 1,
+            containScroll: "trimSnaps",
+          }}
           onSelect={(indexOrEvent: any) => {
             if (typeof indexOrEvent === "number") {
               setActiveIndex(indexOrEvent)

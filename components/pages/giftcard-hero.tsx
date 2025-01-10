@@ -3,10 +3,11 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useState } from "react"
+
 export default function GiftCardHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   return (
-    <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+    <section className="relative h-[30vh] min-h-[200px] w-full overflow-hidden">
       <Image
         src="/giftcard_sample.jpg"
         alt="Massage Gift Card"
@@ -27,7 +28,7 @@ export default function GiftCardHero() {
           transition={{ duration: 0.8 }}
         >
           <motion.h1
-            className="mb-4 text-4xl font-bold md:text-5xl"
+            className="mb-3 text-3xl font-bold md:text-4xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -35,7 +36,7 @@ export default function GiftCardHero() {
             Give the Gift of Relaxation
           </motion.h1>
           <motion.p
-            className="mb-8 text-xl"
+            className="text-lg text-neutral-200"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -43,18 +44,6 @@ export default function GiftCardHero() {
             Treat your loved ones to a blissful massage experience with our
             luxurious gift cards.
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <a
-              href="#order-form"
-              className="inline-block rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
-            >
-              Order Now
-            </a>
-          </motion.div>
         </motion.div>
       </div>
     </section>

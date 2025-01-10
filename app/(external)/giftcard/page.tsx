@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { motion } from "framer-motion"
 import GiftCardHero from "@/components/pages/giftcard-hero"
@@ -12,7 +11,7 @@ export default function GiftCardPage() {
   const [amount, setAmount] = useState("50")
 
   return (
-    <main className="min-h-screen bg-orange-50">
+    <main className="min-h-screen">
       <GiftCardHero />
 
       <section className="px-4 py-16" id="order-form">

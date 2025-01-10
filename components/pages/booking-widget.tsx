@@ -24,14 +24,12 @@ export default function BookingWidget() {
   }, [])
 
   return (
-    <div className="min-h-[800px] w-full rounded-lg bg-white shadow-lg">
+    <div className="min-h-[1000px] w-full rounded-lg bg-white shadow-lg">
       <iframe
         src="https://square.site/appointments/buyer/widget/xe96ggmxltf5b6/L3RH0J52JYVYX"
         width="100%"
-        height="800px" // Increased height
-        frameBorder="0"
-        scrolling="no"
-        className="h-[800px] w-full"
+        height="1000px"
+        className="h-[1000px] w-full"
         title="Square Booking Widget"
       />
     </div>

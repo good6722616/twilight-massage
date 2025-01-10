@@ -47,7 +47,7 @@ export const featureCards: ContentSection = {
       text: `Combo Massage`,
       subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
       price: `Price: $89 for 60 minutes`,
-      image: `/couple_massage.png`,
+      image: `/combo_massage.webp`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/6RSKXJ4P5DW6BA3YHTW43NNH",
     },

@@ -4,10 +4,12 @@ import { motion } from "framer-motion"
 import { Mail, Phone } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+
 export default function ContactHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+
   return (
-    <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+    <section className="relative h-[30vh] min-h-[200px] w-full overflow-hidden">
       <Image
         src="/contact-hero.png"
         alt="Contact Us"
@@ -28,7 +30,7 @@ export default function ContactHero() {
           transition={{ duration: 0.8 }}
         >
           <motion.h1
-            className="mb-4 text-4xl font-bold md:text-5xl"
+            className="mb-3 text-3xl font-bold md:text-4xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -36,7 +38,7 @@ export default function ContactHero() {
             Get in Touch
           </motion.h1>
           <motion.p
-            className="mb-8 text-xl"
+            className="mb-4 text-lg text-neutral-200"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
