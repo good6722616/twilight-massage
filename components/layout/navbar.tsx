@@ -60,8 +60,10 @@ export default function Navbar() {
               />
             </div>
             <span
-              className={`text-2xl font-bold transition-opacity duration-300 ${
-                scrolled ? "text-orange-800" : "text-white"
+              className={`absolute text-xl font-bold transition-all duration-300 ${
+                scrolled
+                  ? "relative text-orange-800 opacity-100"
+                  : "relative text-white opacity-100"
               }`}
             >
               {siteConfig.name}
