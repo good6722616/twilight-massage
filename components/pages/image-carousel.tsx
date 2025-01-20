@@ -46,7 +46,7 @@ export default function ImageCarousel() {
   const [activeIndex, setActiveIndex] = useState(0)
 
   return (
-    <section className="w-full bg-gradient-to-b from-slate-100 to-slate-200 px-4 py-16 md:px-20 md:py-28">
+    <section className="w-full px-4 py-16 md:px-20 md:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <motion.h2
@@ -57,11 +57,30 @@ export default function ImageCarousel() {
           >
             Our Relaxing Services
           </motion.h2>
+          <motion.div
+            className="my-4 flex items-center justify-center space-x-2"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="h-[1px] w-12 bg-slate-300"></div>
+            <div className="relative h-12 w-12 bg-transparent">
+              <Image
+                src="/twilight_logo_black_wotext.png"
+                alt="Twilight Massage Logo"
+                fill
+                sizes="(max-width: 48px) 100vw"
+                className="object-contain"
+                priority
+              />
+            </div>
+            <div className="h-[1px] w-12 bg-slate-300"></div>
+          </motion.div>
           <motion.p
             className="text-slate-600"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
             Discover tranquility through our range of massage therapies
           </motion.p>

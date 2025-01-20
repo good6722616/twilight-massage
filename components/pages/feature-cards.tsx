@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { SpadeIcon as Spa, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 export default function FeatureCards() {
   return (
@@ -28,6 +28,20 @@ export default function FeatureCards() {
               <h2 className="text-3xl font-bold text-orange-800 lg:text-4xl">
                 {featureCards.header}
               </h2>
+              <div className="flex items-center justify-center space-x-2">
+                <div className="h-[1px] w-12 bg-orange-300"></div>
+                <div className="relative h-12 w-12 bg-transparent">
+                  <Image
+                    src="/twilight_logo_black_wotext.png"
+                    alt="Twilight Massage Logo"
+                    fill
+                    sizes="(max-width: 48px) 100vw"
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+                <div className="h-[1px] w-12 bg-orange-300"></div>
+              </div>
               <p className="mx-auto max-w-2xl text-lg text-gray-600">
                 {featureCards.subheader}
               </p>

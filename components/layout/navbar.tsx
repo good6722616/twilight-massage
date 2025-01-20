@@ -33,13 +33,13 @@ export default function Navbar() {
       }`}
     >
       <nav className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-4">
+        <div className="flex items-center justify-between py-6">
           <Link
             href="/"
             onClick={handleClick}
             className="flex items-center gap-2"
           >
-            <div className="relative h-8 w-8">
+            <div className="relative h-16 w-16">
               <Image
                 src="/twilight_white_crop.png"
                 alt="Logo"
@@ -72,12 +72,13 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <li key={link.route}>
                   <Link
-                    className={`transition-colors duration-300 hover:text-orange-500 ${
+                    className={`group relative transition-colors duration-300 hover:text-orange-500 ${
                       scrolled ? "text-gray-800" : "text-white"
                     }`}
                     href={link.path}
                   >
                     {link.route}
+                    <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-orange-500 transition-all duration-300 hover:w-full group-hover:w-full" />
                   </Link>
                 </li>
               ))}

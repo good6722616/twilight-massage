@@ -8,9 +8,9 @@ import { useState } from "react"
 export default function LocationHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   return (
-    <section className="relative h-[30vh] min-h-[200px] w-full overflow-hidden">
+    <section className="relative h-[50vh] min-h-[300px] w-full overflow-hidden">
       <Image
-        src="/location-hero.jpg"
+        src="/location_hero_img.jpg"
         alt="Our Location"
         fill={true}
         style={{ objectFit: "cover" }}
@@ -20,10 +20,10 @@ export default function LocationHero() {
         priority={true}
         onLoad={() => setIsImageLoaded(true)}
       />
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-orange-950/90 to-neutral-900/90" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-orange-950/50 to-neutral-900/90" />
       <div className="container relative z-20 mx-auto flex h-full items-center px-4">
         <motion.div
-          className="max-w-2xl text-white"
+          className="max-w-2xl pt-16 text-white md:pt-20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}

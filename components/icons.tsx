@@ -23,6 +23,8 @@ import { ImSpinner8, ImStatsBars } from "react-icons/im"
 import { RxMixerHorizontal } from "react-icons/rx"
 import { LuSettings } from "react-icons/lu"
 import { HiGift } from "react-icons/hi"
+import { Flower } from "lucide-react"
+
 export type IconKeys = keyof typeof icons
 
 type IconsType = {
@@ -101,6 +103,7 @@ const icons = {
   mixer: RxMixerHorizontal,
   check: BsCheck2,
   giftCard: HiGift,
+  lotus: Flower,
 }
 
 export const Icons: IconsType = icons
