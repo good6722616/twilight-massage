@@ -44,23 +44,23 @@ export default function Navbar() {
                 src="/twilight_white_crop.png"
                 alt="Logo"
                 fill
-                className={`object-contain transition-opacity duration-300 ${
-                  scrolled ? "opacity-0" : "opacity-100"
+                className={`absolute object-contain transition-opacity duration-300 ${
+                  scrolled ? "invisible opacity-0" : "visible opacity-100"
                 }`}
               />
               <Image
                 src="/twilight_white_crop.png"
                 alt="Logo"
                 fill
-                className={`object-contain transition-opacity duration-300 ${
+                className={`absolute object-contain transition-opacity duration-300 ${
                   scrolled
-                    ? "opacity-100 brightness-0 hue-rotate-[335deg] saturate-[80] sepia-[.75]"
-                    : "opacity-0"
+                    ? "visible opacity-100 brightness-0 hue-rotate-[335deg] saturate-[80] sepia-[.75]"
+                    : "invisible opacity-0"
                 }`}
               />
             </div>
             <span
-              className={`text-2xl font-bold transition-colors duration-300 ${
+              className={`text-2xl font-bold transition-opacity duration-300 ${
                 scrolled ? "text-orange-800" : "text-white"
               }`}
             >
