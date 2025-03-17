@@ -10,6 +10,16 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/booking",
+        destination:
+          "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

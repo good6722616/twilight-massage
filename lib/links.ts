@@ -7,10 +7,10 @@ export const navLinks = [
     route: "Service",
     path: "/service",
   },
-  {
-    route: "Booking",
-    path: "/booking",
-  },
+  // {
+  //   route: "Booking",
+  //   path: "/booking",
+  // },
   {
     route: "Contact",
     path: "/contact",

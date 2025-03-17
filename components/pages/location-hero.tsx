@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { MapPin } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function LocationHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
@@ -50,13 +51,15 @@ export default function LocationHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <a
-              href="#location-map"
+            <Link
+              href="https://www.google.com/maps/search/?api=1&query=23805+El+Toro+Rd+Lake+Forest+CA+92630"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
             >
               <MapPin className="mr-2" />
               Find Us
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
       </div>

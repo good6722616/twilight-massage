@@ -39,6 +39,12 @@ export default function ServiceCards() {
               <p className="text-base text-muted-foreground">
                 {service.subtext}
               </p>
+              {service.duration && (
+                <p className="text-sm font-medium">
+                  <span className="text-orange-800">Duration:</span>{" "}
+                  <span className="text-gray-700">{service.duration}</span>
+                </p>
+              )}
               <p className="text-lg font-semibold text-primary">
                 {service.price}
               </p>

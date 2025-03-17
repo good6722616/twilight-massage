@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import GoogleMap from "@/components/pages/googlemap"
 import LocationHero from "@/components/pages/location-hero"
 import Image from "next/image"
+import Link from "next/link"
+
 export default function LocationPage() {
   const location = "23805 El Toro Rd, Lake Forest, CA 92630"
 
@@ -48,8 +50,14 @@ export default function LocationPage() {
                     </p>
                   </div>
                 </div>
-                <Button className="bg-orange-600 hover:bg-orange-700">
-                  Book Your Session Now
+                <Button className="bg-orange-600 hover:bg-orange-700" asChild>
+                  <Link
+                    href="https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Book Your Session Now
+                  </Link>
                 </Button>
               </div>
               <div className="relative h-64 md:h-full">

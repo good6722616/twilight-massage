@@ -75,7 +75,6 @@ export default function FeatureCards() {
                     <CardTitle className="mb-2 text-2xl font-bold text-orange-800">
                       {card.text}
                     </CardTitle>
-                    <p className="text-gray-600">{card.subtext}</p>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">
                     <Button

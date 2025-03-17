@@ -22,7 +22,8 @@ export const featureCards: ContentSection = {
     {
       text: `Swedish Massage`,
       subtext: `A classic massage designed to relax the entire body, improve circulation, and relieve muscle tension.`,
-      price: `Price: $79 for 60 minutes`,
+      duration: `60-90 minutes`,
+      price: `$80 - $120`,
       image: `/swedish_massage.png`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/JP63BPFNQM2J5VYNS7XXBCQZ",
@@ -30,26 +31,66 @@ export const featureCards: ContentSection = {
     {
       text: `Deep Tissue Massage`,
       subtext: `A focused, therapeutic massage to relieve muscle tension, reduce pain, and improve mobility`,
-      price: `Price: $89 for 60 minutes`,
+      duration: `60-90 minutes`,
+      price: `$90 - $135`,
       image: `/deep-tissue-massage.png`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/XUTTN7KL3DTXNE2QG2GV66TM",
     },
+
+    {
+      text: `Couples Massage`,
+      subtext: `Share a relaxing experience with your loved one in our specially designed couples suite.`,
+      duration: `60-90 minutes`,
+      price: `$160 - $240`,
+      image: `/couple-massage.jpg`,
+      bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/UJF66VQTQI5Y3OEKDC4SJ6YE",
+    },
     {
       text: `Foot Massage`,
       subtext: `Targeted pressure point massage to relieve tension and stress in the feet, promoting full-body relaxation.`,
-      price: `Price: $80 for 60 minutes`,
+      duration: `30-60 minutes`,
+      price: `$50 - $80`,
       image: `/foot_massage.png`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/WIC7FDNK2YNJTKPRMZZUHJNW",
     },
     {
-      text: `Combo Massage`,
-      subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
-      price: `Price: $89 for 60 minutes`,
+      text: `Foot Combo Massage`,
+      subtext: `A perfect blend of traditional foot massage and lower body treatment for complete relaxation.`,
+      duration: `90 minutes`,
+      price: `$120 - $130`,
       image: `/combo_massage.webp`,
       bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/3IJ3HKTG3B7MHP6FKF62G4IL",
+    },
+    {
+      text: `Special Combo Massage`,
+      subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
+      duration: `60-90 minutes`,
+      price: `$160 - $270`,
+      image: `/special-combo-massage.jpeg`,
+      bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/6RSKXJ4P5DW6BA3YHTW43NNH",
+    },
+    {
+      text: `Thai Massage`,
+      subtext: `Traditional Thai massage combining acupressure, stretching, and yoga-like positions for full body rejuvenation.`,
+      duration: `60-90 minutes`,
+      price: `$100 - $150`,
+      image: `/thai-massage-therapy.jpg`,
+      bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/HGIXYBHTQLOWCQKMVZMO2MEP",
+    },
+    {
+      text: `Lymphatic Drainage Massage`,
+      subtext: `A gentle massage technique designed to improve lymph flow, reduce swelling, and support immune system function.`,
+      duration: `30-60 minutes`,
+      price: `$60 - $120`,
+      image: `/lymphatic-drainage-massage.jpg`,
+      bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/ZGR7PXCQ2B2P3PPFH42T342V",
     },
   ],
 }
@@ -62,6 +103,7 @@ export const giftCards: ContentSection = {
     {
       text: `Give the Gift of Relaxation`,
       subtext: `Transform any occasion into a memorable experience with our massage gift cards. Perfect for birthdays, anniversaries, or showing appreciation to someone special.`,
+      duration: ``,
       price: `Price: $100 for 60 minutes`,
       icon: "giftCard",
     },

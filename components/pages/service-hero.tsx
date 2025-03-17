@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { SpadeIcon as Spa, Info } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 
 export default function ServiceHero() {
@@ -62,7 +61,7 @@ export default function ServiceHero() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <a
-              href="#service-list"
+              href="https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services"
               className="inline-flex items-center rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
             >
               Explore Services
