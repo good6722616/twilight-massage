@@ -10,7 +10,7 @@ export default function ContactPage() {
       <ContactHero />
       <section className="container mx-auto py-16">
         <div className="grid gap-12 md:grid-cols-2">
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden border-none shadow-none">
             <CardHeader>
               <h2 className="text-3xl font-bold text-orange-800">
                 Get In Touch
@@ -57,13 +57,13 @@ export default function ContactPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-orange-50">
+          <Card className="border-none shadow-none">
             <CardHeader>
               <h2 className="text-2xl font-semibold text-orange-800">
                 Send us a message
               </h2>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <ContactForm />
             </CardContent>
           </Card>

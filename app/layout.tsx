@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { settings } from "@/config/settings"
+import { Toaster } from "sonner"
 
 const urbanist = Urbanist({ subsets: ["latin"] })
 export const metadata = {
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Footer />
           </ThemeProvider>
         )}
+        <Toaster position="top-center" />
       </body>
     </html>
   )
