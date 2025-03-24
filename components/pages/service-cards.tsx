@@ -7,28 +7,37 @@ import { Button } from "@/components/ui/button"
 
 export default function ServiceCards() {
   return (
-    <section className="container space-y-6 py-8 lg:py-16">
+    <section
+      className="container space-y-6 py-8 lg:py-16"
+      aria-label="Available Massage Services"
+    >
       {featureCards.header || featureCards.subheader ? (
         <HeadingText subtext={featureCards.subheader} className="text-center">
           {featureCards.header}
         </HeadingText>
       ) : null}
 
-      <div className="grid gap-4">
+      <div
+        className="grid gap-4"
+        role="list"
+        aria-label="Massage service options"
+      >
         {featureCards.content.map((service) => (
-          <div
+          <article
             key={service.text}
             className="flex flex-col gap-4 rounded-lg border p-4 md:flex-row"
+            role="listitem"
           >
             {/* Center the image container on mobile */}
             <div className="flex justify-center md:justify-start">
               <div className="relative h-[200px] w-[200px]">
                 <Image
                   src={service.image || "/default-image.png"}
-                  alt={service.text}
+                  alt={`${service.text} massage service at Twilight Massage & Spa`}
                   fill
                   className="rounded-lg object-cover"
                   sizes="(max-width: 200px) 100vw, 200px"
+                  priority={false}
                 />
               </div>
             </div>
@@ -51,12 +60,12 @@ export default function ServiceCards() {
               <Button
                 className="w-fit bg-orange-800 text-white hover:bg-orange-900"
                 onClick={() => window.open(service.bookingLink, "_blank")}
-                aria-label={`Book ${service.text} treatment`}
+                aria-label={`Book ${service.text} massage treatment`}
               >
                 Book Now
               </Button>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>

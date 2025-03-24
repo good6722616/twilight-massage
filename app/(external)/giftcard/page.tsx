@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import GiftCardHero from "@/components/pages/giftcard-hero"
 import { Button } from "@/components/ui/button"
-import { Gift, Clock, CreditCard } from "lucide-react"
+
 import Image from "next/image"
 
 const giftCards = [

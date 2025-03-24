@@ -7,10 +7,13 @@ import { useState } from "react"
 export default function GiftCardHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   return (
-    <section className="relative h-[50vh] min-h-[300px] w-full overflow-hidden">
+    <section
+      className="relative h-[50vh] min-h-[300px] w-full overflow-hidden"
+      aria-label="Twilight Massage & Spa Gift Cards Introduction"
+    >
       <Image
         src="/gift_hero_img.jpg"
-        alt="Massage Gift Card"
+        alt="Twilight Massage & Spa gift cards featuring luxurious massage treatments"
         fill={true}
         style={{ objectFit: "cover" }}
         priority={true}
@@ -18,6 +21,7 @@ export default function GiftCardHero() {
           isImageLoaded ? "opacity-100" : "opacity-0"
         }`}
         onLoad={() => setIsImageLoaded(true)}
+        sizes="100vw"
       />
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-orange-950/50 to-neutral-900/90" />
       <div className="container relative z-20 mx-auto flex h-full items-center px-4">
@@ -42,7 +46,8 @@ export default function GiftCardHero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             Treat your loved ones to a blissful massage experience with our
-            luxurious gift cards.
+            luxurious gift cards. Perfect for any occasion, our gift cards are
+            available in multiple elegant designs with customizable amounts.
           </motion.p>
         </motion.div>
       </div>

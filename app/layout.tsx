@@ -1,28 +1,34 @@
 import "./globals.css"
-import { siteConfig } from "@/config/site"
+import { siteConfig, contactConfig } from "@/config/site"
 import { Urbanist } from "next/font/google"
 import Navbar from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { settings } from "@/config/settings"
 import { Toaster } from "sonner"
+import { Metadata } from "next"
 
 const urbanist = Urbanist({ subsets: ["latin"] })
-export const metadata = {
-  metadataBase: new URL(siteConfig.url.base),
+
+export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   keywords: siteConfig.keywords,
-  authors: [
-    {
-      name: siteConfig.author,
-      url: siteConfig.url.author,
-    },
-  ],
+  authors: [{ name: siteConfig.author }],
   creator: siteConfig.author,
+  publisher: siteConfig.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(siteConfig.url.base),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -44,10 +50,21 @@ export const metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    creator: "@_rdev7",
+    creator: "@twilightmassagespa",
   },
-  icons: {
-    icon: "/twilight_logo_black_wotext.png",
+  verification: {
+    google: "your-google-site-verification",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 }
 
@@ -65,9 +82,64 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body
         className={`${urbanist.className} flex min-h-screen flex-col bg-background text-primary`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: siteConfig.name,
+              description: siteConfig.description,
+              image: siteConfig.ogImage,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: contactConfig.address,
+                addressLocality: "Lake Forest",
+                addressRegion: "CA",
+                postalCode: "92630",
+                addressCountry: "US",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: "33.6469", // Replace with actual coordinates
+                longitude: "-117.6897", // Replace with actual coordinates
+              },
+              telephone: contactConfig.phone,
+              openingHoursSpecification: [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday",
+                  ],
+                  opens: "10:00",
+                  closes: "20:30",
+                },
+              ],
+              sameAs: [
+                siteConfig.url.facebook,
+                siteConfig.url.instagram,
+                siteConfig.url.twitter,
+              ],
+            }),
+          }}
+        />
         {settings.themeToggleEnabled ? (
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Navbar />

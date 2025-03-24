@@ -5,29 +5,45 @@ import { SiteConfig, ContactConfig } from "@/types"
 -- Fill the details about your website
  ==================== */
 
-const baseUrl = "localhost:3000"
-
 export const siteConfig: SiteConfig = {
   name: "Twilight Massage & Spa",
-  author: "Charles Zhang",
-  description: "Step into Twilight, Step into Relaxation",
+  author: "Twilight Massage & Spa",
+  description:
+    "Experience luxury massage and spa treatments in a serene environment. Professional massage therapists, therapeutic treatments, and relaxation services.",
   keywords: [
-    "Next.js",
-    "React",
-    "Tailwind CSS",
-    "Radix UI",
-    "shadcn/ui",
-    "Landing Page",
-    "Template",
-    "Starter",
+    "massage spa",
+    "therapeutic massage",
+    "relaxation massage",
+    "deep tissue massage",
+    "swedish massage",
+    "spa treatments",
+    "wellness center",
+    "massage therapy",
+    "body massage",
+    "facial treatments",
+    "massage services",
+    "spa services",
+    "wellness massage",
+    "massage therapist",
+    "spa treatments",
   ],
   url: {
-    base: baseUrl,
-    author: "",
+    base: "https://twilightmassagespa.com",
+    author: "https://twilightmassagespa.com",
+    facebook: "https://facebook.com/twilightmassagespa",
+    instagram: "https://instagram.com/twilightmassagespa",
+    twitter: "https://twitter.com/twilightmassagespa",
   },
-  ogImage: `${baseUrl}/og.jpg`,
+  ogImage: "https://twilightmassagespa.com/og.jpg",
 }
 
 export const contactConfig: ContactConfig = {
-  email: "shhwkk54@gmail.com",
+  email: "twilightmassagespa@gmail.com",
+  phone: "(949) 697-3888",
+  address: "23805 El Toro Rd, Lake Forest, CA 92630",
+  businessHours: {
+    weekday: "10:00 AM - 8:30 PM",
+    weekend: "10:00 AM - 8:30 PM",
+    days: "Monday - Sunday",
+  },
 }

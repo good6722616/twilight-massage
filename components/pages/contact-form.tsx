@@ -61,7 +61,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section className="container mx-auto px-4">
+    <section className="container mx-auto px-4" aria-label="Contact Form">
       <div className="mx-auto max-w-2xl">
         <motion.div
           className="rounded-lg bg-white p-4 shadow-xl"
@@ -79,7 +79,11 @@ export default function ContactForm() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 space-y-6"
+            aria-label="Contact form for Twilight Massage & Spa"
+          >
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
@@ -91,6 +95,8 @@ export default function ContactForm() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Your name"
+                  aria-required="true"
+                  aria-label="Your name"
                 />
               </div>
               <div className="space-y-2">
@@ -103,6 +109,8 @@ export default function ContactForm() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your.email@example.com"
+                  aria-required="true"
+                  aria-label="Your email address"
                 />
               </div>
             </div>
@@ -117,6 +125,8 @@ export default function ContactForm() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Your phone number"
+                aria-required="true"
+                aria-label="Your phone number"
               />
             </div>
 
@@ -130,11 +140,17 @@ export default function ContactForm() {
                 onChange={handleChange}
                 placeholder="Your message"
                 className="min-h-[150px]"
+                aria-required="true"
+                aria-label="Your message"
               />
             </div>
 
             {error && (
-              <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+              <div
+                className="rounded-md bg-red-50 p-4 text-sm text-red-700"
+                role="alert"
+                aria-live="polite"
+              >
                 {error}
               </div>
             )}
@@ -143,6 +159,7 @@ export default function ContactForm() {
               type="submit"
               className="w-full bg-orange-600 hover:bg-orange-700"
               disabled={isSubmitting}
+              aria-label={isSubmitting ? "Sending message..." : "Send message"}
             >
               {isSubmitting ? "Sending..." : "Send Message"}
             </Button>

@@ -6,12 +6,22 @@ export type SiteConfig = {
   url: {
     base: string
     author: string
+    facebook?: string
+    instagram?: string
+    twitter?: string
   }
   ogImage: string
 }
 
 export type ContactConfig = {
   email: string
+  phone?: string
+  address?: string
+  businessHours?: {
+    weekday: string
+    weekend: string
+    days: string
+  }
 }
 
 export type Settings = {

@@ -14,7 +14,10 @@ export default function ServiceHero() {
   }, [])
 
   return (
-    <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+    <section
+      className="relative h-[60vh] min-h-[400px] w-full overflow-hidden"
+      aria-label="Massage Services Introduction"
+    >
       <div className="absolute inset-0">
         <video
           ref={videoRef}
@@ -27,6 +30,7 @@ export default function ServiceHero() {
           className={`h-full w-full object-cover transition-opacity duration-700 ${
             isVideoLoaded ? "opacity-100" : "opacity-0"
           }`}
+          aria-label="Background video showing massage therapy techniques"
         />
       </div>
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/70 to-black/30" />
@@ -43,7 +47,7 @@ export default function ServiceHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Our Luxurious Services
+            Professional Massage Services
           </motion.h1>
           <motion.p
             className="mb-8 text-xl"
@@ -52,7 +56,8 @@ export default function ServiceHero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             Experience the perfect blend of traditional techniques and modern
-            therapy for ultimate relaxation and wellness.
+            therapy for ultimate relaxation and wellness at Twilight Massage &
+            Spa.
           </motion.p>
           <motion.div
             className="flex space-x-4"
@@ -63,8 +68,9 @@ export default function ServiceHero() {
             <a
               href="https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services"
               className="inline-flex items-center rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition duration-300 hover:bg-orange-700"
+              aria-label="Book a massage appointment"
             >
-              Explore Services
+              Book Your Massage
             </a>
           </motion.div>
         </motion.div>
