@@ -45,9 +45,7 @@ export default function LocationPage() {
                   </div>
                   <div className="flex items-center space-x-4">
                     <Clock className="h-6 w-6 text-orange-600" />
-                    <p className="text-gray-700">
-                      Mon-Sat: 9am-8pm, Sun: 10am-6pm
-                    </p>
+                    <p className="text-gray-700">Mon - Sun: 10AM - 8PM</p>
                   </div>
                 </div>
                 <Button className="bg-orange-600 hover:bg-orange-700" asChild>
