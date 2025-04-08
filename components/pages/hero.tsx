@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import Navbar from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
-import { Calendar, Clock, MapPin, Phone, Mail } from "lucide-react"
 export default function HeroHeader() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
@@ -74,8 +73,8 @@ export default function HeroHeader() {
             Soft Opening Now
           </h2>
           <p className="mb-8 text-xl text-gray-200">
-            We're excited to announce the soft opening of Twilight Massage &
-            Spa, your new destination for relaxation and rejuvenation.
+            We&apos;re excited to announce the soft opening of Twilight Massage
+            & Spa, your new destination for relaxation and rejuvenation.
           </p>
         </div>
       </div>
