@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { settings } from "@/config/settings"
 import { Toaster } from "sonner"
 import { Metadata } from "next"
+import { GoogleAnalytics } from "@next/third-parties/google"
 
 const urbanist = Urbanist({ subsets: ["latin"] })
 
@@ -112,8 +113,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
               },
               geo: {
                 "@type": "GeoCoordinates",
-                latitude: "33.6469", // Replace with actual coordinates
-                longitude: "-117.6897", // Replace with actual coordinates
+                latitude: "33.616570",
+                longitude: "-117.705647",
               },
               telephone: contactConfig.phone,
               openingHoursSpecification: [
@@ -154,6 +155,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           </ThemeProvider>
         )}
         <Toaster position="top-center" />
+        <GoogleAnalytics gaId="G-G3MCW7WFM7" />
       </body>
     </html>
   )
