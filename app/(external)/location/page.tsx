@@ -5,50 +5,139 @@ import GoogleMap from "@/components/pages/googlemap"
 import LocationHero from "@/components/pages/location-hero"
 import Image from "next/image"
 import Link from "next/link"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Visit Twilight Massage | Lake Forest Location",
+  description:
+    "Visit our Lake Forest massage spa at 23805 El Toro Rd. Find directions, parking information, and business hours. Book your appointment today!",
+  keywords: [
+    "Twilight Massage location",
+    "Lake Forest massage",
+    "El Toro Rd massage",
+    "massage spa near me",
+    "massage parking",
+    "massage directions",
+  ],
+  openGraph: {
+    title: "Visit Twilight Massage | Lake Forest Location",
+    description:
+      "Visit our Lake Forest massage spa at 23805 El Toro Rd. Find directions, parking information, and business hours.",
+    images: [
+      {
+        url: "/twilight-front-door-daytime.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Twilight Massage Entrance",
+      },
+    ],
+  },
+}
 
 export default function LocationPage() {
   const location = "23805 El Toro Rd, Lake Forest, CA 92630"
+  const phone = "(949) 697-3888"
+  const email = "twilightmassagespa@gmail.com"
+  const hours = "Mon - Sun: 10AM - 8PM"
 
   return (
     <main>
       <LocationHero />
-      <section className="container mx-auto py-16">
-        <div className="space-y-12">
-          <GoogleMap location={location} />
 
-          <Card>
-            <CardContent className="grid gap-8 p-8 md:grid-cols-2">
+      <section className="container mx-auto px-4 py-8">
+        <div className="space-y-8">
+          {/* Main Content Card */}
+          <Card className="overflow-hidden shadow-lg">
+            <CardContent className="grid gap-6 p-4 md:grid-cols-2 md:gap-8 md:p-8">
+              {/* Left Column - Location Info and Image */}
               <div className="space-y-6">
-                <h2 className="text-3xl font-semibold text-orange-800">
-                  Visit Us Today
-                </h2>
-                <p className="text-gray-600">
-                  Step into our serene environment and let the stress melt away.
-                  Our expert therapists are ready to provide you with a
-                  personalized massage experience that will leave you feeling
-                  refreshed and renewed.
-                </p>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <MapPin className="h-6 w-6 text-orange-600" />
-                    <p className="text-gray-700">{location}</p>
+                {/* Contact Information and Image in a row */}
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-orange-700 dark:text-orange-400">
+                      Contact Information
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
+                          <MapPin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            Address
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            {location}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
+                          <Phone className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            Phone
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            {phone}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
+                          <Mail className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            Email
+                          </p>
+                          <p className="break-words text-sm text-gray-700 dark:text-gray-300">
+                            {email}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
+                          <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            Hours
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            {hours}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <Phone className="h-6 w-6 text-orange-600" />
-                    <p className="text-gray-700">(949) 697-3888</p>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <Mail className="h-6 w-6 text-orange-600" />
-                    <p className="text-gray-700">
-                      twilightmassagespa@gmail.com
+
+                  {/* Entrance Image */}
+                  <div className="flex flex-col items-center justify-center space-y-4">
+                    <div className="relative h-[350px] w-[250px] overflow-hidden rounded-lg shadow-md">
+                      <Image
+                        src="/twilight-front-door-daytime.jpg"
+                        alt="Twilight Massage Entrance"
+                        fill={true}
+                        style={{ objectFit: "cover" }}
+                        className="rounded-lg"
+                        priority
+                      />
+                    </div>
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+                      Our entrance is easily accessible with ample parking
+                      available.
                     </p>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <Clock className="h-6 w-6 text-orange-600" />
-                    <p className="text-gray-700">Mon - Sun: 10AM - 8PM</p>
-                  </div>
                 </div>
-                <Button className="bg-orange-600 hover:bg-orange-700" asChild>
+
+                {/* CTA Button */}
+                <Button
+                  className="w-full bg-orange-600 py-4 text-base hover:bg-orange-700"
+                  asChild
+                >
                   <Link
                     href="https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services"
                     target="_blank"
@@ -58,14 +147,10 @@ export default function LocationPage() {
                   </Link>
                 </Button>
               </div>
-              <div className="relative h-64 md:h-full">
-                <Image
-                  src="/entrance.png"
-                  alt="Twilight Massage Entrance"
-                  fill={true}
-                  style={{ objectFit: "cover" }}
-                  className="rounded-lg shadow-md"
-                />
+
+              {/* Right Column - Google Map */}
+              <div className="flex flex-col justify-center">
+                <GoogleMap location={location} className="h-full" />
               </div>
             </CardContent>
           </Card>
