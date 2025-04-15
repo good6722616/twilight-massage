@@ -3,9 +3,11 @@ import ServiceCards from "@/components/pages/service-cards"
 
 export default function ServicePage() {
   return (
-    <main>
+    <main className="min-h-screen">
       <ServiceHero />
-      <ServiceCards />
+      <div className="container mx-auto px-4 py-8">
+        <ServiceCards />
+      </div>
     </main>
   )
 }

@@ -46,7 +46,7 @@ export default function ImageCarousel() {
   const [activeIndex, setActiveIndex] = useState(0)
 
   return (
-    <section className="w-full px-4 py-16 md:px-20 md:py-28">
+    <section className="w-full bg-slate-50 px-4 py-16 md:px-20 md:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <motion.h2

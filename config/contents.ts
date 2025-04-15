@@ -42,7 +42,7 @@ export const featureCards: ContentSection = {
       text: `Couples Massage`,
       subtext: `Share a relaxing experience with your loved one in our specially designed couples suite.`,
       duration: `60-90 minutes`,
-      price: `$160 - $240`,
+      price: `$160 - $270`,
       image: `/couple-massage.jpg`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/UJF66VQTQI5Y3OEKDC4SJ6YE",
@@ -69,7 +69,7 @@ export const featureCards: ContentSection = {
       text: `Special Combo Massage`,
       subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
       duration: `60-90 minutes`,
-      price: `$160 - $270`,
+      price: `$90 - $130`,
       image: `/special-combo-massage.jpeg`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/6RSKXJ4P5DW6BA3YHTW43NNH",
