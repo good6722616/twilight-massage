@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import Navbar from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
+import { Heart, Gift, Sparkles } from "lucide-react"
+import Link from "next/link"
+
 export default function HeroHeader() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
@@ -69,13 +72,59 @@ export default function HeroHeader() {
           Book Now
         </Button>
         <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="mb-4 text-4xl font-bold text-white">
-            Soft Opening Now
-          </h2>
-          <p className="mb-8 text-xl text-gray-200">
-            We&apos;re excited to announce the soft opening of Twilight Massage
-            & Spa, your new destination for relaxation and rejuvenation.
-          </p>
+          <div className="relative mb-6 inline-block">
+            <div className="absolute -left-4 -top-4 animate-pulse">
+              <Heart className="h-8 w-8 text-rose-400" />
+            </div>
+            <div
+              className="absolute -right-4 -top-4 animate-pulse"
+              style={{ animationDelay: "0.5s" }}
+            >
+              <Heart className="h-8 w-8 text-rose-400" />
+            </div>
+            <h2 className="relative z-10 mb-4 bg-gradient-to-r from-rose-400 via-purple-400 to-rose-400 bg-clip-text text-4xl font-bold text-transparent">
+              Mother&apos;s Day Special
+            </h2>
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 transform">
+              <Sparkles className="h-6 w-6 text-amber-300" />
+            </div>
+          </div>
+          <div className="relative rounded-lg border border-rose-400/30 bg-black/40 p-6 backdrop-blur-sm">
+            <div className="absolute -right-3 -top-3 rounded-full bg-gradient-to-r from-rose-400 to-purple-400 p-2">
+              <Gift className="h-5 w-5 text-white" />
+            </div>
+            <p className="mb-4 text-2xl font-medium text-gray-200">
+              Gift Card Promotion:
+            </p>
+            <ul className="mb-4 space-y-2 text-left text-xl text-gray-300">
+              <li className="flex items-center">
+                <span className="mr-2 text-rose-400">•</span> Spend $100 - Get
+                $10 Free
+              </li>
+              <li className="flex items-center">
+                <span className="mr-2 text-rose-400">•</span> Spend $150 - Get
+                $20 Free
+              </li>
+              <li className="flex items-center">
+                <span className="mr-2 text-rose-400">•</span> Spend $250 - Get
+                $40 Free
+              </li>
+              <li className="flex items-center">
+                <span className="mr-2 text-rose-400">•</span> Spend $400 - Get
+                $80 Free
+              </li>
+            </ul>
+            <p className="mb-4 text-xl text-gray-300">
+              Perfect for treating the special mother in your life this Mother's
+              Day!
+            </p>
+            <Link
+              href="/giftcard"
+              className="inline-flex items-center text-lg font-medium text-rose-400 hover:text-rose-300 hover:underline"
+            >
+              Shop Gift Cards & Save Today <span className="ml-1">→</span>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

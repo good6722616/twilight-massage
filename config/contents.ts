@@ -51,7 +51,7 @@ export const featureCards: ContentSection = {
       text: `Foot Massage`,
       subtext: `Targeted pressure point massage to relieve tension and stress in the feet, promoting full-body relaxation.`,
       duration: `30-60 minutes`,
-      price: `$50 - $80`,
+      price: `$45 - $65`,
       image: `/foot_massage.png`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/WIC7FDNK2YNJTKPRMZZUHJNW",
@@ -60,7 +60,7 @@ export const featureCards: ContentSection = {
       text: `Foot Combo Massage`,
       subtext: `A perfect blend of traditional foot massage and lower body treatment for complete relaxation.`,
       duration: `90 minutes`,
-      price: `$120 - $130`,
+      price: `$110 - $120`,
       image: `/combo_massage.webp`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/3IJ3HKTG3B7MHP6FKF62G4IL",
