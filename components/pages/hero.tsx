@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import type { JSX } from "react"
 import Image from "next/image"
 import Navbar from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
@@ -72,57 +73,67 @@ export default function HeroHeader() {
           Book Now
         </Button>
         <div className="container mx-auto max-w-3xl text-center">
-          <div className="relative mb-6 inline-block">
-            <div className="absolute -left-4 -top-4 animate-pulse">
-              <Heart className="h-8 w-8 text-rose-400" />
-            </div>
-            <div
-              className="absolute -right-4 -top-4 animate-pulse"
-              style={{ animationDelay: "0.5s" }}
-            >
-              <Heart className="h-8 w-8 text-rose-400" />
-            </div>
-            <h2 className="relative z-10 mb-4 bg-gradient-to-r from-rose-400 via-purple-400 to-rose-400 bg-clip-text text-4xl font-bold text-transparent">
-              Mother&apos;s Day Special
-            </h2>
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 transform">
-              <Sparkles className="h-6 w-6 text-amber-300" />
-            </div>
-          </div>
-          <div className="relative rounded-lg border border-rose-400/30 bg-black/40 p-6 backdrop-blur-sm">
-            <div className="absolute -right-3 -top-3 rounded-full bg-gradient-to-r from-rose-400 to-purple-400 p-2">
+          <div className="relative rounded-xl border border-rose-400/30 bg-black/40 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-rose-500/20">
+            <div className="absolute -right-3 -top-3 rounded-full bg-gradient-to-r from-rose-400 to-purple-400 p-2 shadow-md">
               <Gift className="h-5 w-5 text-white" />
             </div>
-            <p className="mb-4 text-2xl font-medium text-gray-200">
+            <h2 className="relative z-10 mb-4 font-serif text-2xl font-bold uppercase tracking-wider text-white md:text-4xl">
+              Mother&apos;s Day Special
+            </h2>
+            <p className="mb-6 text-xl font-medium text-white md:text-2xl">
               Gift Card Promotion:
             </p>
-            <ul className="mb-4 space-y-2 text-left text-xl text-gray-300">
-              <li className="flex items-center">
-                <span className="mr-2 text-rose-400">•</span> Spend $100 - Get
-                $10 Free
+            <ul className="mb-6 space-y-4 text-center text-base font-light tracking-wider text-gray-200 sm:text-lg md:space-y-3 md:text-4xl">
+              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
+                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
+                <span className="font-sans font-semibold tracking-widest">
+                  Spend $100 - Get
+                  <span className="ml-2">
+                    <span className="text-rose-300">$10</span>{" "}
+                    <span className="text-white">Free</span>
+                  </span>
+                </span>
               </li>
-              <li className="flex items-center">
-                <span className="mr-2 text-rose-400">•</span> Spend $150 - Get
-                $20 Free
+              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
+                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
+                <span className="font-sans font-semibold tracking-widest">
+                  Spend $150 - Get
+                  <span className="ml-2">
+                    <span className="text-rose-300">$20</span>{" "}
+                    <span className="text-white">Free</span>
+                  </span>
+                </span>
               </li>
-              <li className="flex items-center">
-                <span className="mr-2 text-rose-400">•</span> Spend $250 - Get
-                $40 Free
+              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
+                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
+                <span className="font-sans font-semibold tracking-widest">
+                  Spend $250 - Get
+                  <span className="ml-2">
+                    <span className="text-rose-300">$40</span>{" "}
+                    <span className="text-white">Free</span>
+                  </span>
+                </span>
               </li>
-              <li className="flex items-center">
-                <span className="mr-2 text-rose-400">•</span> Spend $400 - Get
-                $80 Free
+              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
+                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
+                <span className="font-sans font-semibold tracking-widest">
+                  Spend $400 - Get
+                  <span className="ml-2">
+                    <span className="text-rose-300">$80</span>{" "}
+                    <span className="text-white">Free</span>
+                  </span>
+                </span>
               </li>
             </ul>
-            <p className="mb-4 text-xl text-gray-300">
+            <p className="mb-6 text-xl italic text-gray-200">
               Perfect for treating the special mother in your life this
               Mother&apos;s Day!
             </p>
             <Link
               href="/giftcard"
-              className="inline-flex items-center text-lg font-medium text-rose-400 hover:text-rose-300 hover:underline"
+              className="inline-flex items-center rounded-lg bg-rose-300 px-6 py-3 text-lg font-medium text-white shadow-md transition-all duration-300 hover:bg-pink-600 hover:shadow-lg"
             >
-              Shop Gift Cards & Save Today <span className="ml-1">→</span>
+              Shop Gift Cards & Save Today <span className="ml-2">→</span>
             </Link>
           </div>
         </div>
