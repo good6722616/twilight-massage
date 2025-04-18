@@ -115,8 +115,8 @@ export default function HeroHeader() {
               </li>
             </ul>
             <p className="mb-4 text-xl text-gray-300">
-              Perfect for treating the special mother in your life this Mother's
-              Day!
+              Perfect for treating the special mother in your life this
+              Mother&apos;s Day!
             </p>
             <Link
               href="/giftcard"
