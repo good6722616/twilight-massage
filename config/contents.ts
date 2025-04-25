@@ -84,11 +84,29 @@ export const featureCards: ContentSection = {
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/HGIXYBHTQLOWCQKMVZMO2MEP",
     },
     {
-      text: `Lymphatic Drainage Massage`,
-      subtext: `A gentle massage technique designed to improve lymph flow, reduce swelling, and support immune system function.`,
+      text: `Machine-Assisted Lymphatic Drainage`,
+      subtext: `A rhythmic technique using a specialized machine that encourages the natural movement of lymph fluid to reduce swelling, support detoxification, and boost the immune system.`,
       duration: `30-60 minutes`,
       price: `$60 - $120`,
-      image: `/lymphatic-drainage-massage.jpg`,
+      image: `/machine_assisted_lymphatic_drainage.webp`,
+      bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/ZGR7PXCQ2B2P3PPFH42T342V",
+    },
+    {
+      text: `Manual Lymphatic Drainage`,
+      subtext: `A gentle, hands-on massage that stimulates natural lymph flow, including the chest area, to reduce swelling, support detox, and improve circulation. Ideal for post-surgery recovery, bloating, or overall wellness.`,
+      duration: `30 minutes`,
+      price: `$60`,
+      image: `/chest-care-massage.webp`,
+      bookingLink:
+        "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/ZGR7PXCQ2B2P3PPFH42T342V",
+    },
+    {
+      text: `Abdominal Detox Massage`,
+      subtext: `A gentle abdominal massage that promotes digestion, relieves tension, and supports reproductive health. Great for bloating, fatigue, or menstrual discomfor`,
+      duration: `30 minutes`,
+      price: `$60`,
+      image: `/abdominal-detox-massage.jpg`,
       bookingLink:
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/ZGR7PXCQ2B2P3PPFH42T342V",
     },

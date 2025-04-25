@@ -45,15 +45,6 @@ export default function ContactPage() {
                   </p>
                 </div>
               </div>
-
-              <div className="relative h-64 w-full overflow-hidden rounded-lg">
-                <Image
-                  src="/entrance.png"
-                  alt="Twilight Massage Parlor"
-                  fill
-                  className="object-cover"
-                />
-              </div>
             </CardContent>
           </Card>
 

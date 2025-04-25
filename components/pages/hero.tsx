@@ -1,143 +1,106 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
-import type { JSX } from "react"
 import Image from "next/image"
-import Navbar from "@/components/layout/navbar"
 import { Button } from "@/components/ui/button"
-import { Heart, Gift, Sparkles } from "lucide-react"
 import Link from "next/link"
 
 export default function HeroHeader() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  const handleBooking = () => {
+    window.open(
+      "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
+      "_blank"
+    )
+  }
+
   useEffect(() => {
-    // Check if video is already loaded
     if (videoRef.current && videoRef.current.readyState >= 3) {
       setIsVideoLoaded(true)
     }
   }, [])
 
   return (
-    <section className="relative flex h-[1000px] w-full flex-col gap-4 bg-gray-900 pb-12 pt-4 text-center lg:items-center lg:gap-8 lg:py-20">
-      {/* Background Video with loading state */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 to-gray-900/60">
-        <video
-          ref={videoRef}
-          src="https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/sunset-hzZUVI5oVwDWrAv5vXiJVKchKN7Uc2.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setIsVideoLoaded(true)}
-          className={`h-full w-full object-cover transition-opacity duration-700 ${
-            isVideoLoaded ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      </div>
-      <div className="absolute inset-0 bg-black/50"></div>
-
-      <Navbar />
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 text-center lg:gap-8">
-        <div className="space-y-1">
-          <div className="min-h-[150px]">
-            <Image
-              src="/twilight_white_crop.png"
-              alt="Twilight Massage & Spa Logo"
-              quality={100}
-              width={400}
-              height={150}
-              priority
-              loading="eager"
-              sizes="(max-width: 768px) 90vw, 400px"
-              className={`mx-auto h-auto w-auto transition-opacity duration-500 ${
-                isImageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              onLoad={() => setIsImageLoaded(true)}
-            />
-          </div>
-        </div>
-        <Button
-          className="mb-2 me-2 rounded-lg bg-orange-600 px-10 py-6 text-center text-2xl font-medium text-white hover:bg-orange-700 dark:focus:ring-blue-800"
-          onClick={() =>
-            window.open(
-              "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
-              "_blank"
-            )
-          }
-          aria-label="Book a massage appointment"
-        >
-          Book Now
-        </Button>
-        <div className="container mx-auto max-w-3xl text-center">
-          <div className="relative rounded-xl border border-rose-400/30 bg-black/40 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-rose-500/20">
-            <div className="absolute -right-3 -top-3 rounded-full bg-gradient-to-r from-rose-400 to-purple-400 p-2 shadow-md">
-              <Gift className="h-5 w-5 text-white" />
+    <div className="relative mt-20">
+      <section className="relative flex min-h-[85vh] w-full flex-col lg:h-[85vh] lg:flex-row">
+        {/* Left half - Content */}
+        <div className="flex w-full items-center bg-[#FFF9F5] px-6 py-16 lg:w-1/2 lg:px-16">
+          <div className="mx-auto max-w-xl">
+            <div className="mb-8 flex items-center gap-3">
+              <Image
+                src="/twilight_logo_black_wotext.png"
+                alt="Twilight Massage & Spa Logo"
+                width={50}
+                height={50}
+                className="h-12 w-12"
+              />
+              <span className="text-lg font-light text-gray-900">
+                Twilight Massage & Spa
+              </span>
             </div>
-            <h2 className="relative z-10 mb-4 font-serif text-2xl font-bold uppercase tracking-wider text-white md:text-4xl">
-              Mother&apos;s Day Special
-            </h2>
-            <p className="mb-6 text-xl font-medium text-white md:text-2xl">
-              Gift Card Promotion:
+            <h1 className="mb-6 font-serif text-4xl font-light leading-tight text-gray-900 lg:text-5xl xl:text-6xl">
+              Experience the Art of
+              <br />
+              <span className="font-normal">Relaxation & Renewal</span>
+            </h1>
+            <p className="mb-8 text-lg font-light leading-relaxed text-gray-600">
+              Discover a sanctuary of peace where ancient healing traditions
+              meet modern therapeutic techniques. Let our expert therapists
+              guide you on a journey to wellness and tranquility.
             </p>
-            <ul className="mb-6 space-y-4 text-center text-base font-light tracking-wider text-gray-200 sm:text-lg md:space-y-3 md:text-4xl">
-              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
-                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
-                <span className="font-sans font-semibold tracking-widest">
-                  Spend $100 - Get
-                  <span className="ml-2">
-                    <span className="text-rose-300">$10</span>{" "}
-                    <span className="text-white">Free</span>
-                  </span>
-                </span>
-              </li>
-              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
-                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
-                <span className="font-sans font-semibold tracking-widest">
-                  Spend $150 - Get
-                  <span className="ml-2">
-                    <span className="text-rose-300">$20</span>{" "}
-                    <span className="text-white">Free</span>
-                  </span>
-                </span>
-              </li>
-              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
-                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
-                <span className="font-sans font-semibold tracking-widest">
-                  Spend $250 - Get
-                  <span className="ml-2">
-                    <span className="text-rose-300">$40</span>{" "}
-                    <span className="text-white">Free</span>
-                  </span>
-                </span>
-              </li>
-              <li className="flex flex-col items-center justify-center gap-1 transition-transform duration-300 hover:translate-x-1 md:flex-row md:gap-0">
-                <span className="mr-3 hidden text-rose-400 md:inline">•</span>
-                <span className="font-sans font-semibold tracking-widest">
-                  Spend $400 - Get
-                  <span className="ml-2">
-                    <span className="text-rose-300">$80</span>{" "}
-                    <span className="text-white">Free</span>
-                  </span>
-                </span>
-              </li>
-            </ul>
-            <p className="mb-6 text-xl italic text-gray-200">
-              Perfect for treating the special mother in your life this
-              Mother&apos;s Day!
-            </p>
-            <Link
-              href="/giftcard"
-              className="inline-flex items-center rounded-lg bg-rose-300 px-6 py-3 text-lg font-medium text-white shadow-md transition-all duration-300 hover:bg-pink-600 hover:shadow-lg"
-            >
-              Shop Gift Cards & Save Today <span className="ml-2">→</span>
-            </Link>
+            <div className="flex flex-wrap gap-4">
+              <Button
+                onClick={handleBooking}
+                className="rounded-full bg-[#A6644C] px-8 py-4 text-base font-light text-white transition-colors hover:bg-[#95583F] lg:text-lg"
+              >
+                Book Your Session
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-full border-2 border-gray-900 bg-transparent px-8 py-4 text-base font-light text-gray-900 transition-all hover:bg-gray-900 hover:text-white lg:text-lg"
+              >
+                <Link href="/service">Explore Services</Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* Divider line - only visible on desktop */}
+        <div className="absolute left-1/2 top-0 hidden h-full w-[1px] bg-gradient-to-b from-transparent via-[#E8E1DC] to-transparent opacity-30 lg:block" />
+
+        {/* Right half - Video */}
+        <div className="relative h-[50vh] w-full bg-[#FFF9F5] lg:h-auto lg:w-1/2">
+          <video
+            ref={videoRef}
+            src="https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/sunset-hzZUVI5oVwDWrAv5vXiJVKchKN7Uc2.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            onLoadedData={() => setIsVideoLoaded(true)}
+            className={`h-full w-full object-cover transition-opacity duration-700 ${
+              isVideoLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          {/* Animated Logo Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="animate-slide-in motion-reduce:animate-none">
+              <Image
+                src="/twilight_logo_white.png"
+                alt="Twilight Massage & Spa Logo"
+                width={800}
+                height={800}
+                className="h-auto w-[800px]"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Bottom line */}
+      <div className="absolute bottom-0 h-[1px] w-full bg-[#E8E1DC]" />
+    </div>
   )
 }
