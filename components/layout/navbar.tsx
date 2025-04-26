@@ -20,20 +20,17 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 z-50 w-full bg-[#FFF9F5]">
-      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[#E8E1DC]" />
+      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[#A6644C]" />
       <nav className="container mx-auto px-6">
         <div className="flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/twilight_logo_black_wotext.png"
+              src="/twilight_logo_horizontal_text.png"
               alt="Twilight Massage & Spa Logo"
-              width={40}
+              width={200}
               height={40}
-              className="h-10 w-10"
+              className="h-12 w-40"
             />
-            <span className="text-lg font-light text-gray-900">
-              Twilight Massage & Spa
-            </span>
           </Link>
 
           <div className="hidden md:block">

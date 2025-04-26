@@ -1,117 +1,95 @@
 "use client"
 
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { useRef } from "react"
 import { featureCards } from "@/config/contents"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ArrowLeft } from "lucide-react"
 
 export default function FeatureCards() {
-  return (
-    <section className="bg-gradient-to-b from-orange-50 to-white py-16 lg:py-24">
-      <div className="container mx-auto px-4">
-        <motion.div
-          className="space-y-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {featureCards.header || featureCards.subheader ? (
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-orange-800 lg:text-4xl">
-                {featureCards.header}
-              </h2>
-              <div className="flex items-center justify-center space-x-2">
-                <div className="h-[1px] w-12 bg-orange-300"></div>
-                <div className="relative h-12 w-12 bg-transparent">
-                  <Image
-                    src="/twilight_logo_black_wotext.png"
-                    alt="Twilight Massage Logo"
-                    fill
-                    sizes="(max-width: 48px) 100vw"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-                <div className="h-[1px] w-12 bg-orange-300"></div>
-              </div>
-              <p className="mx-auto max-w-2xl text-lg text-gray-600">
-                {featureCards.subheader}
-              </p>
-            </div>
-          ) : null}
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {featureCards.content.map((card, index) => (
-              <motion.div
-                key={card.text}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+  const scroll = (direction: "left" | "right") => {
+    const container = scrollRef.current
+    if (!container) return
+    const card = container.querySelector(".feature-card") as HTMLElement
+    if (!card) return
+    const scrollAmount = card.offsetWidth + 24 // 24px gap
+    container.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    })
+  }
+
+  return (
+    <section className="bg-[#FFF9F5] py-16 lg:py-24">
+      <div className="mx-auto px-4">
+        <div className="flex flex-col items-center gap-8 lg:flex-row">
+          {/* Left: Title and Description */}
+          <div className="min-w-[280px] max-w-lg flex-1 text-center lg:w-1/2 lg:pl-20 lg:text-left">
+            <h2 className="mb-4 font-serif text-4xl leading-tight text-[#342b20]">
+              Our top
+              <br />
+              services
+            </h2>
+            <p className="mb-8 text-[#342b20]">
+              Discover our most popular services, carefully designed to help you
+              relax, refresh, and renew.
+            </p>
+            <div className="flex justify-center gap-4 lg:justify-start">
+              <button
+                aria-label="Scroll left"
+                onClick={() => scroll("left")}
+                className="rounded-full border border-[#A6644C] p-2 text-[#A6644C] transition hover:bg-[#A6644C] hover:text-white"
               >
-                <Card className="group flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800">
-                  <CardHeader className="p-0">
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <Image
-                        src={card.image || "/default-image.png"}
-                        alt={card.text}
-                        fill={true}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        style={{ objectFit: "cover" }}
-                        className="transition-transform duration-300 group-hover:scale-110"
-                        priority={index === 0}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow p-6">
-                    <CardTitle className="mb-2 text-2xl font-bold text-orange-800">
-                      {card.text}
-                    </CardTitle>
-                  </CardContent>
-                  <CardFooter className="p-6 pt-0">
-                    <Button
-                      className="w-full bg-orange-800 text-white transition-colors hover:bg-orange-900"
-                      onClick={() => window.open(card.bookingLink, "_blank")}
-                      aria-label="Discover more massage treatments"
-                    >
-                      Book Now
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
+                <ArrowLeft className="h-6 w-6" />
+              </button>
+              <button
+                aria-label="Scroll right"
+                onClick={() => scroll("right")}
+                className="rounded-full border border-[#A6644C] p-2 text-[#A6644C] transition hover:bg-[#A6644C] hover:text-white"
+              >
+                <ArrowRight className="h-6 w-6" />
+              </button>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Button
-              size="lg"
-              variant="outline"
-              className="mt-8 border-orange-800 text-orange-800 hover:bg-orange-800 hover:text-white"
-              onClick={() =>
-                window.open(
-                  "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
-                  "_blank"
-                )
-              }
+          {/* Right: Carousel */}
+          <div className="w-full flex-1 lg:w-1/2">
+            <div
+              ref={scrollRef}
+              className="hide-scrollbar flex gap-6 overflow-x-hidden scroll-smooth pb-4"
             >
-              Discover More Treatments
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
-        </motion.div>
+              {featureCards.content.map((card, index) => (
+                <div
+                  key={card.text}
+                  className="feature-card m-0 flex w-full flex-shrink-0 flex-col bg-[#FFF9F5] p-0 lg:min-w-[24%] lg:max-w-[24%]"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden">
+                    <Image
+                      src={card.image || "/default-image.png"}
+                      alt={card.text}
+                      fill={true}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      style={{ objectFit: "cover" }}
+                      className="object-cover"
+                      priority={index === 0}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="text-left font-serif text-2xl text-[#342b20]">
+                      {card.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
 }
+
+// Add this to your global CSS or Tailwind config:
+// .hide-scrollbar::-webkit-scrollbar { display: none; }
+// .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

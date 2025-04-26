@@ -6,97 +6,103 @@ import { Button } from "@/components/ui/button"
 
 export default function Footer() {
   return (
-    <footer className="mt-auto bg-gradient-to-b from-orange-50 to-orange-100">
-      <div className="mx-auto w-full max-w-screen-xl p-6 md:py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="space-y-4">
-            <Link href="/" className="inline-block">
-              <h1 className="text-3xl font-bold text-orange-800">
-                {siteConfig.name}
-              </h1>
-            </Link>
-            <p className="text-sm text-gray-600">
-              Experience tranquility and rejuvenation at Twilight Massage. Our
-              expert therapists are dedicated to your well-being.
+    <footer className="mt-auto border-t border-[#e5e0d6] bg-[#FAF6ED]">
+      <div className="mx-auto w-full max-w-screen-2xl px-4 py-12 lg:py-20">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:gap-24">
+          {/* Left: Newsletter */}
+          <div className="flex flex-col items-center justify-center text-center md:items-start md:text-left">
+            <h2 className="mb-4 font-serif text-4xl text-[#342b20]">
+              Subscribe to our newsletter!
+            </h2>
+            <p className="mb-6 max-w-md text-[#6d6252]">
+              Stay updated on special offers, new services, and wellness tips —
+              straight to your inbox. Subscribe to our newsletter and be the
+              first to know!
             </p>
-            <div className="flex space-x-4">
+            <form className="mb-6 flex w-full max-w-md items-center overflow-hidden rounded-full border border-[#b8a98a] bg-white px-4 py-2 shadow-sm">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                className="min-w-0 flex-1 border-none bg-transparent px-2 py-2 text-[#342b20] placeholder-[#b8a98a] focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="ml-2 flex-shrink-0 rounded-full bg-[#a6644c] px-6 py-2 font-semibold text-white shadow-md transition hover:bg-[#8a523a]"
+              >
+                Subscribe
+              </button>
+            </form>
+            <div className="flex justify-center space-x-4 md:justify-start">
               <Button variant="ghost" size="icon" aria-label="Facebook">
-                <Facebook className="h-5 w-5 text-orange-700" />
+                <Facebook className="h-5 w-5 text-[#342b20]" />
               </Button>
               <Button variant="ghost" size="icon" aria-label="Instagram">
-                <Instagram className="h-5 w-5 text-orange-700" />
+                <Instagram className="h-5 w-5 text-[#342b20]" />
               </Button>
               <Button variant="ghost" size="icon" aria-label="Twitter">
-                <Twitter className="h-5 w-5 text-orange-700" />
+                <Twitter className="h-5 w-5 text-[#342b20]" />
               </Button>
             </div>
           </div>
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-orange-800">
-              Quick Links
-            </h2>
-            <ul className="space-y-2">
-              {navLinks.map((link) => (
-                <li key={link.route}>
-                  <Link
-                    href={link.path}
-                    className="text-gray-600 transition-colors hover:text-orange-700 hover:underline"
+
+          {/* Right: Links */}
+          <div className="flex flex-col gap-8 border-t border-[#e5e0d6] text-[#342b20] md:grid md:grid-cols-2 md:gap-8 md:border-l md:border-t-0 md:pl-12">
+            {/* Pages */}
+            <div>
+              <h3 className="mb-3 font-serif text-lg font-semibold">Pages</h3>
+              <ul className="space-y-2 text-[16px]">
+                {navLinks.slice(0, 7).map((link) => (
+                  <li key={link.route}>
+                    <Link
+                      href={link.path}
+                      className="transition-colors hover:text-[#a6644c] hover:underline"
+                    >
+                      {link.route}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Contact */}
+            <div>
+              <h3 className="mb-3 font-serif text-lg font-semibold">Contact</h3>
+              <address className="space-y-2 text-[16px] not-italic">
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-5 w-5 text-[#a6644c]" />
+                  <span>23805 El Toro Rd, Lake Forest, CA 92630</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-5 w-5 text-[#a6644c]" />
+                  <a
+                    href="tel:+19496973888"
+                    className="transition-colors hover:text-[#a6644c] hover:underline"
                   >
-                    {link.route}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-orange-800">
-              Contact Us
-            </h2>
-            <address className="not-italic">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <MapPin className="h-5 w-5 text-orange-700" />
-                <span>23805 El Toro Rd, Lake Forest, CA 92630</span>
-              </div>
-              <div className="mt-2 flex items-center space-x-2 text-gray-600">
-                <Phone className="h-5 w-5 text-orange-700" />
-                <a
-                  href="tel:+19496973888"
-                  className="transition-colors hover:text-orange-700 hover:underline"
-                >
-                  (949) 697-3888
-                </a>
-              </div>
-              <div className="mt-2 flex items-center space-x-2 text-gray-600">
-                <Mail className="h-5 w-5 text-orange-700" />
-                <a
-                  href="mailto:twilightmassagespa@gmail.com"
-                  className="transition-colors hover:text-orange-700 hover:underline"
-                >
-                  twilightmassagespa@gmail.com
-                </a>
-              </div>
-            </address>
+                    (949) 697-3888
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5 text-[#a6644c]" />
+                  <a
+                    href="mailto:twilightmassagespa@gmail.com"
+                    className="transition-colors hover:text-[#a6644c] hover:underline"
+                  >
+                    twilightmassagespa@gmail.com
+                  </a>
+                </div>
+              </address>
+            </div>
           </div>
         </div>
-        <hr className="my-8 border-orange-200" />
-        <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
-          <span className="text-sm text-gray-600">
+      </div>
+      {/* Bottom bar */}
+      <div className="border-t border-[#e5e0d6] bg-[#f3ede5] py-6">
+        <div className="flex flex-col items-center justify-center">
+          <span className="mb-2 font-serif text-xl text-[#342b20]">
+            {siteConfig.name}
+          </span>
+          <span className="text-sm text-[#6d6252]">
             © {new Date().getFullYear()} Twilight Massage. All Rights Reserved.
           </span>
-          <div className="flex space-x-4 text-sm text-gray-600">
-            <Link
-              href="/privacy-policy"
-              className="transition-colors hover:text-orange-700 hover:underline"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms-of-service"
-              className="transition-colors hover:text-orange-700 hover:underline"
-            >
-              Terms of Service
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

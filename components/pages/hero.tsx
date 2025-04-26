@@ -35,11 +35,8 @@ export default function HeroHeader() {
                 height={50}
                 className="h-12 w-12"
               />
-              <span className="text-lg font-light text-gray-900">
-                Twilight Massage & Spa
-              </span>
             </div>
-            <h1 className="mb-6 font-serif text-4xl font-light leading-tight text-gray-900 lg:text-5xl xl:text-6xl">
+            <h1 className="mb-6 font-serif text-4xl font-light leading-tight text-[#342b20] lg:text-6xl xl:text-8xl">
               Experience the Art of
               <br />
               <span className="font-normal">Relaxation & Renewal</span>
@@ -90,9 +87,9 @@ export default function HeroHeader() {
               <Image
                 src="/twilight_logo_white.png"
                 alt="Twilight Massage & Spa Logo"
-                width={800}
-                height={800}
-                className="h-auto w-[800px]"
+                width={600}
+                height={600}
+                className="h-auto w-[600px]"
                 priority
               />
             </div>
@@ -100,7 +97,7 @@ export default function HeroHeader() {
         </div>
       </section>
       {/* Bottom line */}
-      <div className="absolute bottom-0 h-[1px] w-full bg-[#E8E1DC]" />
+      <div className="absolute bottom-0 h-[1px] w-full bg-[#A6644C]" />
     </div>
   )
 }
