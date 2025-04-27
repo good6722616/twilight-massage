@@ -14,6 +14,7 @@ export type Content = {
   price?: string
   image?: string
   bookingLink?: string
+  benefits?: string[]
 }
 
 export type ContentSection = {

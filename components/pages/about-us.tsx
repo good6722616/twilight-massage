@@ -8,7 +8,7 @@ export default function AboutUs() {
         {/* Left: Image */}
         <div className="relative z-10 h-[480px] w-full md:h-[560px] md:w-[600px]">
           <Image
-            src="/about-us.jpg"
+            src="/twilight_front_desk.jpg"
             alt="Massage Room"
             fill
             className="object-cover shadow-md"

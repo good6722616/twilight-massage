@@ -1,25 +1,15 @@
 "use client"
-import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default function HeroHeader() {
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-
   const handleBooking = () => {
     window.open(
       "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
       "_blank"
     )
   }
-
-  useEffect(() => {
-    if (videoRef.current && videoRef.current.readyState >= 3) {
-      setIsVideoLoaded(true)
-    }
-  }, [])
 
   return (
     <div className="relative mt-20">
@@ -36,10 +26,8 @@ export default function HeroHeader() {
                 className="h-12 w-12"
               />
             </div>
-            <h1 className="mb-6 font-serif text-4xl font-light leading-tight text-[#342b20] lg:text-6xl xl:text-8xl">
-              Experience the Art of
-              <br />
-              <span className="font-normal">Relaxation & Renewal</span>
+            <h1 className="mb-6 font-serif text-3xl font-light leading-tight text-[#342b20] lg:text-5xl xl:text-7xl">
+              Experience the Art of Relaxation & Renewal
             </h1>
             <p className="mb-8 text-lg font-light leading-relaxed text-gray-600">
               Discover a sanctuary of peace where ancient healing traditions
@@ -67,19 +55,14 @@ export default function HeroHeader() {
         {/* Divider line - only visible on desktop */}
         <div className="absolute left-1/2 top-0 hidden h-full w-[1px] bg-gradient-to-b from-transparent via-[#E8E1DC] to-transparent opacity-30 lg:block" />
 
-        {/* Right half - Video */}
+        {/* Right half - Image */}
         <div className="relative h-[50vh] w-full bg-[#FFF9F5] lg:h-auto lg:w-1/2">
-          <video
-            ref={videoRef}
-            src="https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/sunset-hzZUVI5oVwDWrAv5vXiJVKchKN7Uc2.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            onLoadedData={() => setIsVideoLoaded(true)}
-            className={`h-full w-full object-cover transition-opacity duration-700 ${
-              isVideoLoaded ? "opacity-100" : "opacity-0"
-            }`}
+          <Image
+            src="/twilight_aisle.jpg"
+            alt="Twilight Massage & Spa Aisle"
+            fill
+            className="h-full w-full object-cover"
+            priority
           />
           {/* Animated Logo Overlay */}
           <div className="absolute inset-0 flex items-center justify-center">

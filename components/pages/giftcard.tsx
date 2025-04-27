@@ -1,109 +1,93 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { giftCards } from "@/config/contents"
-import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { CheckCircle, Plus, Minus } from "lucide-react"
 
 export default function GiftCards() {
+  const [openIndex, setOpenIndex] = useState(0)
+
   return (
-    <section className="bg-gradient-to-b from-orange-50 to-white py-16 lg:py-24">
+    <section className="bg-[#FFF9F5] py-16 lg:py-24">
       <div className="container mx-auto px-4">
-        <motion.div
-          className="space-y-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {giftCards.header || giftCards.subheader ? (
-            <div className="space-y-4 text-center">
-              <h2 className="text-3xl font-bold text-orange-800 lg:text-4xl">
-                {giftCards.header}
-              </h2>
-              <div className="flex items-center justify-center space-x-2">
-                <div className="h-[1px] w-12 bg-orange-300"></div>
-                <div className="relative h-12 w-12 bg-transparent">
-                  <Image
-                    src="/twilight_logo_black_wotext.png"
-                    alt="Twilight Massage Logo"
-                    fill
-                    sizes="(max-width: 48px) 100vw"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-                <div className="h-[1px] w-12 bg-orange-300"></div>
-              </div>
-              <p className="mx-auto max-w-2xl text-lg text-gray-600">
-                {giftCards.subheader}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <motion.div
-              className="grid grid-cols-1 gap-8"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              {giftCards.content.map((cards, index) => {
-                const Icon = Icons[cards.icon || "giftCard"]
-
-                return (
-                  <motion.div
-                    key={cards.text}
-                    className="flex flex-col items-center gap-4 md:flex-row md:justify-center md:gap-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 + 0.3 }}
-                  >
-                    <div className="flex transform transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-[6rem] w-[6rem] text-orange-800" />
-                    </div>
-                    <div className="max-w-md flex-1 space-y-4 text-left">
-                      <p className="text-2xl font-semibold text-orange-800 md:text-4xl">
-                        {cards.text}
-                      </p>
-                      <p className="font-light text-muted-foreground md:text-lg">
-                        {cards.subtext}
-                      </p>
-                      <Button
-                        className="w-full bg-orange-800 text-white transition-colors duration-300 hover:bg-orange-900 md:w-auto"
-                        size="xl"
-                        aria-label="Purchase a gift card"
-                        asChild
-                      >
-                        <a href="/giftcard">Buy a Gift Card</a>
-                      </Button>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="relative overflow-hidden rounded-xl shadow-lg"
-            >
-              <div
-                className="h-full w-full transform transition-transform duration-500 hover:scale-105"
-                style={{
-                  backgroundImage: `url("/gift_hero_img.jpg")`,
-                  backgroundRepeat: `no-repeat`,
-                  backgroundSize: `cover`,
-                  backgroundPosition: `center`,
-                  minHeight: "500px",
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-              </div>
-            </motion.div>
+        <h2 className="mb-12 text-center font-serif text-4xl font-normal text-[#342b20] md:text-5xl">
+          Gift a moment of relaxation
+        </h2>
+        <div className="flex flex-col items-center gap-12 md:flex-row md:items-start md:justify-center">
+          {/* Left: Image */}
+          <div className="relative mx-auto h-[260px] w-[260px] overflow-hidden rounded-t-[50%] bg-[#e5ded3] md:h-[520px] md:w-[480px] lg:h-[700px] lg:w-[600px]">
+            <Image
+              src="/gift_hero_img.jpg"
+              alt="Gift Card Room"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+              priority
+            />
           </div>
-        </motion.div>
+          {/* Right: Accordion */}
+          <div className="w-full max-w-xl space-y-4">
+            {giftCards.content.map((card, idx) => (
+              <div key={card.text} className="border-b border-[#e5e0d6] pb-6">
+                <button
+                  className="flex w-full items-center justify-between py-4 text-left font-serif text-3xl text-[#342b20] focus:outline-none"
+                  onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}
+                  aria-expanded={openIndex === idx}
+                  aria-controls={`giftcard-panel-${idx}`}
+                >
+                  {card.text}
+                  <span className="ml-2 flex h-8 w-8 items-center justify-center rounded-full border border-[#342b20]">
+                    {openIndex === idx ? (
+                      <Minus size={20} />
+                    ) : (
+                      <Plus size={20} />
+                    )}
+                  </span>
+                </button>
+                {openIndex === idx && (
+                  <motion.div
+                    id={`giftcard-panel-${idx}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="pl-2 pr-4"
+                  >
+                    <p className="mb-4 text-base text-[#6d6252]">
+                      {card.subtext}
+                    </p>
+                    {card.benefits && (
+                      <ul className="mb-4 space-y-2">
+                        {card.benefits.map((benefit: string) => (
+                          <li
+                            key={benefit}
+                            className="flex items-center text-base text-[#342b20]"
+                          >
+                            <CheckCircle className="mr-2 h-5 w-5 text-[#a6644c]" />
+                            <span className="font-semibold">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="mb-4 text-2xl text-[#342b20]">
+                      {card.price}
+                    </div>
+                    <Button
+                      className="rounded-full bg-[#a6644c] px-8 py-2 text-base font-semibold text-white shadow-md transition hover:bg-[#8a523a]"
+                      size="lg"
+                      aria-label="Buy Gift Card"
+                      asChild
+                    >
+                      <a href="/giftcard">Buy Gift Card</a>
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

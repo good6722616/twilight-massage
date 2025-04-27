@@ -119,21 +119,48 @@ export const giftCards: ContentSection = {
   image: ``,
   content: [
     {
-      text: `Give the Gift of Relaxation`,
-      subtext: `Transform any occasion into a memorable experience with our massage gift cards. Perfect for birthdays, anniversaries, or showing appreciation to someone special.`,
-      duration: ``,
-      price: `Price: $100 for 60 minutes`,
+      text: `Bronze`,
+      subtext: `A $100 gift card for a perfect introduction to relaxation. Enjoy a soothing massage session or spa service.`,
+      price: `$100 Gift Card`,
+      benefits: [
+        "Redeemable for any service",
+        "Beautifully packaged",
+        "No expiration date",
+      ],
       icon: "giftCard",
     },
-    // {
-    //   text: `Highly Performant`,
-    //   subtext: `Fast loading times and smooth performance`,
-    //   icon: "barChart",
-    // },
-    // {
-    //   text: `Easy Customizability`,
-    //   subtext: `Change your content and layout with little effort`,
-    //   icon: "settings",
-    // },
+    {
+      text: `Silver`,
+      subtext: `A $300 gift card for a balanced experience. Ideal for those seeking both relaxation and rejuvenation.`,
+      price: `$300 Gift Card`,
+      benefits: [
+        "Redeemable for any service",
+        "Beautifully packaged",
+        "No expiration date",
+      ],
+      icon: "giftCard",
+    },
+    {
+      text: `Gold`,
+      subtext: `A $500 gift card for a luxurious escape. Extended time and premium enhancements for the ultimate pampering.`,
+      price: `$500 Gift Card`,
+      benefits: [
+        "Redeemable for any service",
+        "Beautifully packaged",
+        "No expiration date",
+      ],
+      icon: "giftCard",
+    },
+    {
+      text: `Diamond`,
+      subtext: `A $1000 gift card for the ultimate indulgence. A full spa experience for those who deserve the very best.`,
+      price: `$1000 Gift Card`,
+      benefits: [
+        "Redeemable for any service",
+        "Beautifully packaged",
+        "No expiration date",
+      ],
+      icon: "giftCard",
+    },
   ],
 }
