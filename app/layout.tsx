@@ -90,6 +90,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link
+          rel="icon"
+          href="/twilight_logo_black_wotext.png"
+          type="image/png"
+        />
       </head>
       <body
         className={`${urbanist.className} flex min-h-screen flex-col bg-background text-primary`}

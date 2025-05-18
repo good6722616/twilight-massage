@@ -57,7 +57,7 @@ export const featureCards: ContentSection = {
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/WIC7FDNK2YNJTKPRMZZUHJNW",
     },
     {
-      text: `Foot Combo Massage`,
+      text: `Twilight Special Combo`,
       subtext: `A perfect blend of traditional foot massage and lower body treatment for complete relaxation.`,
       duration: `90 minutes`,
       price: `$110 - $120`,
@@ -66,7 +66,7 @@ export const featureCards: ContentSection = {
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/3IJ3HKTG3B7MHP6FKF62G4IL",
     },
     {
-      text: `Special Combo Massage`,
+      text: `Head-to-Toe Reset`,
       subtext: `A complete relaxation with our signature combination of full-body massage and specialized foot therapy.`,
       duration: `60-90 minutes`,
       price: `$90 - $130`,
@@ -84,7 +84,7 @@ export const featureCards: ContentSection = {
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/HGIXYBHTQLOWCQKMVZMO2MEP",
     },
     {
-      text: `Machine-Assisted Lymphatic Drainage`,
+      text: `Lymphatic Drainage Massage`,
       subtext: `A rhythmic technique using a specialized machine that encourages the natural movement of lymph fluid to reduce swelling, support detoxification, and boost the immune system.`,
       duration: `30-60 minutes`,
       price: `$60 - $120`,
@@ -93,7 +93,7 @@ export const featureCards: ContentSection = {
         "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services/ZGR7PXCQ2B2P3PPFH42T342V",
     },
     {
-      text: `Manual Lymphatic Drainage`,
+      text: `Chest Care Massage`,
       subtext: `A gentle, hands-on massage that stimulates natural lymph flow, including the chest area, to reduce swelling, support detox, and improve circulation. Ideal for post-surgery recovery, bloating, or overall wellness.`,
       duration: `30 minutes`,
       price: `$60`,
