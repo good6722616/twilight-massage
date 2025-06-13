@@ -12,7 +12,7 @@ export default function ContactHero() {
 
   return (
     <section
-      className="relative h-[50vh] min-h-[300px] w-full overflow-hidden"
+      className="relative h-[80vh] min-h-[300px] w-full overflow-hidden"
       aria-label="Contact Twilight Massage & Spa"
     >
       <Image

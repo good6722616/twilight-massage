@@ -1,13 +1,12 @@
 import "./globals.css"
 import { siteConfig, contactConfig } from "@/config/site"
 import { Urbanist } from "next/font/google"
-import Navbar from "@/components/layout/navbar"
-import Footer from "@/components/layout/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { settings } from "@/config/settings"
 import { Toaster } from "sonner"
 import { Metadata } from "next"
 import { GoogleAnalytics } from "@next/third-parties/google"
+import { ClerkProvider } from "@clerk/nextjs"
 
 const urbanist = Urbanist({ subsets: ["latin"] })
 
@@ -146,19 +145,24 @@ export default function RootLayout({ children }: RootLayoutProps) {
             }),
           }}
         />
-        {settings.themeToggleEnabled ? (
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Navbar />
-            {children}
-            <Footer />
-          </ThemeProvider>
-        ) : (
-          <ThemeProvider attribute="class" forcedTheme="light" enableSystem>
-            <Navbar />
-            {children}
-            <Footer />
-          </ThemeProvider>
-        )}
+        <ClerkProvider
+          appearance={{
+            elements: {
+              formButtonPrimary: "bg-[#4F46E5] hover:bg-[#4338CA]",
+              footerActionLink: "text-[#4F46E5] hover:text-[#4338CA]",
+            },
+          }}
+        >
+          {settings.themeToggleEnabled ? (
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              {children}
+            </ThemeProvider>
+          ) : (
+            <ThemeProvider attribute="class" forcedTheme="light" enableSystem>
+              {children}
+            </ThemeProvider>
+          )}
+        </ClerkProvider>
         <Toaster position="top-center" />
         <GoogleAnalytics gaId="G-G3MCW7WFM7" />
         <script

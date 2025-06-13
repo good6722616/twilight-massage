@@ -8,7 +8,7 @@ export default function GiftCardHero() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   return (
     <section
-      className="relative h-[50vh] min-h-[300px] w-full overflow-hidden"
+      className="relative h-[80vh] min-h-[300px] w-full overflow-hidden"
       aria-label="Twilight Massage & Spa Gift Cards Introduction"
     >
       <Image

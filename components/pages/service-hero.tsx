@@ -15,7 +15,7 @@ export default function ServiceHero() {
 
   return (
     <section
-      className="relative h-[60vh] min-h-[400px] w-full overflow-hidden"
+      className="relative h-[80vh] min-h-[400px] w-full overflow-hidden"
       aria-label="Massage Services Introduction"
     >
       <div className="absolute inset-0">
