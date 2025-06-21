@@ -118,7 +118,7 @@ export default function DailyLogPage() {
       {/* Table Section */}
       <div className="mt-8">
         <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          Today's Records ({records.length})
+          Today&apos;s Records ({records.length})
         </h2>
 
         {isLoading ? (
