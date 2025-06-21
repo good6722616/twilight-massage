@@ -83,15 +83,23 @@ export function DailyLogForm({
   const handleSubmit = async (values: DailyLogFormValues) => {
     try {
       const duration = parseInt(values.duration) as Duration
-      const basePrice = BASE_PRICES[values.type][duration]
-      const isCouple = isCoupleMassage(values.type)
+
+      // Validate that type is a valid MassageType
+      if (!values.type || !MASSAGE_TYPES.includes(values.type as MassageType)) {
+        console.error("Invalid massage type:", values.type)
+        return
+      }
+
+      const massageType = values.type as MassageType
+      const basePrice = BASE_PRICES[massageType][duration]
+      const isCouple = isCoupleMassage(massageType)
 
       // Create the massage record
       const record = {
         date: today.toISOString().split("T")[0],
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
-        service_name: values.type,
+        service_name: massageType,
         duration,
         discount: Number(values.discount) as Discount,
         add_ons: values.addOns

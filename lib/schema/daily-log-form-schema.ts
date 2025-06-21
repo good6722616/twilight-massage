@@ -20,9 +20,12 @@ const baseSchema = {
     })
     .or(z.literal(""))
     .refine((val) => val !== "", { message: "Please select a duration" }),
-  discount: z.enum(DISCOUNTS.map(String) as [string, ...string[]], {
-    required_error: "Please select a discount",
-  }),
+  discount: z
+    .enum(DISCOUNTS.map(String) as [string, ...string[]], {
+      required_error: "Please select a discount",
+    })
+    .or(z.literal(""))
+    .refine((val) => val !== "", { message: "Please select a discount" }),
   addOns: z.array(z.string()).optional(),
   tip: z
     .string()
