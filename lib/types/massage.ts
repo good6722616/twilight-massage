@@ -1,30 +1,33 @@
 export interface MassageRecord {
   id: string
+  created_at: string
   date: string
+  time_slot: string
   staff: string
-  type: MassageType
-  duration: Duration
+  service_name: string
+  duration: number
   discount: number
-  addOns: Addon[]
+  add_ons: string[]
   tip: number
   income: number
-  timestamp: string
+  user_id: string
 }
 
 export type MassageType =
-  | "Abdominal Detox Massage"
-  | "Chest Care Massage"
-  | "Couple Massage"
+  | "Swedish Massage"
   | "Deep Tissue Massage"
   | "Foot Massage"
-  | "Full Core Detox Massage"
-  | "Head-to-Toe Reset"
-  | "Lymphatic Drainage Massage"
-  | "Swedish Massage"
-  | "Thai Massage"
   | "Twilight Special Combo"
-export type Duration = 30 | 60 | 90 | 120
-export type Addon = "Body Scrub" | "CBD Oil" | "Essential Oil" | "Hot Stone"
+  | "Thai Massage"
+  | "Lymphatic Drainage Massage"
+  | "Swedish Massage (Couple)"
+  | "Deep Tissue Massage (Couple)"
+
+export type CoupleMassageSubtype = "Swedish Massage" | "Deep Tissue Massage"
+
+export type Duration = 30 | 60 | 90
+export type Addon = "Hot Stone" | "Essential Oil" | "Body Scrub" | "CBD Oil"
+
 export type Staff =
   | "Vivian Zhang"
   | "Sarah Jin"
@@ -33,114 +36,106 @@ export type Staff =
   | "Anna"
 
 export const MASSAGE_TYPES: MassageType[] = [
-  "Abdominal Detox Massage",
-  "Chest Care Massage",
-  "Couple Massage",
+  "Swedish Massage",
   "Deep Tissue Massage",
   "Foot Massage",
-  "Full Core Detox Massage",
-  "Head-to-Toe Reset",
-  "Lymphatic Drainage Massage",
-  "Swedish Massage",
-  "Thai Massage",
   "Twilight Special Combo",
+  "Thai Massage",
+  "Lymphatic Drainage Massage",
+  "Swedish Massage (Couple)",
+  "Deep Tissue Massage (Couple)",
 ]
 
-export const DURATIONS: Duration[] = [30, 60, 90, 120]
+export const COUPLE_MASSAGE_SUBTYPES: CoupleMassageSubtype[] = [
+  "Swedish Massage",
+  "Deep Tissue Massage",
+]
+
+export const DURATIONS: Duration[] = [30, 60, 90]
 
 export const ADDONS: { name: Addon; price: number }[] = [
+  { name: "Hot Stone", price: 3 },
+  { name: "Essential Oil", price: 3 },
   { name: "Body Scrub", price: 3 },
   { name: "CBD Oil", price: 3 },
-  { name: "Essential Oil", price: 3 },
-  { name: "Hot Stone", price: 3 },
 ]
 
-export const DISCOUNTS = [0, 10, 15, 20]
+export const DISCOUNTS = [0, 5, 10, 15, 20] as const
+export type Discount = (typeof DISCOUNTS)[number]
 
 export const BASE_PRICES: Record<MassageType, Record<Duration, number>> = {
-  "Abdominal Detox Massage": {
-    30: 60,
-    60: 100,
-    90: 140,
-    120: 180,
-  },
-  "Chest Care Massage": {
-    30: 60,
-    60: 100,
-    90: 140,
-    120: 180,
-  },
-  "Couple Massage": {
-    30: 120,
-    60: 200,
-    90: 280,
-    120: 360,
+  "Swedish Massage": {
+    30: 40,
+    60: 60,
+    90: 90,
   },
   "Deep Tissue Massage": {
-    30: 70,
-    60: 110,
-    90: 150,
-    120: 190,
+    30: 45,
+    60: 70,
+    90: 100,
   },
   "Foot Massage": {
-    30: 50,
-    60: 90,
-    90: 130,
-    120: 170,
-  },
-  "Full Core Detox Massage": {
-    30: 70,
-    60: 120,
-    90: 170,
-    120: 220,
-  },
-  "Head-to-Toe Reset": {
-    30: 65,
-    60: 110,
-    90: 155,
-    120: 200,
-  },
-  "Lymphatic Drainage Massage": {
-    30: 65,
-    60: 110,
-    90: 155,
-    120: 200,
-  },
-  "Swedish Massage": {
-    30: 60,
-    60: 100,
-    90: 140,
-    120: 180,
-  },
-  "Thai Massage": {
-    30: 65,
-    60: 110,
-    90: 155,
-    120: 200,
+    30: 35,
+    60: 50,
+    90: 75,
   },
   "Twilight Special Combo": {
-    30: 80,
-    60: 130,
-    90: 180,
-    120: 230,
+    30: 55,
+    60: 80,
+    90: 120,
+  },
+  "Thai Massage": {
+    30: 45,
+    60: 65,
+    90: 95,
+  },
+  "Lymphatic Drainage Massage": {
+    30: 50,
+    60: 75,
+    90: 110,
+  },
+  "Swedish Massage (Couple)": {
+    30: 40,
+    60: 60,
+    90: 90,
+  },
+  "Deep Tissue Massage (Couple)": {
+    30: 45,
+    60: 70,
+    90: 100,
   },
 }
 
-export const calculateIncome = (
+export function calculateIncome(
   type: MassageType,
   duration: Duration,
   discount: number,
   addOns: Addon[],
   tip: number
-): number => {
+): number {
+  // Get base price from mapping
   const basePrice = BASE_PRICES[type][duration]
-  const discountAmount = (basePrice * discount) / 100
-  const addOnsTotal = addOns.reduce((sum, addon) => {
-    const addonPrice = ADDONS.find((a) => a.name === addon)?.price || 0
-    return sum + addonPrice
-  }, 0)
 
-  return basePrice - discountAmount + addOnsTotal + tip
+  // If price is undefined, return 0 or handle error
+  if (basePrice === undefined) {
+    console.warn(`No price defined for ${type} ${duration}min`)
+    return 0
+  }
+
+  // Calculate add-ons (each add-on is $3)
+  const addOnsTotal = addOns.length * 3
+
+  // Calculate total before discount
+  const subtotal = basePrice + addOnsTotal
+
+  // Apply discount
+  const discountAmount = (subtotal * discount) / 100
+  const discountedTotal = subtotal - discountAmount
+
+  // Add tip
+  const total = discountedTotal + tip
+
+  return total
 }
 
 export const STAFFS: Staff[] = [

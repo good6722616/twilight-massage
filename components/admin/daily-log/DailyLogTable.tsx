@@ -15,7 +15,17 @@ interface DailyLogTableProps {
   records: MassageRecord[]
   onDelete: (recordId: string) => void
 }
-
+function formatTimeSlot(timeSlot: string) {
+  const [from, to] = timeSlot.split("–")
+  const format = (t: string) => {
+    if (!t) return ""
+    const [h, m] = t.split(":")
+    const date = new Date()
+    date.setHours(Number(h), Number(m))
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+  }
+  return `${format(from)}–${format(to)}`
+}
 export function DailyLogTable({ records, onDelete }: DailyLogTableProps) {
   return (
     <div className="mt-8 rounded-lg bg-white shadow">
@@ -25,6 +35,7 @@ export function DailyLogTable({ records, onDelete }: DailyLogTableProps) {
             <TableHead>Staff</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Duration</TableHead>
+            <TableHead>Time Slot</TableHead>
             <TableHead>Discount</TableHead>
             <TableHead>Add-ons</TableHead>
             <TableHead>Tip</TableHead>
@@ -36,13 +47,14 @@ export function DailyLogTable({ records, onDelete }: DailyLogTableProps) {
           {records.map((record) => (
             <TableRow key={record.id}>
               <TableCell>{record.staff}</TableCell>
-              <TableCell>{record.type}</TableCell>
+              <TableCell>{record.service_name}</TableCell>
               <TableCell>{record.duration} min</TableCell>
+              <TableCell>{formatTimeSlot(record.time_slot)}</TableCell>
               <TableCell>{record.discount}%</TableCell>
               <TableCell>
-                {record.addOns.length > 0 ? (
+                {record.add_ons.length > 0 ? (
                   <ul className="list-inside list-disc">
-                    {record.addOns.map((addon: string) => (
+                    {record.add_ons.map((addon: string) => (
                       <li key={addon}>{addon}</li>
                     ))}
                   </ul>
