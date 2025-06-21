@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
@@ -65,6 +65,7 @@ export function DailyLogForm({
       tip: "",
       timeSlot: { from: "", to: "" },
     } as any,
+    mode: "onBlur", // Only validate on blur instead of onChange
   })
 
   // Handle success state animation
@@ -78,7 +79,9 @@ export function DailyLogForm({
     }
   }, [isSuccess])
 
-  const isCoupleMassage = (type: MassageType) => type.includes("(Couple)")
+  const isCoupleMassage = useMemo(() => {
+    return (type: MassageType) => type.includes("(Couple)")
+  }, [])
 
   const handleSubmit = async (values: DailyLogFormValues) => {
     try {
@@ -139,12 +142,7 @@ export function DailyLogForm({
     }
 
     if (showSuccess) {
-      return (
-        <>
-          <Check className="mr-2 h-4 w-4" />
-          Added!
-        </>
-      )
+      return <Check className="h-4 w-4" />
     }
 
     return "Add Record"
@@ -167,12 +165,12 @@ export function DailyLogForm({
       </div>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-6 px-2"
+        className="space-y-6 px-2 text-lg"
         key={form.formState.submitCount}
       >
         <div className="grid grid-cols-2 gap-x-4 gap-y-8">
           <FormItem className="col-span-2">
-            <FormLabel>Time Slot</FormLabel>
+            <FormLabel className="text-lg">Time Slot</FormLabel>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Controller
                 name="timeSlot.from"
@@ -181,7 +179,7 @@ export function DailyLogForm({
                   <Input
                     type="time"
                     {...field}
-                    className="w-full bg-white sm:w-32"
+                    className="h-12 w-full bg-white text-lg sm:w-32"
                   />
                 )}
               />
@@ -193,7 +191,7 @@ export function DailyLogForm({
                   <Input
                     type="time"
                     {...field}
-                    className="w-full bg-white sm:w-32"
+                    className="h-12 w-full bg-white text-lg sm:w-32"
                   />
                 )}
               />
@@ -206,10 +204,13 @@ export function DailyLogForm({
             name="staff"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Staff</FormLabel>
+                <FormLabel className="text-lg">Staff</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="w-full bg-white">
+                    <SelectTrigger
+                      size="lg"
+                      className="w-full bg-white text-lg"
+                    >
                       <SelectValue placeholder="Select staff member" />
                     </SelectTrigger>
                   </FormControl>
@@ -231,10 +232,13 @@ export function DailyLogForm({
             name="type"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Massage Type</FormLabel>
+                <FormLabel className="text-lg">Massage Type</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="w-full bg-white">
+                    <SelectTrigger
+                      size="lg"
+                      className="w-full bg-white text-lg"
+                    >
                       <SelectValue placeholder="Select massage type" />
                     </SelectTrigger>
                   </FormControl>
@@ -256,10 +260,13 @@ export function DailyLogForm({
             name="duration"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Duration</FormLabel>
+                <FormLabel className="text-lg">Duration</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="w-full bg-white">
+                    <SelectTrigger
+                      size="lg"
+                      className="w-full bg-white text-lg"
+                    >
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                   </FormControl>
@@ -281,10 +288,13 @@ export function DailyLogForm({
             name="discount"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Discount</FormLabel>
+                <FormLabel className="text-lg">Discount</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="w-full bg-white">
+                    <SelectTrigger
+                      size="lg"
+                      className="w-full bg-white text-lg"
+                    >
                       <SelectValue placeholder="Select discount" />
                     </SelectTrigger>
                   </FormControl>
@@ -306,7 +316,7 @@ export function DailyLogForm({
             name="addOns"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Add-ons ($3 each)</FormLabel>
+                <FormLabel className="text-lg">Add-ons ($3 each)</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={ADDONS.map((addon) => ({
@@ -316,7 +326,7 @@ export function DailyLogForm({
                     onValueChange={field.onChange}
                     value={field.value || []}
                     placeholder="Select add-ons"
-                    className="w-full bg-white hover:bg-orange-50"
+                    className="h-12 w-full bg-white text-lg hover:bg-orange-50"
                   />
                 </FormControl>
                 <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -329,14 +339,14 @@ export function DailyLogForm({
             name="tip"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel>Tip ($)</FormLabel>
+                <FormLabel className="text-lg">Tip ($)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     step="0.01"
                     placeholder="Enter tip amount"
                     {...field}
-                    className="w-full"
+                    className="h-12 w-full bg-white text-lg"
                   />
                 </FormControl>
                 <FormMessage className="absolute -bottom-5 left-0 text-xs" />

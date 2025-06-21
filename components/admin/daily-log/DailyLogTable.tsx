@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { MassageRecord } from "@/lib/types/massage"
 import { Trash2 } from "lucide-react"
 import {
@@ -14,21 +15,38 @@ import {
 interface DailyLogTableProps {
   records: MassageRecord[]
   onDelete: (recordId: string) => void
+  isUpdating?: boolean
 }
+
 function formatTimeSlot(timeSlot: string) {
-  const [from, to] = timeSlot.split("–")
-  const format = (t: string) => {
-    if (!t) return ""
-    const [h, m] = t.split(":")
-    const date = new Date()
-    date.setHours(Number(h), Number(m))
-    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+  try {
+    const [from, to] = timeSlot.split("–")
+    const format = (t: string) => {
+      if (!t) return ""
+      const [h, m] = t.split(":")
+      const date = new Date()
+      date.setHours(Number(h), Number(m))
+      return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+    }
+    return `${format(from)}–${format(to)}`
+  } catch (error) {
+    console.error("Error formatting time slot:", timeSlot, error)
+    return timeSlot // Fallback to original value
   }
-  return `${format(from)}–${format(to)}`
 }
-export function DailyLogTable({ records, onDelete }: DailyLogTableProps) {
+
+export const DailyLogTable = memo(function DailyLogTable({
+  records,
+  onDelete,
+  isUpdating = false,
+}: DailyLogTableProps) {
   return (
     <div className="mt-8 rounded-lg bg-white shadow">
+      {isUpdating && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -80,4 +98,4 @@ export function DailyLogTable({ records, onDelete }: DailyLogTableProps) {
       </Table>
     </div>
   )
-}
+})

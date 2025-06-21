@@ -30,6 +30,8 @@ export default function DailyLogPage() {
       return getTodaysDailyLogs(token)
     },
     enabled: true, // Always enabled since we're in a protected route
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
   })
 
   // Mutation to add a new record
@@ -52,17 +54,49 @@ export default function DailyLogPage() {
 
       return response.json()
     },
-    onSuccess: () => {
-      // Invalidate and refetch today's records
-      queryClient.invalidateQueries({ queryKey: ["dailyLogs", "today"] })
+    onMutate: async (newRecord) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["dailyLogs", "today"] })
 
+      // Snapshot the previous value
+      const previousRecords = queryClient.getQueryData(["dailyLogs", "today"])
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(
+        ["dailyLogs", "today"],
+        (old: MassageRecord[] = []) => {
+          const optimisticRecord: MassageRecord = {
+            id: `temp-${Date.now()}`, // Temporary ID
+            created_at: new Date().toISOString(),
+            user_id: "", // Will be filled by server
+            ...newRecord,
+          }
+          return [optimisticRecord, ...old]
+        }
+      )
+
+      // Return a context object with the snapshotted value
+      return { previousRecords }
+    },
+    onError: (err, newRecord, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousRecords) {
+        queryClient.setQueryData(
+          ["dailyLogs", "today"],
+          context.previousRecords
+        )
+      }
+      console.error("Error adding record:", err)
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure data consistency
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs", "today"] })
+    },
+    onSuccess: () => {
       // Reset mutation state after success animation (3 seconds)
       setTimeout(() => {
         addRecordMutation.reset()
       }, 3000)
-    },
-    onError: (error) => {
-      console.error("Error adding record:", error)
     },
   })
 
@@ -128,7 +162,11 @@ export default function DailyLogPage() {
             No records found for today. Add your first record above.
           </div>
         ) : (
-          <DailyLogTable records={records} onDelete={handleDeleteRecord} />
+          <DailyLogTable
+            records={records}
+            onDelete={handleDeleteRecord}
+            isUpdating={addRecordMutation.isPending}
+          />
         )}
       </div>
     </div>
