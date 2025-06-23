@@ -4,11 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
 import { DailyLogForm } from "@/components/admin/daily-log/DailyLogForm"
 import { DailyLogTable } from "@/components/admin/daily-log/DailyLogTable"
-import {
-  PageSpinner,
-  InlineSpinner,
-  TableSkeleton,
-} from "@/components/ui/loading"
+import { DailyLogSummary } from "@/components/admin/daily-log/DailyLogSummary"
 import { MassageRecord } from "@/lib/types/massage"
 import { getTodaysDailyLogs } from "@/services/dailyLogService"
 
@@ -151,23 +147,15 @@ export default function DailyLogPage() {
 
       {/* Table Section */}
       <div className="mt-8">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          Today&apos;s Records ({records.length})
-        </h2>
+        <div className="mb-4">
+          <DailyLogSummary records={records} />
+        </div>
 
-        {isLoading ? (
-          <TableSkeleton rows={5} />
-        ) : records.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">
-            No records found for today. Add your first record above.
-          </div>
-        ) : (
-          <DailyLogTable
-            records={records}
-            onDelete={handleDeleteRecord}
-            isUpdating={addRecordMutation.isPending}
-          />
-        )}
+        <DailyLogTable
+          records={records}
+          onDelete={handleDeleteRecord}
+          isUpdating={addRecordMutation.isPending || isLoading}
+        />
       </div>
     </div>
   )

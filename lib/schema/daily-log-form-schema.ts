@@ -5,27 +5,28 @@ import {
   DISCOUNTS,
   STAFFS,
   MassageType,
+  Staff,
 } from "@/lib/types/massage"
 
 const baseSchema = {
   type: z
-    .enum(MASSAGE_TYPES as [MassageType, ...MassageType[]], {
-      required_error: "Please select a massage type",
-    })
-    .or(z.literal(""))
-    .refine((val) => val !== "", { message: "Please select a massage type" }),
+    .string()
+    .min(1, { message: "Please select a massage type" })
+    .refine((val) => MASSAGE_TYPES.includes(val as MassageType), {
+      message: "Please select a valid massage type",
+    }),
   duration: z
-    .enum(DURATIONS.map(String) as [string, ...string[]], {
-      required_error: "Please select a duration",
-    })
-    .or(z.literal(""))
-    .refine((val) => val !== "", { message: "Please select a duration" }),
+    .string()
+    .min(1, { message: "Please select a duration" })
+    .refine((val) => DURATIONS.map(String).includes(val), {
+      message: "Please select a valid duration",
+    }),
   discount: z
-    .enum(DISCOUNTS.map(String) as [string, ...string[]], {
-      required_error: "Please select a discount",
-    })
-    .or(z.literal(""))
-    .refine((val) => val !== "", { message: "Please select a discount" }),
+    .string()
+    .min(1, { message: "Please select a discount" })
+    .refine((val) => DISCOUNTS.map(String).includes(val), {
+      message: "Please select a valid discount",
+    }),
   addOns: z.array(z.string()).optional(),
   tip: z
     .string()
@@ -34,11 +35,11 @@ const baseSchema = {
       message: "Tip must be a non-negative number",
     }),
   staff: z
-    .enum(STAFFS as [string, ...string[]], {
-      required_error: "Staff is required",
-    })
-    .or(z.literal(""))
-    .refine((val) => val !== "", { message: "Please select a staff member" }),
+    .string()
+    .min(1, { message: "Please select a staff member" })
+    .refine((val) => STAFFS.includes(val as Staff), {
+      message: "Please select a valid staff member",
+    }),
   timeSlot: z
     .object({
       from: z.string().min(1, "Start time is required"),

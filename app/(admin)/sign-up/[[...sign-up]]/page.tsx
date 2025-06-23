@@ -10,7 +10,7 @@ export default function SignUpPage() {
             footerActionLink: "text-blue-600 hover:text-blue-700",
           },
         }}
-        afterSignUpUrl="/admin/aily-log"
+        fallbackRedirectUrl="/admin/daily-log"
         signInUrl="/admin/sign-in"
       />
     </div>

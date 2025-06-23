@@ -33,7 +33,7 @@ import {
   ADDONS,
   DISCOUNTS,
   STAFFS,
-  BASE_PRICES,
+  STAFF_SERVICE_INCOME,
   Discount,
 } from "@/lib/types/massage"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
@@ -53,7 +53,6 @@ export function DailyLogForm({
 }: DailyLogFormProps) {
   const today = new Date()
   const [showSuccess, setShowSuccess] = useState(false)
-
   const form = useForm<DailyLogFormValues>({
     resolver: zodResolver(dailyLogFormSchema),
     defaultValues: {
@@ -64,7 +63,7 @@ export function DailyLogForm({
       addOns: [],
       tip: "",
       timeSlot: { from: "", to: "" },
-    } as any,
+    },
     mode: "onBlur", // Only validate on blur instead of onChange
   })
 
@@ -94,12 +93,12 @@ export function DailyLogForm({
       }
 
       const massageType = values.type as MassageType
-      const basePrice = BASE_PRICES[massageType][duration]
+      const basePrice = STAFF_SERVICE_INCOME[massageType][duration]
       const isCouple = isCoupleMassage(massageType)
 
       // Create the massage record
       const record = {
-        date: today.toISOString().split("T")[0],
+        date: today.toLocaleDateString("en-CA"),
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
         service_name: massageType,
@@ -124,7 +123,7 @@ export function DailyLogForm({
         addOns: [],
         tip: "",
         timeSlot: { from: "", to: "" },
-      } as any)
+      })
     } catch (error) {
       console.error("Error preparing form data:", error)
     }

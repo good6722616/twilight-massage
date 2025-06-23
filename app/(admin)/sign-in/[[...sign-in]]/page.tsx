@@ -10,7 +10,7 @@ export default function SignInPage() {
             footerActionLink: "text-blue-600 hover:text-blue-700",
           },
         }}
-        redirectUrl="/admin/daily-log"
+        fallbackRedirectUrl="/admin/daily-log"
         signUpUrl="/admin/sign-up"
       />
     </div>

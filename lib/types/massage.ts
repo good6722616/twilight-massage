@@ -13,15 +13,22 @@ export interface MassageRecord {
   user_id: string
 }
 
-export type MassageType =
-  | "Swedish Massage"
-  | "Deep Tissue Massage"
-  | "Foot Massage"
-  | "Twilight Special Combo"
-  | "Thai Massage"
-  | "Lymphatic Drainage Massage"
-  | "Swedish Massage (Couple)"
-  | "Deep Tissue Massage (Couple)"
+export const MASSAGE_TYPES = [
+  "Swedish Massage",
+  "Deep Tissue Massage",
+  "Foot Massage",
+  "Twilight Special Combo",
+  "Thai Massage",
+  "Lymphatic Drainage Massage",
+  "Chest Care Massage",
+  "Abdominal Detox Massage",
+  "Full Core Detox Massage",
+  "Head-to-Toe Reset",
+  "Swedish Massage (Couple)",
+  "Deep Tissue Massage (Couple)",
+] as const
+
+export type MassageType = (typeof MASSAGE_TYPES)[number]
 
 export type CoupleMassageSubtype = "Swedish Massage" | "Deep Tissue Massage"
 
@@ -35,22 +42,6 @@ export type Staff =
   | "Daisy L"
   | "Anna"
 
-export const MASSAGE_TYPES: MassageType[] = [
-  "Swedish Massage",
-  "Deep Tissue Massage",
-  "Foot Massage",
-  "Twilight Special Combo",
-  "Thai Massage",
-  "Lymphatic Drainage Massage",
-  "Swedish Massage (Couple)",
-  "Deep Tissue Massage (Couple)",
-]
-
-export const COUPLE_MASSAGE_SUBTYPES: CoupleMassageSubtype[] = [
-  "Swedish Massage",
-  "Deep Tissue Massage",
-]
-
 export const DURATIONS: Duration[] = [30, 60, 90]
 
 export const ADDONS: { name: Addon; price: number }[] = [
@@ -63,46 +54,69 @@ export const ADDONS: { name: Addon; price: number }[] = [
 export const DISCOUNTS = [0, 5, 10, 15, 20] as const
 export type Discount = (typeof DISCOUNTS)[number]
 
-export const BASE_PRICES: Record<MassageType, Record<Duration, number>> = {
+export const STAFF_SERVICE_INCOME: Record<
+  MassageType,
+  Record<Duration, number>
+> = {
   "Swedish Massage": {
-    30: 40,
-    60: 60,
+    30: 20,
+    60: 45,
     90: 90,
   },
   "Deep Tissue Massage": {
-    30: 45,
-    60: 70,
-    90: 100,
+    30: 20,
+    60: 35,
+    90: 50,
   },
   "Foot Massage": {
-    30: 35,
-    60: 50,
-    90: 75,
+    30: 20,
+    60: 30,
+    90: 40,
   },
   "Twilight Special Combo": {
-    30: 55,
-    60: 80,
-    90: 120,
+    30: 20,
+    60: 32,
+    90: 48,
   },
   "Thai Massage": {
-    30: 45,
-    60: 65,
-    90: 95,
+    30: 20,
+    60: 40,
+    90: 60,
   },
   "Lymphatic Drainage Massage": {
-    30: 50,
-    60: 75,
-    90: 110,
+    30: 20,
+    60: 30,
+    90: 40,
   },
   "Swedish Massage (Couple)": {
-    30: 40,
-    60: 60,
-    90: 90,
+    30: 20,
+    60: 30,
+    90: 45,
   },
   "Deep Tissue Massage (Couple)": {
-    30: 45,
-    60: 70,
-    90: 100,
+    30: 20,
+    60: 35,
+    90: 50,
+  },
+  "Chest Care Massage": {
+    30: 20,
+    60: 30,
+    90: 40,
+  },
+  "Abdominal Detox Massage": {
+    30: 20,
+    60: 40,
+    90: 60,
+  },
+  "Full Core Detox Massage": {
+    30: 20,
+    60: 40,
+    90: 60,
+  },
+  "Head-to-Toe Reset": {
+    30: 20,
+    60: 30,
+    90: 40,
   },
 }
 
@@ -113,11 +127,11 @@ export function calculateIncome(
   addOns: Addon[],
   tip: number
 ): number {
-  // Get base price from mapping
-  const basePrice = BASE_PRICES[type][duration]
+  // Get staff income from mapping
+  const staffIncome = STAFF_SERVICE_INCOME[type][duration]
 
   // If price is undefined, return 0 or handle error
-  if (basePrice === undefined) {
+  if (staffIncome === undefined) {
     console.warn(`No price defined for ${type} ${duration}min`)
     return 0
   }
@@ -126,7 +140,7 @@ export function calculateIncome(
   const addOnsTotal = addOns.length * 3
 
   // Calculate total before discount
-  const subtotal = basePrice + addOnsTotal
+  const subtotal = staffIncome + addOnsTotal
 
   // Apply discount
   const discountAmount = (subtotal * discount) / 100
@@ -136,6 +150,28 @@ export function calculateIncome(
   const total = discountedTotal + tip
 
   return total
+}
+
+export function calculateTotalIncome(records: MassageRecord[]): number {
+  return records.reduce((sum, record) => {
+    // Get staff income
+    const staffIncome =
+      STAFF_SERVICE_INCOME[record.service_name as MassageType][
+        record.duration as Duration
+      ]
+
+    // Calculate add-ons total (each add-on is $3)
+    const addOnsTotal = record.add_ons.length * 3
+
+    // Calculate total before discount
+    const subtotal = staffIncome + addOnsTotal
+
+    // Apply discount
+    const discountAmount = (subtotal * record.discount) / 100
+    const discountedTotal = subtotal - discountAmount
+
+    return sum + discountedTotal
+  }, 0)
 }
 
 export const STAFFS: Staff[] = [
