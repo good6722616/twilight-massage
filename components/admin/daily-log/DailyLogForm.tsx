@@ -64,7 +64,7 @@ export function DailyLogForm({
       tip: "",
       timeSlot: { from: "", to: "" },
     },
-    mode: "onBlur", // Only validate on blur instead of onChange
+    mode: "onSubmit", // Only validate when form is submitted
   })
 
   // Handle success state animation
@@ -315,11 +315,11 @@ export function DailyLogForm({
             name="addOns"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Add-ons ($3 each)</FormLabel>
+                <FormLabel className="text-lg">Add-ons</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={ADDONS.map((addon) => ({
-                      label: `${addon.name} (+$${addon.price})`,
+                      label: addon.name,
                       value: addon.name,
                     }))}
                     onValueChange={field.onChange}
