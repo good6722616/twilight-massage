@@ -47,9 +47,9 @@ export async function addDailyLog(
   return data?.[0] as MassageRecord
 }
 
-// Delete a daily log by id (not updated for token, but can be if needed)
-export async function deleteDailyLog(id: string): Promise<void> {
-  // This function uses the generic client because it might be called from a context without a user-specific token
+// Delete a daily log by id
+export async function deleteDailyLog(id: string, token: string): Promise<void> {
+  const supabase = createSupabaseClient(token)
   const { error } = await supabase.from("massage_records").delete().eq("id", id)
   if (error) throw error
 }

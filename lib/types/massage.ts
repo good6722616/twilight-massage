@@ -17,7 +17,8 @@ export const MASSAGE_TYPES = [
   "Swedish Massage",
   "Deep Tissue Massage",
   "Foot Massage",
-  "Twilight Special Combo",
+  "Twilight Special Combo (Swedish)",
+  "Twilight Special Combo (Deep Tissue)",
   "Thai Massage",
   "Lymphatic Drainage Massage",
   "Chest Care Massage",
@@ -26,13 +27,12 @@ export const MASSAGE_TYPES = [
   "Head-to-Toe Reset",
   "Swedish Massage (Couple)",
   "Deep Tissue Massage (Couple)",
+  "Focus",
 ] as const
 
 export type MassageType = (typeof MASSAGE_TYPES)[number]
 
-export type CoupleMassageSubtype = "Swedish Massage" | "Deep Tissue Massage"
-
-export type Duration = 30 | 60 | 90
+export type Duration = 30 | 45 | 60 | 90
 export type Addon = "Hot Stone" | "Essential Oil" | "Body Scrub" | "CBD Oil"
 
 export type Staff =
@@ -42,7 +42,7 @@ export type Staff =
   | "Daisy L"
   | "Anna"
 
-export const DURATIONS: Duration[] = [30, 60, 90]
+export const DURATIONS: Duration[] = [30, 45, 60, 90]
 
 export const ADDONS: { name: Addon; price: number }[] = [
   { name: "Hot Stone", price: 10 },
@@ -56,12 +56,12 @@ export type Discount = (typeof DISCOUNTS)[number]
 
 export const STAFF_SERVICE_INCOME: Record<
   MassageType,
-  Record<Duration, number>
+  Partial<Record<Duration, number>>
 > = {
   "Swedish Massage": {
     30: 20,
-    60: 45,
-    90: 90,
+    60: 30,
+    90: 45,
   },
   "Deep Tissue Massage": {
     30: 20,
@@ -71,22 +71,20 @@ export const STAFF_SERVICE_INCOME: Record<
   "Foot Massage": {
     30: 20,
     60: 30,
-    90: 40,
   },
-  "Twilight Special Combo": {
-    30: 20,
-    60: 32,
-    90: 48,
+  "Twilight Special Combo (Swedish)": {
+    90: 42,
+  },
+  "Twilight Special Combo (Deep Tissue)": {
+    90: 45,
   },
   "Thai Massage": {
-    30: 20,
     60: 40,
     90: 60,
   },
   "Lymphatic Drainage Massage": {
     30: 20,
     60: 30,
-    90: 40,
   },
   "Swedish Massage (Couple)": {
     30: 20,
@@ -99,30 +97,34 @@ export const STAFF_SERVICE_INCOME: Record<
     90: 50,
   },
   "Chest Care Massage": {
-    30: 20,
-    60: 30,
-    90: 40,
+    30: 30,
+    60: 40,
+    90: 60,
   },
   "Abdominal Detox Massage": {
-    30: 20,
+    30: 25,
     60: 40,
-    90: 60,
+    90: 55,
   },
   "Full Core Detox Massage": {
-    30: 20,
     60: 40,
-    90: 60,
   },
   "Head-to-Toe Reset": {
+    60: 32,
+    90: 48,
+  },
+  Focus: {
     30: 20,
-    60: 30,
-    90: 40,
+    45: 30,
   },
 }
 
-export const SERVICE_PRICES: Record<MassageType, Record<Duration, number>> = {
+export const SERVICE_PRICES: Record<
+  MassageType,
+  Partial<Record<Duration, number>>
+> = {
   "Swedish Massage": {
-    30: 45,
+    30: 50,
     60: 80,
     90: 120,
   },
@@ -134,22 +136,20 @@ export const SERVICE_PRICES: Record<MassageType, Record<Duration, number>> = {
   "Foot Massage": {
     30: 45,
     60: 65,
-    90: 95,
   },
-  "Twilight Special Combo": {
-    30: 60,
-    60: 110,
+  "Twilight Special Combo (Swedish)": {
+    90: 110,
+  },
+  "Twilight Special Combo (Deep Tissue)": {
     90: 120,
   },
   "Thai Massage": {
-    30: 60,
     60: 100,
     90: 150,
   },
   "Lymphatic Drainage Massage": {
     30: 60,
     60: 120,
-    90: 180,
   },
   "Chest Care Massage": {
     30: 60,
@@ -162,47 +162,40 @@ export const SERVICE_PRICES: Record<MassageType, Record<Duration, number>> = {
     90: 140,
   },
   "Full Core Detox Massage": {
-    30: 80,
+    30: 60,
     60: 120,
-    90: 160,
   },
   "Head-to-Toe Reset": {
-    30: 60,
     60: 90,
     90: 130,
   },
   "Swedish Massage (Couple)": {
-    30: 45,
     60: 80,
     90: 120,
   },
   "Deep Tissue Massage (Couple)": {
-    30: 50,
     60: 90,
     90: 135,
+  },
+  Focus: {
+    30: 55,
+    45: 75,
   },
 }
 
 export function calculateStaffIncome(
   type: MassageType,
   duration: Duration,
-  addOns: Addon[],
-  tip: number
+  addOns: Addon[]
 ): number {
   // Get base staff income from mapping
-  const baseStaffIncome = STAFF_SERVICE_INCOME[type][duration]
+  const baseStaffIncome = STAFF_SERVICE_INCOME[type][duration] ?? 0
 
-  // If base income is undefined, return 0 or handle error
-  if (baseStaffIncome === undefined) {
-    console.warn(`No base income defined for ${type} ${duration}min`)
-    return 0
-  }
+  // Only non-CBD Oil add-ons give $3 to staff
+  const addonIncome = addOns.filter((a) => a !== "CBD Oil").length * 3
 
-  // Calculate staff's addon income ($3 per addon)
-  const addonIncome = addOns.length * 3
-
-  // Total staff income is base income + addon income + full tip
-  const totalStaffIncome = baseStaffIncome + addonIncome + tip
+  // Total staff income is base income + addon income (NO tip, NO discount)
+  const totalStaffIncome = baseStaffIncome + addonIncome
 
   return totalStaffIncome
 }
@@ -214,6 +207,11 @@ export function calculateStoreIncome(records: MassageRecord[]): number {
       SERVICE_PRICES[record.service_name as MassageType][
         record.duration as Duration
       ]
+
+    // If the price is undefined, skip this record
+    if (baseServicePrice === undefined) {
+      return sum
+    }
 
     // Calculate full price before discount
     const priceBeforeDiscount = baseServicePrice

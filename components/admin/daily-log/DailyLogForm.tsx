@@ -35,6 +35,8 @@ import {
   STAFFS,
   STAFF_SERVICE_INCOME,
   Discount,
+  SERVICE_PRICES,
+  calculateStaffIncome,
 } from "@/lib/types/massage"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 
@@ -67,6 +69,14 @@ export function DailyLogForm({
     mode: "onSubmit", // Only validate when form is submitted
   })
 
+  const selectedType = form.watch("type") as MassageType | undefined
+  const availableDurations = useMemo(() => {
+    if (!selectedType || !SERVICE_PRICES[selectedType]) return []
+    return Object.entries(SERVICE_PRICES[selectedType])
+      .filter(([_, price]) => price > 0)
+      .map(([duration]) => duration)
+  }, [selectedType])
+
   // Handle success state animation
   useEffect(() => {
     if (isSuccess) {
@@ -93,8 +103,12 @@ export function DailyLogForm({
       }
 
       const massageType = values.type as MassageType
-      const basePrice = STAFF_SERVICE_INCOME[massageType][duration]
       const isCouple = isCoupleMassage(massageType)
+      const staffIncome = calculateStaffIncome(
+        massageType,
+        duration,
+        values.addOns ? values.addOns.map((s) => s.trim() as Addon) : []
+      )
 
       // Create the massage record
       const record = {
@@ -108,7 +122,7 @@ export function DailyLogForm({
           ? values.addOns.map((s) => s.trim() as Addon)
           : [],
         tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
-        income: basePrice / (isCouple ? 2 : 1),
+        income: staffIncome / (isCouple ? 2 : 1),
       }
 
       // Call the parent's onSubmit function
@@ -164,13 +178,13 @@ export function DailyLogForm({
       </div>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-6 px-2 text-lg"
+        className="space-y-6 px-1 text-base sm:px-2 sm:text-lg"
         key={form.formState.submitCount}
       >
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8">
-          <FormItem className="col-span-2">
-            <FormLabel className="text-lg">Time Slot</FormLabel>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:gap-y-8 md:grid-cols-2">
+          <FormItem className="col-span-1 md:col-span-2">
+            <FormLabel className="text-base sm:text-lg">Time Slot</FormLabel>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
               <Controller
                 name="timeSlot.from"
                 control={form.control}
@@ -178,11 +192,14 @@ export function DailyLogForm({
                   <Input
                     type="time"
                     {...field}
-                    className="h-12 w-full bg-white text-lg sm:w-32"
+                    className="h-11 w-full bg-white text-base sm:h-12 sm:w-32 sm:text-lg"
                   />
                 )}
               />
               <span className="hidden sm:inline">–</span>
+              <span className="text-center text-sm text-gray-500 sm:hidden">
+                to
+              </span>
               <Controller
                 name="timeSlot.to"
                 control={form.control}
@@ -190,7 +207,7 @@ export function DailyLogForm({
                   <Input
                     type="time"
                     {...field}
-                    className="h-12 w-full bg-white text-lg sm:w-32"
+                    className="h-11 w-full bg-white text-base sm:h-12 sm:w-32 sm:text-lg"
                   />
                 )}
               />
@@ -203,13 +220,10 @@ export function DailyLogForm({
             name="staff"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Staff</FormLabel>
+                <FormLabel className="text-base sm:text-lg">Staff</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger
-                      size="lg"
-                      className="w-full bg-white text-lg"
-                    >
+                    <SelectTrigger className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg">
                       <SelectValue placeholder="Select staff member" />
                     </SelectTrigger>
                   </FormControl>
@@ -231,13 +245,12 @@ export function DailyLogForm({
             name="type"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Massage Type</FormLabel>
+                <FormLabel className="text-base sm:text-lg">
+                  Massage Type
+                </FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger
-                      size="lg"
-                      className="w-full bg-white text-lg"
-                    >
+                    <SelectTrigger className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg">
                       <SelectValue placeholder="Select massage type" />
                     </SelectTrigger>
                   </FormControl>
@@ -259,22 +272,38 @@ export function DailyLogForm({
             name="duration"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Duration</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                  <FormLabel className="text-base sm:text-lg">
+                    Duration
+                  </FormLabel>
+                  {!selectedType && (
+                    <span className="text-xs font-medium text-green-600">
+                      Please select a massage type first
+                    </span>
+                  )}
+                </div>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={!selectedType}
+                >
                   <FormControl>
-                    <SelectTrigger
-                      size="lg"
-                      className="w-full bg-white text-lg"
-                    >
+                    <SelectTrigger className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg">
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {DURATIONS.map((duration) => (
-                      <SelectItem key={duration} value={duration.toString()}>
-                        {duration} minutes
-                      </SelectItem>
-                    ))}
+                    {selectedType ? (
+                      availableDurations.map((duration) => (
+                        <SelectItem key={duration} value={duration}>
+                          {duration} minutes
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-muted-foreground">
+                        Please select a massage type first
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -287,13 +316,10 @@ export function DailyLogForm({
             name="discount"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Discount</FormLabel>
+                <FormLabel className="text-base sm:text-lg">Discount</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger
-                      size="lg"
-                      className="w-full bg-white text-lg"
-                    >
+                    <SelectTrigger className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg">
                       <SelectValue placeholder="Select discount" />
                     </SelectTrigger>
                   </FormControl>
@@ -315,7 +341,7 @@ export function DailyLogForm({
             name="addOns"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Add-ons</FormLabel>
+                <FormLabel className="text-base sm:text-lg">Add-ons</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={ADDONS.map((addon) => ({
@@ -325,7 +351,7 @@ export function DailyLogForm({
                     onValueChange={field.onChange}
                     value={field.value || []}
                     placeholder="Select add-ons"
-                    className="h-12 w-full bg-white text-lg hover:bg-orange-50"
+                    className="h-11 w-full bg-white text-base hover:bg-orange-50 sm:h-12 sm:text-lg"
                   />
                 </FormControl>
                 <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -338,14 +364,14 @@ export function DailyLogForm({
             name="tip"
             render={({ field }) => (
               <FormItem className="relative">
-                <FormLabel className="text-lg">Tip ($)</FormLabel>
+                <FormLabel className="text-base sm:text-lg">Tip ($)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     step="0.01"
                     placeholder="Enter tip amount"
                     {...field}
-                    className="h-12 w-full bg-white text-lg"
+                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                   />
                 </FormControl>
                 <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -357,7 +383,7 @@ export function DailyLogForm({
         <Button
           type="submit"
           disabled={isSubmitting || showSuccess}
-          className={getButtonClassName()}
+          className={`${getButtonClassName()} w-full sm:w-fit`}
         >
           {getButtonContent()}
         </Button>

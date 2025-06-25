@@ -96,15 +96,61 @@ export default function DailyLogPage() {
     },
   })
 
+  // Mutation to delete a record
+  const deleteRecordMutation = useMutation({
+    mutationFn: async (recordId: string) => {
+      const response = await fetch(`/api/daily-log?id=${recordId}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to delete record")
+      }
+
+      return response.json()
+    },
+    onMutate: async (recordId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["dailyLogs", "today"] })
+
+      // Snapshot the previous value
+      const previousRecords = queryClient.getQueryData(["dailyLogs", "today"])
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(
+        ["dailyLogs", "today"],
+        (old: MassageRecord[] = []) =>
+          old.filter((record) => record.id !== recordId)
+      )
+
+      // Return a context object with the snapshotted value
+      return { previousRecords }
+    },
+    onError: (err, recordId, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousRecords) {
+        queryClient.setQueryData(
+          ["dailyLogs", "today"],
+          context.previousRecords
+        )
+      }
+      console.error("Error deleting record:", err)
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure data consistency
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs", "today"] })
+    },
+  })
+
   const handleAddRecord = (
     record: Omit<MassageRecord, "id" | "created_at" | "user_id">
   ) => {
     addRecordMutation.mutate(record)
   }
 
-  const handleDeleteRecord = (recordId: string) => {
-    // TODO: Implement delete mutation if needed
-    console.log("Delete record:", recordId)
+  const handleDeleteRecord = async (recordId: string) => {
+    return deleteRecordMutation.mutateAsync(recordId)
   }
 
   // Error state

@@ -34,4 +34,37 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(newLog)
 }
 
-// For DELETE, you might use a dynamic route or handle in the same file
+export async function DELETE(req: NextRequest) {
+  const { userId, getToken } = await auth()
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const token = await getToken({ template: "supabase" })
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Get the record ID from the URL
+  const url = new URL(req.url)
+  const id = url.searchParams.get("id")
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Record ID is required" },
+      { status: 400 }
+    )
+  }
+
+  try {
+    // Pass both the user ID and token to the service function
+    await deleteDailyLog(id, token)
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error deleting record:", error)
+    return NextResponse.json(
+      { error: "Failed to delete record" },
+      { status: 500 }
+    )
+  }
+}

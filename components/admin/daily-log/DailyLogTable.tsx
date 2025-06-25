@@ -13,7 +13,13 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { MassageRecord } from "@/lib/types/massage"
+import {
+  MassageRecord,
+  calculateStaffIncome,
+  MassageType,
+  Duration,
+  Addon,
+} from "@/lib/types/massage"
 import {
   Trash2,
   Search,
@@ -69,6 +75,10 @@ function formatTimeSlot(timeSlot: string) {
   }
 }
 
+function formatCurrency(amount: number) {
+  return `$${amount.toFixed(2)}`
+}
+
 export const DailyLogTable = memo(function DailyLogTable({
   records,
   onDelete,
@@ -79,6 +89,23 @@ export const DailyLogTable = memo(function DailyLogTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
+
+  const handleDelete = async (recordId: string) => {
+    try {
+      setDeletingIds((prev) => new Set([...Array.from(prev), recordId]))
+      // Call the parent's onDelete callback
+      await onDelete(recordId)
+    } catch (error) {
+      console.error("Error deleting record:", error)
+    } finally {
+      setDeletingIds((prev) => {
+        const newSet = new Set(Array.from(prev))
+        newSet.delete(recordId)
+        return newSet
+      })
+    }
+  }
 
   const columns: ColumnDef<MassageRecord>[] = useMemo(
     () => [
@@ -230,7 +257,7 @@ export const DailyLogTable = memo(function DailyLogTable({
         },
       },
       {
-        accessorKey: "income",
+        accessorKey: "Pay",
         header: ({ column }) => {
           return (
             <Button
@@ -239,14 +266,39 @@ export const DailyLogTable = memo(function DailyLogTable({
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              Income
+              Pay
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           )
         },
         cell: ({ row }) => {
-          const income = parseFloat(row.getValue("income"))
-          return <div className="font-medium">${income.toFixed(2)}</div>
+          const record = row.original
+          const staffIncome = calculateStaffIncome(
+            record.service_name as MassageType,
+            record.duration as Duration,
+            (record.add_ons as string[]).map((a) => a as Addon)
+          )
+          return (
+            <div className="font-medium">{formatCurrency(staffIncome)}</div>
+          )
+        },
+      },
+      {
+        id: "income",
+        header: "Income",
+        cell: ({ row }) => {
+          const record = row.original
+          const staffIncome = calculateStaffIncome(
+            record.service_name as MassageType,
+            record.duration as Duration,
+            (record.add_ons as string[]).map((a) => a as Addon)
+          )
+          const tip =
+            typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
+          const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
+          return (
+            <div className="font-medium">{formatCurrency(overallIncome)}</div>
+          )
         },
       },
       {
@@ -256,21 +308,27 @@ export const DailyLogTable = memo(function DailyLogTable({
         header: "Actions",
         cell: ({ row }) => {
           const record = row.original
+          const isDeleting = deletingIds.has(record.id)
 
           return (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onDelete(record.id)}
+              onClick={() => handleDelete(record.id)}
+              disabled={isDeleting}
               className="text-destructive hover:text-destructive"
             >
-              <Trash2 className="h-4 w-4" />
+              {isDeleting ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
             </Button>
           )
         },
       },
     ],
-    [onDelete]
+    [onDelete, deletingIds]
   )
 
   const table = useReactTable({
@@ -300,7 +358,7 @@ export const DailyLogTable = memo(function DailyLogTable({
   })
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 overflow-x-auto">
       {/* Filters and Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 items-center space-x-2">
