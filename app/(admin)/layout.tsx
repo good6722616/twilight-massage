@@ -26,18 +26,7 @@ export default function AdminLayout({
 }>) {
   return (
     <ClerkProvider>
-      <div className={`${inter.variable} antialiased`}>
-        <header className="flex h-16 items-center justify-end gap-4 p-4">
-          <SignedOut>
-            <SignInButton />
-            <SignUpButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </header>
-        {children}
-      </div>
+      <div className={`${inter.variable} antialiased`}>{children}</div>
     </ClerkProvider>
   )
 }

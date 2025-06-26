@@ -20,13 +20,7 @@ import {
   Duration,
   Addon,
 } from "@/lib/types/massage"
-import {
-  Trash2,
-  Search,
-  ChevronDown,
-  MoreHorizontal,
-  ArrowUpDown,
-} from "lucide-react"
+import { Trash2, Search, ChevronDown, ArrowUpDown, Info } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -51,6 +45,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface DailyLogTableProps {
   records: MassageRecord[]
@@ -260,15 +260,30 @@ export const DailyLogTable = memo(function DailyLogTable({
         accessorKey: "Pay",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Pay
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                Pay
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 cursor-help text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">
+                      The amount paid to the staff member for this service,
+                      calculated based on service type, duration, and add-ons.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           )
         },
         cell: ({ row }) => {
@@ -285,7 +300,26 @@ export const DailyLogTable = memo(function DailyLogTable({
       },
       {
         id: "income",
-        header: "Income",
+        header: () => {
+          return (
+            <div className="flex items-center gap-1">
+              <span>Income</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 cursor-help text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">
+                      Total income for the staff member including their pay plus
+                      any tips received.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const record = row.original
           const staffIncome = calculateStaffIncome(

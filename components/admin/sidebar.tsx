@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Calendar, Users, BarChart, Menu, X } from "lucide-react"
 import { useState } from "react"
+import { H2 } from "@/components/ui/typography"
 
 const navigation = [
   { name: "Daily Log", href: "/admin/daily-log", icon: Calendar },
@@ -30,7 +31,7 @@ export function Sidebar() {
         }`}
       >
         <div className="p-4">
-          <h2 className="text-xl font-bold">Admin Dashboard</h2>
+          <H2 className="text-xl font-bold text-white">Admin Dashboard</H2>
         </div>
         <nav className="mt-4">
           {navigation.map((item) => {

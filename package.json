@@ -1,6 +1,6 @@
 {
-  "name": "next-shadcn-landing",
-  "version": "0.1.0",
+  "name": "twilight-massage-website",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

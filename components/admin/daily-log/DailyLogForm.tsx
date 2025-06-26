@@ -7,6 +7,7 @@ import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
+import { H2, Small, Muted } from "@/components/ui/typography"
 import { Check } from "lucide-react"
 import {
   Form,
@@ -172,9 +173,9 @@ export function DailyLogForm({
   return (
     <Form {...form}>
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">
+        <H2 className="text-2xl font-semibold text-gray-900">
           {format(today, "MMMM dd, yyyy")}
-        </h2>
+        </H2>
       </div>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
@@ -197,9 +198,7 @@ export function DailyLogForm({
                 )}
               />
               <span className="hidden sm:inline">–</span>
-              <span className="text-center text-sm text-gray-500 sm:hidden">
-                to
-              </span>
+              <Small className="text-center text-gray-500 sm:hidden">to</Small>
               <Controller
                 name="timeSlot.to"
                 control={form.control}
@@ -277,9 +276,9 @@ export function DailyLogForm({
                     Duration
                   </FormLabel>
                   {!selectedType && (
-                    <span className="text-xs font-medium text-green-600">
+                    <Small className="font-medium text-green-600">
                       Please select a massage type first
-                    </span>
+                    </Small>
                   )}
                 </div>
                 <Select
@@ -300,9 +299,9 @@ export function DailyLogForm({
                         </SelectItem>
                       ))
                     ) : (
-                      <div className="px-4 py-2 text-sm text-muted-foreground">
+                      <Muted className="px-4 py-2">
                         Please select a massage type first
-                      </div>
+                      </Muted>
                     )}
                   </SelectContent>
                 </Select>

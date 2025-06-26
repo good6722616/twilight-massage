@@ -1,6 +1,7 @@
 import type { MassageRecord } from "@/lib/types/massage"
 import { calculateStoreIncome } from "@/lib/types/massage"
 import { Badge } from "@/components/ui/badge"
+import { H2 } from "@/components/ui/typography"
 import { FileText, DollarSign } from "lucide-react"
 
 interface DailyLogSummaryProps {
@@ -12,10 +13,8 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
 
   return (
     <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-      <h2 className="text-xl font-semibold text-gray-900">
-        Today&apos;s Summary
-      </h2>
-      <div className="flex w-full flex-col gap-2 sm:flex-row sm:gap-3">
+      <H2 className="whitespace-nowrap">Today&apos;s Summary</H2>
+      <div className="flex w-full flex-col gap-2 sm:flex-1 sm:flex-row sm:gap-3">
         <Badge
           variant="outline"
           className="w-full border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 text-lg font-medium text-blue-700 shadow-sm transition-all duration-200 hover:from-blue-100 hover:to-indigo-100 sm:w-auto"
