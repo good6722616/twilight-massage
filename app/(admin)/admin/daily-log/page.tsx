@@ -7,6 +7,7 @@ import { DailyLogTable } from "@/components/admin/daily-log/DailyLogTable"
 import { DailyLogSummary } from "@/components/admin/daily-log/DailyLogSummary"
 import { MassageRecord } from "@/lib/types/massage"
 import { getTodaysDailyLogs } from "@/services/dailyLogService"
+import { H1, H3, P } from "@/components/ui/typography"
 
 export default function DailyLogPage() {
   const { getToken } = useAuth()
@@ -157,12 +158,16 @@ export default function DailyLogPage() {
   if (isError) {
     return (
       <div className="mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">Daily Log</h1>
+        <H1 size="3xl" weight="bold" className="mb-8 text-gray-900">
+          Daily Log
+        </H1>
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h3 className="font-medium text-red-800">Error loading records</h3>
-          <p className="mt-1 text-sm text-red-600">
+          <H3 size="base" weight="medium" className="text-red-800">
+            Error loading records
+          </H3>
+          <P size="sm" className="mt-1 text-red-600">
             {error instanceof Error ? error.message : "Unknown error occurred"}
-          </p>
+          </P>
         </div>
       </div>
     )
@@ -170,7 +175,9 @@ export default function DailyLogPage() {
 
   return (
     <div className="mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">Daily Log</h1>
+      <H1 size="3xl" weight="bold" className="mb-8 text-gray-900">
+        Daily Log
+      </H1>
 
       {/* Form Section */}
       <DailyLogForm
@@ -182,12 +189,12 @@ export default function DailyLogPage() {
       {/* Mutation Error Display */}
       {addRecordMutation.isError && (
         <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+          <P size="sm" className="text-red-800">
             Error adding record:{" "}
             {addRecordMutation.error instanceof Error
               ? addRecordMutation.error.message
               : "Unknown error"}
-          </p>
+          </P>
         </div>
       )}
 
