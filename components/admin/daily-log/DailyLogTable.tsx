@@ -20,7 +20,14 @@ import {
   Duration,
   Addon,
 } from "@/lib/types/massage"
-import { Trash2, Search, ChevronDown, ArrowUpDown, Info } from "lucide-react"
+import {
+  Trash2,
+  Search,
+  ChevronDown,
+  ArrowUpDown,
+  Info,
+  Funnel,
+} from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -51,6 +58,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 interface DailyLogTableProps {
   records: MassageRecord[]
@@ -149,6 +161,10 @@ export const DailyLogTable = memo(function DailyLogTable({
           )
         },
         cell: ({ row }) => <div>{row.getValue("staff")}</div>,
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+          return value.length === 0 || value.includes(row.getValue(id))
+        },
       },
       {
         accessorKey: "service_name",
@@ -260,30 +276,15 @@ export const DailyLogTable = memo(function DailyLogTable({
         accessorKey: "Pay",
         header: ({ column }) => {
           return (
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                Pay
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 cursor-help text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">
-                      The amount paid to the staff member for this service,
-                      calculated based on service type, duration, and add-ons.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Pay
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
           )
         },
         cell: ({ row }) => {
@@ -301,24 +302,7 @@ export const DailyLogTable = memo(function DailyLogTable({
       {
         id: "income",
         header: () => {
-          return (
-            <div className="flex items-center gap-1">
-              <span>Income</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 cursor-help text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">
-                      Total income for the staff member including their pay plus
-                      any tips received.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          )
+          return <span>Income</span>
         },
         cell: ({ row }) => {
           const record = row.original
@@ -396,6 +380,7 @@ export const DailyLogTable = memo(function DailyLogTable({
       {/* Filters and Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 items-center space-x-2">
+          {/* Search bar always visible */}
           <div className="relative max-w-sm flex-1">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -405,50 +390,167 @@ export const DailyLogTable = memo(function DailyLogTable({
               className="bg-white pl-8"
             />
           </div>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}
-          >
-            <SelectTrigger className="w-[180px] bg-white">
-              <SelectValue placeholder="Select page size" />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize} rows
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
+          {/* Desktop filters */}
+          <div className="hidden items-center space-x-2 sm:flex">
+            {/* Staff Filter */}
+            <Select
+              value={
+                (table.getColumn("staff")?.getFilterValue() as string) ?? ""
+              }
+              onValueChange={(value) => {
+                table
+                  .getColumn("staff")
+                  ?.setFilterValue(value === "all" ? "" : value)
+              }}
+            >
+              <SelectTrigger className="w-[180px] bg-white">
+                <SelectValue placeholder="Filter by staff" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Staff</SelectItem>
+                {Array.from(new Set(records.map((record) => record.staff)))
+                  .sort()
+                  .map((staff) => (
+                    <SelectItem key={staff} value={staff}>
+                      {staff}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+
+            {/* Rows per page */}
+            <Select
+              value={`${table.getState().pagination.pageSize}`}
+              onValueChange={(value) => {
+                table.setPageSize(Number(value))
+              }}
+            >
+              <SelectTrigger className="w-[180px] bg-white">
+                <SelectValue placeholder="Select page size" />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize} rows
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Columns selection */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Mobile: Popover for filters */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="sm:hidden">
+                <Funnel className="mr-2 h-4 w-4" />
+                Filters
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-64 space-y-4 p-4">
+              {/* Staff Filter */}
+              <Select
+                value={
+                  (table.getColumn("staff")?.getFilterValue() as string) ?? ""
+                }
+                onValueChange={(value) => {
+                  table
+                    .getColumn("staff")
+                    ?.setFilterValue(value === "all" ? "" : value)
+                }}
+              >
+                <SelectTrigger className="w-full bg-white">
+                  <SelectValue placeholder="Filter by staff" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Staff</SelectItem>
+                  {Array.from(new Set(records.map((record) => record.staff)))
+                    .sort()
+                    .map((staff) => (
+                      <SelectItem key={staff} value={staff}>
+                        {staff}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+
+              {/* Rows per page */}
+              <Select
+                value={`${table.getState().pagination.pageSize}`}
+                onValueChange={(value) => {
+                  table.setPageSize(Number(value))
+                }}
+              >
+                <SelectTrigger className="w-full bg-white">
+                  <SelectValue placeholder="Select page size" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize} rows
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Columns selection */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    Columns <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          className="capitalize"
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) =>
+                            column.toggleVisibility(!!value)
+                          }
+                        >
+                          {column.id}
+                        </DropdownMenuCheckboxItem>
+                      )
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </PopoverContent>
+          </Popover>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {/* Table */}
