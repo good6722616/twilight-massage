@@ -8,7 +8,7 @@ import { DailyLogTable } from "@/components/admin/daily-log/DailyLogTable"
 import { DailyLogSummary } from "@/components/admin/daily-log/DailyLogSummary"
 import { MassageRecord } from "@/lib/types/massage"
 import { getTodaysDailyLogs } from "@/services/dailyLogService"
-import { H1 } from "@/components/ui/typography"
+import { H1, H2 } from "@/components/ui/typography"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -156,9 +156,7 @@ export default function DailyLogPage() {
   if (isError) {
     return (
       <div className="mx-auto px-4 py-8">
-        <H1 size="3xl" weight="bold" className="mb-8 text-gray-900">
-          Daily Log
-        </H1>
+        <H1 className="mb-8 text-3xl font-bold text-gray-900">Daily Log</H1>
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <h3 className="font-medium text-red-800">Error loading records</h3>
           <p className="mt-1 text-sm text-red-600">
@@ -171,13 +169,11 @@ export default function DailyLogPage() {
 
   return (
     <div className="mx-auto px-4 py-8">
-      <div className="mb-8">
+      <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <DailyLogSummary records={records} />
       </div>
       <div className="mb-6 flex items-center gap-4">
-        <H1 size="3xl" weight="bold" className="text-gray-900">
-          Daily Log
-        </H1>
+        <H2 className="text-3xl text-gray-900">Daily Log</H2>
         <Button
           onClick={() => setSheetOpen(true)}
           size="lg"
@@ -186,11 +182,13 @@ export default function DailyLogPage() {
           Add Record
         </Button>
       </div>
+
       <DailyLogTable
         records={records}
         onDelete={handleDeleteRecord}
         isUpdating={addRecordMutation.isPending || isLoading}
       />
+
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-full p-8 sm:max-w-xl sm:p-6">
           <SheetHeader>

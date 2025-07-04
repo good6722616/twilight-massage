@@ -7,7 +7,7 @@ import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
-import { H2, Small, Muted } from "@/components/ui/typography"
+import { H2, Muted } from "@/components/ui/typography"
 import { Check } from "lucide-react"
 import {
   Form,
@@ -30,11 +30,9 @@ import {
   Duration,
   Addon,
   MASSAGE_TYPES,
-  DURATIONS,
   ADDONS,
   DISCOUNTS,
   STAFFS,
-  STAFF_SERVICE_INCOME,
   Discount,
   SERVICE_PRICES,
   calculateStaffIncome,
@@ -286,9 +284,9 @@ export function DailyLogForm({
                   Duration
                 </FormLabel>
                 {!selectedType && (
-                  <Small className="font-medium text-green-600">
+                  <span className="text-sm font-medium text-green-600">
                     Please select a massage type first
-                  </Small>
+                  </span>
                 )}
               </div>
               <Select

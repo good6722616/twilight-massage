@@ -20,14 +20,7 @@ import {
   Duration,
   Addon,
 } from "@/lib/types/massage"
-import {
-  Trash2,
-  Search,
-  ChevronDown,
-  ArrowUpDown,
-  Info,
-  Funnel,
-} from "lucide-react"
+import { Trash2, Search, ChevronDown, ArrowUpDown, Funnel } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -52,12 +45,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import {
   Popover,
   PopoverContent,

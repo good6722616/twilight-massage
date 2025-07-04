@@ -7,10 +7,11 @@ import {
   type Addon,
 } from "@/lib/types/massage"
 import { Badge } from "@/components/ui/badge"
-import { H1, H2, H3, P } from "@/components/ui/typography"
+import { H2, H4 } from "@/components/ui/typography"
 import { FileText, DollarSign, Users, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 interface DailyLogSummaryProps {
   records: MassageRecord[]
@@ -72,7 +73,7 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
       {/* Overall Summary */}
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex items-center gap-4">
-          <H1 className="whitespace-nowrap">Today&apos;s Summary</H1>
+          <H2 className="whitespace-nowrap">Today&apos;s Summary</H2>
           <span className="text-xl text-gray-500">
             {format(new Date(), "MMMM dd, yyyy")}
           </span>
@@ -103,57 +104,74 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-gray-600" />
-          <H3 size="lg" weight="semibold" className="text-gray-900">
+          <H4 className="font-bold tracking-tight text-gray-900">
             Staff Income Breakdown
-          </H3>
+          </H4>
         </div>
         {staffList.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Tabs defaultValue={staffList[0].name} className="w-full">
+            <TabsList className="mb-4 flex flex-wrap gap-2">
+              {staffList.map((staff) => (
+                <TabsTrigger
+                  key={staff.name}
+                  value={staff.name}
+                  className="capitalize"
+                >
+                  {staff.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
             {staffList.map((staff) => (
-              <Card
+              <TabsContent
                 key={staff.name}
-                className="border-l-4 border-l-blue-500 transition-shadow hover:shadow-md"
+                value={staff.name}
+                className="w-full"
               >
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center justify-between text-lg">
-                    <span className="font-semibold text-gray-900">
-                      {staff.name}
-                    </span>
-                    <Badge variant="secondary" className="text-xs">
-                      {staff.recordCount}{" "}
-                      {staff.recordCount === 1 ? "service" : "services"}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Total Income:</span>
-                    <span className="text-lg font-bold text-green-600">
-                      ${staff.totalIncome.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>Base Pay:</span>
-                    <span>${staff.totalPay.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>Tips:</span>
-                    <span>${staff.totalTips.toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-gray-100 pt-2">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <TrendingUp className="h-3 w-3" />
-                      <span>
-                        Avg: $
-                        {(staff.totalIncome / staff.recordCount).toFixed(2)} per
-                        service
+                <Card className="max-w-lg border-l-4 border-l-blue-500 transition-shadow hover:shadow-md">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center justify-between text-xl font-bold text-gray-900">
+                      <span>{staff.name}</span>
+                      <Badge
+                        variant="secondary"
+                        className="text-sm font-semibold"
+                      >
+                        {staff.recordCount}{" "}
+                        {staff.recordCount === 1 ? "service" : "services"}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-gray-600">
+                        Total Income:
+                      </span>
+                      <span className="text-xl font-bold text-green-600">
+                        ${staff.totalIncome.toFixed(2)}
                       </span>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Base Pay:</span>
+                      <span>${staff.totalPay.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>Tips:</span>
+                      <span>${staff.totalTips.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t border-gray-100 pt-2">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>
+                          Avg: $
+                          {(staff.totalIncome / staff.recordCount).toFixed(2)}{" "}
+                          per service
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
         ) : (
           <div className="p-4 italic text-gray-500">
             No staff records for today.
