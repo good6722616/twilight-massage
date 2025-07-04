@@ -46,10 +46,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <H1 size="3xl" weight="bold" className="text-gray-900">
-          Dashboard
-        </H1>
-        <P size="base" className="mt-2 text-gray-600">
+        <H1 className="text-3xl font-bold text-gray-900">Dashboard</H1>
+        <P className="mt-2 text-base text-gray-600">
           Welcome to Twilight Massage admin portal
         </P>
       </div>
