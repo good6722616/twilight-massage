@@ -3,7 +3,6 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { H1, P } from "@/components/ui/typography"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Home, Calendar, Settings } from "lucide-react"
 
@@ -22,10 +21,8 @@ export default function AdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <H1 size="3xl" weight="bold" className="text-gray-900">
-          Admin Portal
-        </H1>
-        <P size="base" className="mt-2 text-gray-600">
+        <H1 className="text-3xl font-bold text-gray-900">Admin Portal</H1>
+        <P className="mt-2 text-base text-gray-600">
           Welcome to Twilight Massage administration
         </P>
       </div>
@@ -87,9 +84,7 @@ export default function AdminPage() {
       </div>
 
       <div className="text-center">
-        <P size="sm" className="text-gray-500">
-          Redirecting to dashboard...
-        </P>
+        <P className="text-sm text-gray-500">Redirecting to dashboard...</P>
       </div>
     </div>
   )

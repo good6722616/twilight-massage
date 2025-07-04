@@ -9,7 +9,7 @@ import {
 } from "@clerk/nextjs"
 import { AppSidebar } from "@/components/admin/app-sidebar"
 import { QueryProvider } from "@/components/providers/query-provider"
-import { H1, H2, H3 } from "@/components/ui/typography"
+import { H3 } from "@/components/ui/typography"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 
@@ -86,7 +86,7 @@ export default function AdminLayout({
                     <Menu className="h-5 w-5" />
                   </Button>
                   <div>
-                    <H3 size="lg" weight="semibold" className="text-gray-900">
+                    <H3 className="text-lg font-semibold text-gray-900">
                       Twilight Massage
                     </H3>
                   </div>
