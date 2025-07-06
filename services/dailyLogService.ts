@@ -53,3 +53,18 @@ export async function deleteDailyLog(id: string, token: string): Promise<void> {
   const { error } = await supabase.from("massage_records").delete().eq("id", id)
   if (error) throw error
 }
+
+// Fetch daily logs for a specific date
+export async function getDailyLogsByDate(
+  token: string,
+  date: string
+): Promise<MassageRecord[]> {
+  const supabase = createSupabaseClient(token)
+  const { data, error } = await supabase
+    .from("massage_records")
+    .select("*")
+    .eq("date", date)
+    .order("created_at", { ascending: false })
+  if (error) throw error
+  return data as MassageRecord[]
+}
