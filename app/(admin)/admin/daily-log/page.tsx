@@ -168,7 +168,7 @@ export default function DailyLogPage() {
   }
 
   return (
-    <div className="mx-auto px-4 py-8">
+    <div className="mx-auto px-2 py-2">
       <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <DailyLogSummary records={records} />
       </div>
@@ -190,15 +190,19 @@ export default function DailyLogPage() {
       />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-full p-8 sm:max-w-xl sm:p-6">
-          <SheetHeader>
-            <SheetTitle>Add Daily Log</SheetTitle>
-          </SheetHeader>
-          <DailyLogForm
-            onSubmit={handleAddRecord}
-            isSubmitting={addRecordMutation.isPending}
-            isSuccess={addRecordMutation.isSuccess}
-          />
+        <SheetContent side="right" className="w-full p-0 sm:max-w-xl">
+          <div className="flex h-full max-h-screen flex-col">
+            <SheetHeader className="flex-shrink-0 border-b border-gray-200 px-6 py-4">
+              <SheetTitle>Add Daily Log</SheetTitle>
+            </SheetHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+              <DailyLogForm
+                onSubmit={handleAddRecord}
+                isSubmitting={addRecordMutation.isPending}
+                isSuccess={addRecordMutation.isSuccess}
+              />
+            </div>
+          </div>
         </SheetContent>
       </Sheet>
     </div>

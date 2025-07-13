@@ -7,7 +7,7 @@ import { Toaster } from "sonner"
 import { Metadata } from "next"
 import { GoogleAnalytics } from "@next/third-parties/google"
 import { ClerkProvider } from "@clerk/nextjs"
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const urbanist = Urbanist({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -179,6 +179,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             `,
           }}
         />
+        <SpeedInsights />
       </body>
     </html>
   )

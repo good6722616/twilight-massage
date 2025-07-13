@@ -121,20 +121,19 @@ export function AppSidebar() {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
-                <Link
+                <div
                   key={item.name}
-                  href={item.href}
-                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
+                  className={`group flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 opacity-50 transition-all duration-200 ${
                     isActive
                       ? "bg-orange-50 text-orange-700 shadow-sm"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      : "text-gray-700"
                   }`}
                 >
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
                       isActive
                         ? "bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg"
-                        : "bg-gray-200 text-gray-600 group-hover:bg-gray-300"
+                        : "bg-gray-200 text-gray-600"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -143,7 +142,7 @@ export function AppSidebar() {
                   {isActive && (
                     <div className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-orange-500 to-red-600" />
                   )}
-                </Link>
+                </div>
               )
             })}
           </nav>

@@ -233,10 +233,4 @@ export function calculateStoreIncome(records: MassageRecord[]): number {
   }, 0)
 }
 
-export const STAFFS: Staff[] = [
-  "Vivian Zhang",
-  "Sarah Jin",
-  "Yoyo Lu",
-  "Daisy L",
-  "Anna",
-]
+export const STAFFS: Staff[] = ["Vivian Zhang", "Sarah Jin", "Yoyo Lu", "Anna"]
