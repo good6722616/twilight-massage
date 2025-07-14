@@ -151,11 +151,16 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>Base Pay:</span>
-                      <span>${staff.totalPay.toFixed(2)}</span>
+                      <span className="font-semibold">
+                        ${staff.totalPay.toFixed(2)}
+                      </span>
                     </div>
+                    <div className="border-t border-gray-100"></div>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>Tips:</span>
-                      <span>${staff.totalTips.toFixed(2)}</span>
+                      <span className="font-semibold">
+                        ${staff.totalTips.toFixed(2)}
+                      </span>
                     </div>
                     <div className="border-t border-gray-100 pt-2">
                       <div className="flex items-center gap-1 text-xs text-gray-500">

@@ -256,7 +256,9 @@ export const DailyLogTable = memo(function DailyLogTable({
         },
         cell: ({ row }) => {
           const tip = parseFloat(row.getValue("tip"))
-          return <div className="font-medium">${tip.toFixed(2)}</div>
+          return (
+            <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+          )
         },
       },
       {
@@ -282,7 +284,9 @@ export const DailyLogTable = memo(function DailyLogTable({
             (record.add_ons as string[]).map((a) => a as Addon)
           )
           return (
-            <div className="font-medium">{formatCurrency(staffIncome)}</div>
+            <div className="font-medium text-green-600">
+              {formatCurrency(staffIncome)}
+            </div>
           )
         },
       },
@@ -302,7 +306,9 @@ export const DailyLogTable = memo(function DailyLogTable({
             typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
           const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
           return (
-            <div className="font-medium">{formatCurrency(overallIncome)}</div>
+            <div className="font-bold text-green-700">
+              {formatCurrency(overallIncome)}
+            </div>
           )
         },
       },
