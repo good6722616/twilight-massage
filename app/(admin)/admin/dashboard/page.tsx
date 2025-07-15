@@ -3,27 +3,20 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
-import { Calendar } from "lucide-react"
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { H1 } from "@/components/ui/typography"
 import { getDailyLogsByDate } from "@/services/dailyLogService"
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover"
-import { Calendar as DatePicker } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { DashboardStats } from "@/components/admin/dashboard/DashboardStats"
-import { calculateStoreIncome } from "@/lib/types/massage"
+import { DateSelector } from "@/components/admin/dashboard/DateSelector"
+import { ServiceRecordsList } from "@/components/admin/dashboard/ServiceRecordsList"
+import { LoadingSpinner } from "@/components/admin/dashboard/LoadingSpinner"
+import {
+  calculateStoreIncome,
+  calculateStaffIncome,
+  type MassageType,
+  type Duration,
+  type Addon,
+} from "@/lib/types/massage"
 
 export default function DashboardPage() {
   const { getToken } = useAuth()
@@ -42,9 +35,26 @@ export default function DashboardPage() {
     staleTime: 5 * 60 * 1000,
   })
 
+  const totalStaffPays = records.reduce((total, record) => {
+    const staffIncome = calculateStaffIncome(
+      record.service_name as MassageType,
+      record.duration as Duration,
+      record.add_ons as Addon[]
+    )
+    return total + staffIncome
+  }, 0)
+
+  const totalTips = records.reduce((total, record) => {
+    const tip =
+      typeof record.tip === "number" ? record.tip : parseFloat(record.tip) || 0
+    return total + tip
+  }, 0)
+
   const todayStats = {
     totalClients: records.length,
     totalRevenue: calculateStoreIncome(records),
+    totalStaffPays,
+    totalTips,
   }
 
   return (
@@ -56,86 +66,24 @@ export default function DashboardPage() {
             Service records for {format(selectedDate, "MMMM dd, yyyy")}
           </p>
         </div>
-        <div className="flex flex-1 justify-end">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex h-9 w-auto min-w-0 items-center gap-2 px-3 text-sm font-medium"
-              >
-                <Calendar className="mr-1 h-4 w-4" />
-                {format(selectedDate, "yyyy-MM-dd")}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-auto p-0">
-              <DatePicker
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+        <DateSelector
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
       </div>
 
-      {isLoading && (
-        <div className="flex min-h-[200px] items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500" />
-        </div>
-      )}
-
-      {!isLoading && (
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
         <>
           <DashboardStats
             totalClients={todayStats.totalClients}
             totalRevenue={todayStats.totalRevenue}
+            totalStaffPays={todayStats.totalStaffPays}
+            totalTips={todayStats.totalTips}
           />
 
-          {/* Appointments List */}
-          {records.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Service Records for {format(selectedDate, "MMMM dd, yyyy")}
-                </CardTitle>
-                <CardDescription>
-                  All services for the selected date
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {records.slice(0, 5).map((record) => (
-                    <div
-                      key={record.id}
-                      className="flex items-center justify-between border-b py-2 last:border-0"
-                    >
-                      <div>
-                        <p className="font-medium">{record.staff}</p>
-                        <p className="text-sm text-gray-600">
-                          {record.service_name}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          ${record.income?.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {record.duration}min
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {records.length > 5 && (
-                  <div className="mt-4 border-t pt-4 text-center text-sm text-gray-500">
-                    Showing 5 of {records.length} services
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <ServiceRecordsList records={records} selectedDate={selectedDate} />
         </>
       )}
     </div>
