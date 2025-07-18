@@ -68,3 +68,19 @@ export async function getDailyLogsByDate(
   if (error) throw error
   return data as MassageRecord[]
 }
+
+// Update a daily log by id
+export async function updateDailyLog(
+  id: string,
+  record: Omit<MassageRecord, "id" | "created_at" | "user_id">,
+  token: string
+): Promise<MassageRecord> {
+  const supabase = createSupabaseClient(token)
+  const { data, error } = await supabase
+    .from("massage_records")
+    .update(record)
+    .eq("id", id)
+    .select()
+  if (error) throw error
+  return data?.[0] as MassageRecord
+}

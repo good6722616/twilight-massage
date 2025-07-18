@@ -2,7 +2,6 @@
 
 import { memo, useState, useMemo } from "react"
 import {
-  ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -13,17 +12,10 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import {
-  MassageRecord,
-  calculateStaffIncome,
-  MassageType,
-  Duration,
-  Addon,
-} from "@/lib/types/massage"
-import { Trash2, Search, ChevronDown, ArrowUpDown, Funnel } from "lucide-react"
+import { MassageRecord } from "@/lib/types/massage"
+import { Search, ChevronDown, Funnel } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -50,43 +42,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { getDailyLogColumns } from "./columns"
 
 interface DailyLogTableProps {
   records: MassageRecord[]
   onDelete: (recordId: string) => void
+  onEdit: (record: MassageRecord) => void
   isUpdating?: boolean
-}
-
-function formatTimeSlot(timeSlot: string) {
-  try {
-    const [from, to] = timeSlot.split("–")
-    const format = (t: string) => {
-      if (!t) return ""
-      const [h, m] = t.split(":")
-      const date = new Date()
-      date.setHours(Number(h), Number(m))
-      return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    }
-    return `${format(from)}–${format(to)}`
-  } catch (error) {
-    console.error("Error formatting time slot:", timeSlot, error)
-    return timeSlot // Fallback to original value
-  }
-}
-
-function formatCurrency(amount: number) {
-  return `$${amount.toFixed(2)}`
 }
 
 export const DailyLogTable = memo(function DailyLogTable({
   records,
   onDelete,
+  onEdit,
   isUpdating = false,
 }: DailyLogTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  // Remove rowSelection state
+  // const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
 
@@ -106,240 +81,9 @@ export const DailyLogTable = memo(function DailyLogTable({
     }
   }
 
-  const columns: ColumnDef<MassageRecord>[] = useMemo(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        accessorKey: "staff",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Staff
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => <div>{row.getValue("staff")}</div>,
-        enableColumnFilter: true,
-        filterFn: (row, id, value) => {
-          return value.length === 0 || value.includes(row.getValue(id))
-        },
-      },
-      {
-        accessorKey: "service_name",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Type
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => <div>{row.getValue("service_name")}</div>,
-      },
-      {
-        accessorKey: "duration",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Duration
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => <div>{row.getValue("duration")} min</div>,
-      },
-      {
-        accessorKey: "time_slot",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Time Slot
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => (
-          <div>{formatTimeSlot(row.getValue("time_slot"))}</div>
-        ),
-      },
-      {
-        accessorKey: "discount",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Discount
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => <div>{row.getValue("discount")}%</div>,
-      },
-      {
-        accessorKey: "add_ons",
-        header: "Add-ons",
-        cell: ({ row }) => {
-          const addOns = row.getValue("add_ons") as string[]
-          return addOns.length > 0 ? (
-            <ul className="list-inside list-disc">
-              {addOns.map((addon: string) => (
-                <li key={addon}>{addon}</li>
-              ))}
-            </ul>
-          ) : (
-            <span className="text-muted-foreground">None</span>
-          )
-        },
-      },
-      {
-        accessorKey: "tip",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Tip
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => {
-          const tip = parseFloat(row.getValue("tip"))
-          return (
-            <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
-          )
-        },
-      },
-      {
-        accessorKey: "Pay",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Pay
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
-        cell: ({ row }) => {
-          const record = row.original
-          const staffIncome = calculateStaffIncome(
-            record.service_name as MassageType,
-            record.duration as Duration,
-            (record.add_ons as string[]).map((a) => a as Addon)
-          )
-          return (
-            <div className="font-medium text-green-600">
-              {formatCurrency(staffIncome)}
-            </div>
-          )
-        },
-      },
-      {
-        id: "income",
-        header: () => {
-          return <span>Income</span>
-        },
-        cell: ({ row }) => {
-          const record = row.original
-          const staffIncome = calculateStaffIncome(
-            record.service_name as MassageType,
-            record.duration as Duration,
-            (record.add_ons as string[]).map((a) => a as Addon)
-          )
-          const tip =
-            typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
-          const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
-          return (
-            <div className="font-bold text-green-700">
-              {formatCurrency(overallIncome)}
-            </div>
-          )
-        },
-      },
-      {
-        id: "actions",
-        enableHiding: false,
-        accessorKey: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-          const record = row.original
-          const isDeleting = deletingIds.has(record.id)
-
-          return (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDelete(record.id)}
-              disabled={isDeleting}
-              className="text-destructive hover:text-destructive"
-            >
-              {isDeleting ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-            </Button>
-          )
-        },
-      },
-    ],
-    [onDelete, deletingIds]
+  const columns = useMemo(
+    () => getDailyLogColumns({ onEdit, onDelete: handleDelete, deletingIds }),
+    [onEdit, onDelete, deletingIds]
   )
 
   const table = useReactTable({
@@ -348,7 +92,7 @@ export const DailyLogTable = memo(function DailyLogTable({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    // Remove onRowSelectionChange and rowSelection from state
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -358,7 +102,7 @@ export const DailyLogTable = memo(function DailyLogTable({
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
+      // rowSelection, // remove
       globalFilter,
     },
     initialState: {
@@ -613,11 +357,8 @@ export const DailyLogTable = memo(function DailyLogTable({
       </div>
 
       {/* Pagination and Selection Info */}
+      {/* Remove selection info from pagination/footer */}
       <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
 import { DailyLogForm } from "@/components/admin/daily-log/DailyLogForm"
+import { EditLogForm } from "@/components/admin/daily-log/EditLogForm"
 import { DailyLogTable } from "@/components/admin/daily-log/DailyLogTable"
 import { DailyLogSummary } from "@/components/admin/daily-log/DailyLogSummary"
 import { MassageRecord } from "@/lib/types/massage"
@@ -16,11 +17,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { RefreshCw } from "lucide-react"
 
 export default function DailyLogPage() {
   const { getToken } = useAuth()
   const queryClient = useQueryClient()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [editingRecord, setEditingRecord] = useState<MassageRecord | null>(null)
 
   // Query to fetch today's records
   const {
@@ -101,6 +104,70 @@ export default function DailyLogPage() {
         addRecordMutation.reset()
       }, 3000)
       setSheetOpen(false)
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs"] }) // Invalidate dashboard queries
+    },
+  })
+
+  // Mutation to update a record
+  const updateRecordMutation = useMutation({
+    mutationFn: async ({
+      id,
+      record,
+    }: {
+      id: string
+      record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+    }) => {
+      const response = await fetch(`/api/daily-log?id=${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(record),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to update record")
+      }
+
+      return response.json()
+    },
+    onMutate: async ({ id, record }) => {
+      await queryClient.cancelQueries({ queryKey: ["dailyLogs", "today"] })
+      const previousRecords = queryClient.getQueryData(["dailyLogs", "today"])
+      queryClient.setQueryData(
+        ["dailyLogs", "today"],
+        (old: MassageRecord[] = []) =>
+          old.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  ...record,
+                }
+              : r
+          )
+      )
+      return { previousRecords }
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousRecords) {
+        queryClient.setQueryData(
+          ["dailyLogs", "today"],
+          context.previousRecords
+        )
+      }
+      console.error("Error updating record:", err)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs", "today"] })
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        updateRecordMutation.reset()
+      }, 3000)
+      setEditingRecord(null)
+      setSheetOpen(false)
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs"] }) // Invalidate dashboard queries
     },
   })
 
@@ -148,8 +215,31 @@ export default function DailyLogPage() {
     addRecordMutation.mutate(record)
   }
 
+  const handleUpdateRecord = (
+    record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+  ) => {
+    if (editingRecord) {
+      updateRecordMutation.mutate({ id: editingRecord.id, record })
+    }
+  }
+
+  const handleEditRecord = (record: MassageRecord) => {
+    setEditingRecord(record)
+    setSheetOpen(true)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingRecord(null)
+    setSheetOpen(false)
+  }
+
   const handleDeleteRecord = async (recordId: string) => {
     return deleteRecordMutation.mutateAsync(recordId)
+  }
+
+  const handleAddClick = () => {
+    setEditingRecord(null)
+    setSheetOpen(true)
   }
 
   // Error state
@@ -175,7 +265,21 @@ export default function DailyLogPage() {
       <div className="mb-6 flex items-center gap-4">
         <H2 className="text-3xl text-gray-900">Daily Log</H2>
         <Button
-          onClick={() => setSheetOpen(true)}
+          variant="outline"
+          size="icon"
+          onClick={() =>
+            queryClient.invalidateQueries({ queryKey: ["dailyLogs", "today"] })
+          }
+          className="ml-2"
+          aria-label="Refresh"
+          disabled={isLoading}
+        >
+          <RefreshCw
+            className={`h-5 w-5 transition-transform ${isLoading ? "animate-spin" : ""}`}
+          />
+        </Button>
+        <Button
+          onClick={handleAddClick}
           size="lg"
           className="bg-gradient-to-r from-orange-500 to-red-600 text-base text-white hover:from-orange-600 hover:to-red-700 sm:text-lg"
         >
@@ -186,21 +290,38 @@ export default function DailyLogPage() {
       <DailyLogTable
         records={records}
         onDelete={handleDeleteRecord}
-        isUpdating={addRecordMutation.isPending || isLoading}
+        onEdit={handleEditRecord}
+        isUpdating={
+          addRecordMutation.isPending ||
+          updateRecordMutation.isPending ||
+          isLoading
+        }
       />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-full p-0 sm:max-w-xl">
           <div className="flex h-full max-h-screen flex-col">
             <SheetHeader className="flex-shrink-0 border-b border-gray-200 px-6 py-4">
-              <SheetTitle>Add Daily Log</SheetTitle>
+              <SheetTitle>
+                {editingRecord ? "Edit Daily Log" : "Add Daily Log"}
+              </SheetTitle>
             </SheetHeader>
             <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-              <DailyLogForm
-                onSubmit={handleAddRecord}
-                isSubmitting={addRecordMutation.isPending}
-                isSuccess={addRecordMutation.isSuccess}
-              />
+              {editingRecord ? (
+                <EditLogForm
+                  record={editingRecord}
+                  onSubmit={handleUpdateRecord}
+                  onCancel={handleCancelEdit}
+                  isSubmitting={updateRecordMutation.isPending}
+                  isSuccess={updateRecordMutation.isSuccess}
+                />
+              ) : (
+                <DailyLogForm
+                  onSubmit={handleAddRecord}
+                  isSubmitting={addRecordMutation.isPending}
+                  isSuccess={addRecordMutation.isSuccess}
+                />
+              )}
             </div>
           </div>
         </SheetContent>

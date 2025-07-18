@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
@@ -39,49 +38,46 @@ import {
 } from "@/lib/types/massage"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 
-interface DailyLogFormProps {
+interface EditLogFormProps {
+  record: MassageRecord
   onSubmit: (
     record: Omit<MassageRecord, "id" | "created_at" | "user_id">
   ) => void
+  onCancel: () => void
   isSubmitting?: boolean
   isSuccess?: boolean
 }
 
-export function DailyLogForm({
+export function EditLogForm({
+  record,
   onSubmit,
+  onCancel,
   isSubmitting = false,
   isSuccess = false,
-}: DailyLogFormProps) {
-  const today = new Date()
+}: EditLogFormProps) {
   const [showSuccess, setShowSuccess] = useState(false)
+
+  // Parse time slot for edit mode
+  const parseTimeSlot = (timeSlot: string) => {
+    const [from, to] = timeSlot.split("–")
+    return { from: from || "", to: to || "" }
+  }
 
   const form = useForm<DailyLogFormValues>({
     resolver: zodResolver(dailyLogFormSchema),
     defaultValues: {
-      staff: "",
-      type: "",
-      duration: "",
-      discount: "",
-      addOns: [],
-      tip: "",
-      timeSlot: { from: "", to: "" },
+      staff: record.staff || "",
+      type: record.service_name || "",
+      duration: record.duration?.toString() || "",
+      discount: record.discount?.toString() || "",
+      addOns: record.add_ons || [],
+      tip: record.tip?.toString() || "",
+      timeSlot: record.time_slot
+        ? parseTimeSlot(record.time_slot)
+        : { from: "", to: "" },
     },
     mode: "onSubmit", // Only validate when form is submitted
   })
-
-  // Reset form every time the component mounts (sheet opens)
-  useEffect(() => {
-    form.reset({
-      staff: "",
-      type: "",
-      duration: "",
-      discount: "",
-      addOns: [],
-      tip: "",
-      timeSlot: { from: "", to: "" },
-    })
-    // eslint-disable-next-line
-  }, [])
 
   const selectedType = form.watch("type") as MassageType | undefined
   const availableDurations = useMemo(() => {
@@ -125,8 +121,8 @@ export function DailyLogForm({
       )
 
       // Create the massage record
-      const record = {
-        date: today.toLocaleDateString("en-CA"),
+      const recordData = {
+        date: record.date, // Keep the original date
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
         service_name: massageType,
@@ -140,18 +136,7 @@ export function DailyLogForm({
       }
 
       // Call the parent's onSubmit function
-      onSubmit(record)
-
-      // Reset form on successful submission
-      form.reset({
-        staff: "",
-        type: "",
-        duration: "",
-        discount: "",
-        addOns: [],
-        tip: "",
-        timeSlot: { from: "", to: "" },
-      })
+      onSubmit(recordData)
     } catch (error) {
       console.error("Error preparing form data:", error)
     }
@@ -163,7 +148,7 @@ export function DailyLogForm({
       return (
         <>
           <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          Adding...
+          Updating...
         </>
       )
     }
@@ -172,7 +157,7 @@ export function DailyLogForm({
       return <Check className="h-4 w-4" />
     }
 
-    return "Submit"
+    return "Update"
   }
 
   // Button className based on state
@@ -186,9 +171,8 @@ export function DailyLogForm({
   return (
     <Form {...form}>
       <div className="mb-6">
-        <H2 className="text-2xl font-semibold text-gray-900">
-          {format(today, "MMMM dd, yyyy")}
-        </H2>
+        <H2 className="text-2xl font-semibold text-gray-900">Edit Record</H2>
+        <p className="mt-1 text-sm text-gray-600">Record ID: {record.id}</p>
       </div>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
@@ -412,13 +396,23 @@ export function DailyLogForm({
           )}
         />
 
-        <Button
-          type="submit"
-          disabled={isSubmitting || showSuccess}
-          className="w-32"
-        >
-          {getButtonContent()}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="submit"
+            disabled={isSubmitting || showSuccess}
+            className={getButtonClassName()}
+          >
+            {getButtonContent()}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
     </Form>
   )

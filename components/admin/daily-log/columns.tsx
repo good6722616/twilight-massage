@@ -1,0 +1,247 @@
+import { ArrowUpDown, Edit, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  MassageRecord,
+  calculateStaffIncome,
+  MassageType,
+  Duration,
+  Addon,
+} from "@/lib/types/massage"
+import { ColumnDef } from "@tanstack/react-table"
+
+function formatTimeSlot(timeSlot: string) {
+  try {
+    const [from, to] = timeSlot.split("–")
+    const format = (t: string) => {
+      if (!t) return ""
+      const [h, m] = t.split(":")
+      const date = new Date()
+      date.setHours(Number(h), Number(m))
+      return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+    }
+    return `${format(from)}–${format(to)}`
+  } catch (error) {
+    console.error("Error formatting time slot:", timeSlot, error)
+    return timeSlot // Fallback to original value
+  }
+}
+
+function formatCurrency(amount: number) {
+  return `$${amount.toFixed(2)}`
+}
+
+interface GetDailyLogColumnsParams {
+  onEdit: (record: MassageRecord) => void
+  onDelete: (recordId: string) => void
+  deletingIds: Set<string>
+}
+
+export function getDailyLogColumns({
+  onEdit,
+  onDelete,
+  deletingIds,
+}: GetDailyLogColumnsParams): ColumnDef<MassageRecord>[] {
+  return [
+    {
+      accessorKey: "staff",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Staff
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("staff")}</div>,
+      enableColumnFilter: true,
+      filterFn: (row, id, value) => {
+        return value.length === 0 || value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "service_name",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Type
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("service_name")}</div>,
+    },
+    {
+      accessorKey: "duration",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Duration
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("duration")} 0min</div>,
+    },
+    {
+      accessorKey: "time_slot",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Time Slot
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{formatTimeSlot(row.getValue("time_slot"))}</div>,
+    },
+    {
+      accessorKey: "discount",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Discount
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("discount")}%</div>,
+    },
+    {
+      accessorKey: "add_ons",
+      header: "Add-ons",
+      cell: ({ row }) => {
+        const addOns = row.getValue("add_ons") as string[]
+        return addOns.length > 0 ? (
+          <ul className="list-inside list-disc">
+            {addOns.map((addon: string) => (
+              <li key={addon}>{addon}</li>
+            ))}
+          </ul>
+        ) : (
+          <span className="text-muted-foreground">None</span>
+        )
+      },
+    },
+    {
+      accessorKey: "tip",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tip
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const tip = parseFloat(row.getValue("tip"))
+        return (
+          <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+        )
+      },
+    },
+    {
+      accessorKey: "Pay",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Pay
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const record = row.original
+        const staffIncome = calculateStaffIncome(
+          record.service_name as MassageType,
+          record.duration as Duration,
+          (record.add_ons as string[]).map((a) => a as Addon)
+        )
+        return (
+          <div className="font-medium text-green-600">
+            {formatCurrency(staffIncome)}
+          </div>
+        )
+      },
+    },
+    {
+      id: "income",
+      header: () => <span>Income</span>,
+      cell: ({ row }) => {
+        const record = row.original
+        const staffIncome = calculateStaffIncome(
+          record.service_name as MassageType,
+          record.duration as Duration,
+          (record.add_ons as string[]).map((a) => a as Addon)
+        )
+        const tip =
+          typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
+        const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
+        return (
+          <div className="font-bold text-green-700">
+            {formatCurrency(overallIncome)}
+          </div>
+        )
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const record = row.original
+        const isDeleting = deletingIds.has(record.id)
+        return (
+          <div className="flex gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEdit(record)}
+                    className="text-blue-600 hover:text-blue-700"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDelete(record.id)}
+                    disabled={isDeleting}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    {isDeleting ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )
+      },
+    },
+  ]
+}

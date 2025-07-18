@@ -33,6 +33,7 @@ export default function DashboardPage() {
     },
     enabled: !!selectedDate,
     staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
   })
 
   const totalStaffPays = records.reduce((total, record) => {
