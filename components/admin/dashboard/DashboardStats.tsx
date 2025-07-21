@@ -156,7 +156,7 @@ export function DashboardStats({
           </div>
           <div className="pt-2">
             <span className="block text-xs text-muted-foreground">
-              These sales are <b>not</b> included in today's revenue.
+              These sales are <b>not</b> included in today&apos;s revenue.
             </span>
           </div>
         </CardContent>
