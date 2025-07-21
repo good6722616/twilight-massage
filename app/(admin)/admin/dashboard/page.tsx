@@ -79,6 +79,70 @@ export default function DashboardPage() {
     ), // Total revenue from gift card sales
   }
 
+  // Payment method breakdown for massage records
+  const paymentBreakdown = {
+    cash: records
+      .filter((r) => r.payment_method === "cash")
+      .reduce(
+        (sum, r) =>
+          sum +
+          (function () {
+            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+            const discountAmount = (price * r.discount) / 100
+            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+              const addonPrice =
+                ADDONS.find(
+                  (a: { name: string; price: number }) => a.name === addon
+                )?.price || 0
+              return addonSum + addonPrice
+            }, 0)
+            return price - discountAmount + addOnsTotal
+          })(),
+        0
+      ),
+    credit_card: records
+      .filter((r) => r.payment_method === "credit_card")
+      .reduce(
+        (sum, r) =>
+          sum +
+          (function () {
+            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+            const discountAmount = (price * r.discount) / 100
+            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+              const addonPrice =
+                ADDONS.find(
+                  (a: { name: string; price: number }) => a.name === addon
+                )?.price || 0
+              return addonSum + addonPrice
+            }, 0)
+            return price - discountAmount + addOnsTotal
+          })(),
+        0
+      ),
+    giftcard: records
+      .filter((r) => r.payment_method === "giftcard")
+      .reduce(
+        (sum, r) =>
+          sum +
+          (function () {
+            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+            const discountAmount = (price * r.discount) / 100
+            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+              const addonPrice =
+                ADDONS.find(
+                  (a: { name: string; price: number }) => a.name === addon
+                )?.price || 0
+              return addonSum + addonPrice
+            }, 0)
+            return price - discountAmount + addOnsTotal
+          })(),
+        0
+      ),
+  }
+
   const todayStats = {
     totalClients: records.length,
     totalRevenue: calculateStoreIncome(records),
@@ -111,6 +175,7 @@ export default function DashboardPage() {
             totalStaffPays={todayStats.totalStaffPays}
             totalTips={todayStats.totalTips}
             giftCardStats={giftCardStats}
+            paymentBreakdown={paymentBreakdown}
           />
 
           <ServiceRecordsList records={records} selectedDate={selectedDate} />

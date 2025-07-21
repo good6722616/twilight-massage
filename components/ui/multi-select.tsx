@@ -76,6 +76,12 @@ interface MultiSelectProps
   defaultValue?: string[]
 
   /**
+   * The controlled selected values. If provided, the component will use these
+   * values instead of its internal state.
+   */
+  value?: string[]
+
+  /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
    */
@@ -123,6 +129,7 @@ export const MultiSelect = React.forwardRef<
       onValueChange,
       variant,
       defaultValue = [],
+      value,
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
@@ -133,8 +140,14 @@ export const MultiSelect = React.forwardRef<
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
+    // Internal state for uncontrolled usage
+    const [internalSelectedValues, setInternalSelectedValues] =
       React.useState<string[]>(defaultValue)
+    // Determine if controlled
+    const isControlled = typeof value !== "undefined"
+    // Use controlled value if provided, otherwise use internal state
+    const selectedValues = isControlled ? value : internalSelectedValues
+
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
     const [isAnimating, setIsAnimating] = React.useState(false)
 
@@ -146,9 +159,14 @@ export const MultiSelect = React.forwardRef<
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
         const newSelectedValues = [...selectedValues]
         newSelectedValues.pop()
-        setSelectedValues(newSelectedValues)
+        if (!isControlled) setInternalSelectedValues(newSelectedValues)
         onValueChange(newSelectedValues)
       }
+    }
+
+    const setSelectedValues = (vals: string[]) => {
+      if (!isControlled) setInternalSelectedValues(vals)
+      onValueChange(vals)
     }
 
     const toggleOption = (option: string) => {
@@ -156,12 +174,10 @@ export const MultiSelect = React.forwardRef<
         ? selectedValues.filter((value) => value !== option)
         : [...selectedValues, option]
       setSelectedValues(newSelectedValues)
-      onValueChange(newSelectedValues)
     }
 
     const handleClear = () => {
       setSelectedValues([])
-      onValueChange([])
     }
 
     const handleTogglePopover = () => {
@@ -171,7 +187,6 @@ export const MultiSelect = React.forwardRef<
     const clearExtraOptions = () => {
       const newSelectedValues = selectedValues.slice(0, maxCount)
       setSelectedValues(newSelectedValues)
-      onValueChange(newSelectedValues)
     }
 
     const toggleAll = () => {
@@ -180,9 +195,16 @@ export const MultiSelect = React.forwardRef<
       } else {
         const allValues = options.map((option) => option.value)
         setSelectedValues(allValues)
-        onValueChange(allValues)
       }
     }
+
+    // If value prop changes, update internal state (for defaultValue -> value transition)
+    React.useEffect(() => {
+      if (isControlled) {
+        setInternalSelectedValues(value || [])
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
 
     return (
       <Popover

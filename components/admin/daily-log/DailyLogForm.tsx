@@ -180,14 +180,6 @@ export function DailyLogForm({
     return "Submit"
   }
 
-  // Button className based on state
-  const getButtonClassName = () => {
-    if (showSuccess) {
-      return "w-fit bg-green-600 hover:bg-green-700 transition-colors duration-300"
-    }
-    return "w-fit"
-  }
-
   return (
     <Form {...form}>
       <div className="mb-6">

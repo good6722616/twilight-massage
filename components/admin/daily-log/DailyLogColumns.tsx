@@ -129,7 +129,7 @@ export function getDailyLogColumns({
             ))}
           </ul>
         ) : (
-          <span className="text-muted-foreground">None</span>
+          <span className="text-muted-foreground">--</span>
         )
       },
     },

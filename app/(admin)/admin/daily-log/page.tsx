@@ -31,7 +31,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { RefreshCw, Gift } from "lucide-react"
+import { RefreshCw } from "lucide-react"
 
 export default function DailyLogPage() {
   const { getToken } = useAuth()

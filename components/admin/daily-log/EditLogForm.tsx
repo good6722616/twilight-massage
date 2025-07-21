@@ -100,6 +100,13 @@ export function EditLogForm({
     }
   }, [isSuccess])
 
+  // Reset showSuccess when opening a new record or modal is reopened
+  useEffect(() => {
+    if (!isSuccess) {
+      setShowSuccess(false)
+    }
+  }, [record.id, isSuccess])
+
   const isCoupleMassage = useMemo(() => {
     return (type: MassageType) => type.includes("(Couple)")
   }, [])

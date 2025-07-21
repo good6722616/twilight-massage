@@ -40,8 +40,9 @@ export type Staff =
   | "Vivian Zhang"
   | "Sarah Jin"
   | "Yoyo Lu"
-  | "Daisy L"
   | "Anna"
+  | "Temp Staff 1"
+  | "Temp Staff 2"
 
 export const DURATIONS: Duration[] = [30, 45, 60, 90]
 
@@ -234,7 +235,14 @@ export function calculateStoreIncome(records: MassageRecord[]): number {
   }, 0)
 }
 
-export const STAFFS: Staff[] = ["Vivian Zhang", "Sarah Jin", "Yoyo Lu", "Anna"]
+export const STAFFS: Staff[] = [
+  "Vivian Zhang",
+  "Sarah Jin",
+  "Yoyo Lu",
+  "Anna",
+  "Temp Staff 1",
+  "Temp Staff 2",
+]
 
 export type PaymentMethod = "cash" | "credit_card" | "giftcard"
 
