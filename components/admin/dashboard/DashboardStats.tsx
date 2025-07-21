@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, DollarSign } from "lucide-react"
+import { Users, DollarSign, Gift } from "lucide-react"
 import React from "react"
 import { P } from "@/components/ui/typography"
 
@@ -8,6 +8,11 @@ interface DashboardStatsProps {
   totalRevenue: number
   totalStaffPays: number
   totalTips: number
+  giftCardStats?: {
+    totalCards: number // Number of gift cards issued
+    totalValue: number // Total face value of all gift cards
+    totalSold: number // Total revenue from gift card sales
+  }
 }
 
 export function DashboardStats({
@@ -15,12 +20,13 @@ export function DashboardStats({
   totalRevenue,
   totalStaffPays,
   totalTips,
+  giftCardStats,
 }: DashboardStatsProps) {
   const totalStaffEarnings = totalStaffPays + totalTips
   const netProfit = totalRevenue - totalStaffPays
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Clients</CardTitle>
@@ -84,6 +90,52 @@ export function DashboardStats({
           </div>
         </CardContent>
       </Card>
+
+      {giftCardStats && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Gift Cards</CardTitle>
+            <Gift className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {/* Cards Count Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    Cards Issued:
+                  </span>
+                  <span className="text-xl font-bold text-indigo-600">
+                    {giftCardStats.totalCards}
+                  </span>
+                </div>
+              </div>
+
+              {/* Face Value Section */}
+              <div className="space-y-1 border-t border-gray-100 pt-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>Face Value:</span>
+                  <span className="font-medium text-gray-700">
+                    ${(Number(giftCardStats.totalValue) || 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Revenue Section */}
+              <div className="space-y-1 border-t border-gray-100 pt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">
+                    Revenue:
+                  </span>
+                  <span className="text-lg font-bold text-emerald-600">
+                    ${(Number(giftCardStats.totalSold) || 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

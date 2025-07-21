@@ -97,9 +97,9 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
     <div className="space-y-6">
       {/* Overall Summary */}
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
           <H2 className="whitespace-nowrap">Today&apos;s Summary</H2>
-          <span className="text-xl text-gray-500">
+          <span className="text-lg text-gray-500 sm:text-xl">
             {format(new Date(), "MMMM dd, yyyy")}
           </span>
         </div>

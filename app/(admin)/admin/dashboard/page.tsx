@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
 import { H1 } from "@/components/ui/typography"
 import { getDailyLogsByDate } from "@/services/dailyLogService"
+import { getGiftCardRecordsByDate } from "@/services/giftCardService"
 import { format } from "date-fns"
 import { DashboardStats } from "@/components/admin/dashboard/DashboardStats"
 import { DateSelector } from "@/components/admin/dashboard/DateSelector"
@@ -36,6 +37,20 @@ export default function DashboardPage() {
     refetchOnWindowFocus: true,
   })
 
+  // Query to fetch gift card records for the selected date
+  const { data: giftCardRecords = [], isLoading: isLoadingGiftCards } =
+    useQuery({
+      queryKey: ["giftCards", formattedDate],
+      queryFn: async () => {
+        const token = await getToken({ template: "supabase" })
+        if (!token) throw new Error("No authentication token")
+        return getGiftCardRecordsByDate(token, formattedDate)
+      },
+      enabled: !!selectedDate,
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true,
+    })
+
   const totalStaffPays = records.reduce((total, record) => {
     const staffIncome = calculateStaffIncome(
       record.service_name as MassageType,
@@ -50,6 +65,19 @@ export default function DashboardPage() {
       typeof record.tip === "number" ? record.tip : parseFloat(record.tip) || 0
     return total + tip
   }, 0)
+
+  // Calculate gift card statistics for the selected date
+  const giftCardStats = {
+    totalCards: giftCardRecords.length, // Number of gift cards issued
+    totalValue: giftCardRecords.reduce(
+      (sum, record) => sum + (Number(record.amount) || 0),
+      0
+    ), // Total face value of all gift cards
+    totalSold: giftCardRecords.reduce(
+      (sum, record) => sum + (Number(record.sold_price) || 0),
+      0
+    ), // Total revenue from gift card sales
+  }
 
   const todayStats = {
     totalClients: records.length,
@@ -73,7 +101,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {isLoading ? (
+      {isLoading || isLoadingGiftCards ? (
         <LoadingSpinner />
       ) : (
         <>
@@ -82,6 +110,7 @@ export default function DashboardPage() {
             totalRevenue={todayStats.totalRevenue}
             totalStaffPays={todayStats.totalStaffPays}
             totalTips={todayStats.totalTips}
+            giftCardStats={giftCardStats}
           />
 
           <ServiceRecordsList records={records} selectedDate={selectedDate} />

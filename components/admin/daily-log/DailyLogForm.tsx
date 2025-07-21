@@ -209,6 +209,8 @@ export function DailyLogForm({
                   id="timeSlot-from"
                   type="time"
                   {...field}
+                  tabIndex={-1}
+                  autoFocus={false}
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                 />
               )}
@@ -222,6 +224,8 @@ export function DailyLogForm({
                   id="timeSlot-to"
                   type="time"
                   {...field}
+                  tabIndex={-1}
+                  autoFocus={false}
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                 />
               )}
