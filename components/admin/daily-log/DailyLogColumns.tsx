@@ -151,6 +151,7 @@ export function getDailyLogColumns({
         )
       },
     },
+
     {
       accessorKey: "Pay",
       header: ({ column }) => (
@@ -194,6 +195,21 @@ export function getDailyLogColumns({
             {formatCurrency(overallIncome)}
           </div>
         )
+      },
+    },
+    {
+      accessorKey: "payment_method",
+      header: "Payment Method",
+      cell: ({ row }) => {
+        const paymentMethod = row.getValue("payment_method") as string
+        const displayName =
+          {
+            cash: "Cash",
+            credit_card: "Credit Card",
+            giftcard: "Gift Card",
+          }[paymentMethod] || paymentMethod
+
+        return <div>{displayName}</div>
       },
     },
     {

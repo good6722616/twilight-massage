@@ -42,7 +42,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { getDailyLogColumns } from "./columns"
+import { getDailyLogColumns } from "./DailyLogColumns"
 
 interface DailyLogTableProps {
   records: MassageRecord[]

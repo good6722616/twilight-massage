@@ -32,6 +32,7 @@ import {
   ADDONS,
   DISCOUNTS,
   STAFFS,
+  PAYMENT_METHODS,
   Discount,
   SERVICE_PRICES,
   calculateStaffIncome,
@@ -72,6 +73,7 @@ export function EditLogForm({
       discount: record.discount?.toString() || "",
       addOns: record.add_ons || [],
       tip: record.tip?.toString() || "",
+      payment_method: record.payment_method || "",
       timeSlot: record.time_slot
         ? parseTimeSlot(record.time_slot)
         : { from: "", to: "" },
@@ -121,7 +123,7 @@ export function EditLogForm({
       )
 
       // Create the massage record
-      const recordData = {
+      const recordData: Omit<MassageRecord, "id" | "created_at" | "user_id"> = {
         date: record.date, // Keep the original date
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
@@ -133,6 +135,7 @@ export function EditLogForm({
           : [],
         tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
         income: staffIncome / (isCouple ? 2 : 1),
+        payment_method: values.payment_method,
       }
 
       // Call the parent's onSubmit function
@@ -191,6 +194,8 @@ export function EditLogForm({
               render={({ field }) => (
                 <Input
                   id="timeSlot-from"
+                  tabIndex={-1}
+                  autoFocus={false}
                   type="time"
                   {...field}
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
@@ -205,6 +210,8 @@ export function EditLogForm({
                 <Input
                   id="timeSlot-to"
                   type="time"
+                  tabIndex={-1}
+                  autoFocus={false}
                   {...field}
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                 />
@@ -391,6 +398,37 @@ export function EditLogForm({
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                 />
               </FormControl>
+              <FormMessage className="absolute -bottom-5 left-0 text-xs" />
+            </FormItem>
+          )}
+        />
+
+        {/* Payment Method */}
+        <FormField
+          control={form.control}
+          name="payment_method"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="payment_method">Payment Method</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger
+                    id="payment_method"
+                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  >
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {PAYMENT_METHODS.map((method) => (
+                    <SelectItem key={method} value={method}>
+                      {method === "cash" && "Cash"}
+                      {method === "credit_card" && "Credit Card"}
+                      {method === "giftcard" && "Gift Card"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
             </FormItem>
           )}

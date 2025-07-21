@@ -10,6 +10,7 @@ export interface MassageRecord {
   add_ons: string[]
   tip: number
   income: number
+  payment_method: string
   user_id: string
 }
 
@@ -234,3 +235,11 @@ export function calculateStoreIncome(records: MassageRecord[]): number {
 }
 
 export const STAFFS: Staff[] = ["Vivian Zhang", "Sarah Jin", "Yoyo Lu", "Anna"]
+
+export type PaymentMethod = "cash" | "credit_card" | "giftcard"
+
+export const PAYMENT_METHODS: PaymentMethod[] = [
+  "cash",
+  "credit_card",
+  "giftcard",
+]

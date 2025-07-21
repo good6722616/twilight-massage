@@ -4,8 +4,10 @@ import {
   DURATIONS,
   DISCOUNTS,
   STAFFS,
+  PAYMENT_METHODS,
   MassageType,
   Staff,
+  PaymentMethod,
 } from "@/lib/types/massage"
 
 const baseSchema = {
@@ -39,6 +41,12 @@ const baseSchema = {
     .min(1, { message: "Please select a staff member" })
     .refine((val) => STAFFS.includes(val as Staff), {
       message: "Please select a valid staff member",
+    }),
+  payment_method: z
+    .string()
+    .min(1, { message: "Please select a payment method" })
+    .refine((val) => PAYMENT_METHODS.includes(val as PaymentMethod), {
+      message: "Please select a valid payment method",
     }),
   timeSlot: z
     .object({

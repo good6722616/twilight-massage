@@ -33,6 +33,7 @@ import {
   ADDONS,
   DISCOUNTS,
   STAFFS,
+  PAYMENT_METHODS,
   Discount,
   SERVICE_PRICES,
   calculateStaffIncome,
@@ -64,6 +65,7 @@ export function DailyLogForm({
       discount: "",
       addOns: [],
       tip: "",
+      payment_method: "",
       timeSlot: { from: "", to: "" },
     },
     mode: "onSubmit", // Only validate when form is submitted
@@ -78,6 +80,7 @@ export function DailyLogForm({
       discount: "",
       addOns: [],
       tip: "",
+      payment_method: "",
       timeSlot: { from: "", to: "" },
     })
     // eslint-disable-next-line
@@ -137,6 +140,7 @@ export function DailyLogForm({
           : [],
         tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
         income: staffIncome / (isCouple ? 2 : 1),
+        payment_method: values.payment_method,
       }
 
       // Call the parent's onSubmit function
@@ -150,6 +154,7 @@ export function DailyLogForm({
         discount: "",
         addOns: [],
         tip: "",
+        payment_method: "",
         timeSlot: { from: "", to: "" },
       })
     } catch (error) {
@@ -411,6 +416,37 @@ export function DailyLogForm({
                   className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
                 />
               </FormControl>
+              <FormMessage className="absolute -bottom-5 left-0 text-xs" />
+            </FormItem>
+          )}
+        />
+
+        {/* Payment Method */}
+        <FormField
+          control={form.control}
+          name="payment_method"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="payment_method">Payment Method</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger
+                    id="payment_method"
+                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  >
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {PAYMENT_METHODS.map((method) => (
+                    <SelectItem key={method} value={method}>
+                      {method === "cash" && "Cash"}
+                      {method === "credit_card" && "Credit Card"}
+                      {method === "giftcard" && "Gift Card"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
             </FormItem>
           )}

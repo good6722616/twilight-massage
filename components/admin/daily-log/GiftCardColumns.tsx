@@ -76,15 +76,7 @@ export function getGiftCardColumns({
     },
     {
       accessorKey: "payment_method",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Payment Method
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
+      header: "Payment Method",
       cell: ({ row }) => {
         const paymentMethod = row.getValue("payment_method") as string
         const displayName =
