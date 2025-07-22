@@ -518,27 +518,28 @@ export default function DailyLogPage() {
 
       <Tabs defaultValue="massage" className="w-full">
         <div className="flex flex-col">
-          <TabsList className="inline-flex h-12 items-center justify-center space-x-6 bg-transparent p-0 text-muted-foreground">
-            <TabsTrigger
-              value="massage"
-              className="group flex items-center justify-center space-x-2 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-transparent bg-transparent px-4 py-2 text-base font-medium text-gray-500 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
-            >
-              <span>Massage Records</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 text-xs font-medium text-gray-600 group-data-[state=active]:border-orange-500 group-data-[state=active]:text-orange-600">
-                {records?.length || 0}
-              </span>
-            </TabsTrigger>
-
-            <TabsTrigger
-              value="giftcards"
-              className="group flex items-center justify-center space-x-2 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-transparent bg-transparent px-4 py-2 text-base font-medium text-gray-500 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
-            >
-              <span>Gift Cards</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 text-xs font-medium text-gray-600 group-data-[state=active]:border-orange-500 group-data-[state=active]:text-orange-600">
-                {giftCardRecords?.length || 0}
-              </span>
-            </TabsTrigger>
-          </TabsList>
+          <div className="w-full overflow-x-auto">
+            <TabsList className="inline-flex h-12 items-center justify-center space-x-6 bg-transparent p-0 text-muted-foreground">
+              <TabsTrigger
+                value="massage"
+                className="group flex items-center justify-center space-x-2 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-transparent bg-transparent px-4 py-2 text-base font-medium text-gray-500 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
+              >
+                <span>Massage Records</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 text-xs font-medium text-gray-600 group-data-[state=active]:border-orange-500 group-data-[state=active]:text-orange-600">
+                  {records?.length || 0}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="giftcards"
+                className="group flex items-center justify-center space-x-2 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-transparent bg-transparent px-4 py-2 text-base font-medium text-gray-500 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
+              >
+                <span>Gift Cards</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 text-xs font-medium text-gray-600 group-data-[state=active]:border-orange-500 group-data-[state=active]:text-orange-600">
+                  {giftCardRecords?.length || 0}
+                </span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
           <div className="border-b border-gray-200"></div>
         </div>
 

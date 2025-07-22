@@ -25,12 +25,12 @@ export default function AdminLayout({
     if (sidebarOpen) {
       document.body.style.overflow = "hidden"
     } else {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = ""
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = ""
     }
   }, [sidebarOpen])
 
@@ -72,9 +72,7 @@ export default function AdminLayout({
             </div>
 
             {/* Main content - Takes remaining width */}
-            <div
-              className={`flex min-w-0 flex-1 flex-col ${sidebarOpen ? "overflow-hidden lg:overflow-auto" : "overflow-auto"}`}
-            >
+            <div className="flex min-w-0 flex-1 flex-col overflow-auto">
               <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
                 <div className="flex items-center gap-4">
                   <Button

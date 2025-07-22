@@ -76,7 +76,7 @@ export function getGiftCardColumns({
     },
     {
       accessorKey: "payment_method",
-      header: "Payment Method",
+      header: () => <span className="px-2 py-2 md:px-1">Payment Method</span>,
       cell: ({ row }) => {
         const paymentMethod = row.getValue("payment_method") as string
         const displayName =
@@ -90,7 +90,7 @@ export function getGiftCardColumns({
     },
     {
       accessorKey: "notes",
-      header: "Notes",
+      header: () => <span className="px-4 py-2 md:px-1">Notes</span>,
       cell: ({ row }) => {
         const notes = row.getValue("notes") as string
         return <div className="text-sm text-gray-600">{notes || "-"}</div>
@@ -100,7 +100,7 @@ export function getGiftCardColumns({
       id: "actions",
       enableHiding: false,
       accessorKey: "actions",
-      header: "Actions",
+      header: () => <span className="px-4 py-2 md:px-1">Actions</span>,
       cell: ({ row }) => {
         const record = row.original
         const isDeleting = deletingIds.has(record.id)

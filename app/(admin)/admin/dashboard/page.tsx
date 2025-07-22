@@ -151,7 +151,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen space-y-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <H1 className="text-3xl font-bold text-gray-900">Dashboard</H1>
