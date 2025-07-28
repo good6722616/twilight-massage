@@ -1,4 +1,4 @@
-import { createSupabaseClient, supabase } from "./supabaseClient"
+import { createSupabaseClient } from "./supabaseClient"
 import { MassageRecord } from "@/lib/types/massage"
 
 // Fetch today's daily logs for the daily log page
@@ -54,17 +54,27 @@ export async function deleteDailyLog(id: string, token: string): Promise<void> {
   if (error) throw error
 }
 
-// Fetch daily logs for a specific date
+// Fetch daily logs for a specific date or date range
 export async function getDailyLogsByDate(
   token: string,
-  date: string
+  from: string,
+  to?: string
 ): Promise<MassageRecord[]> {
   const supabase = createSupabaseClient(token)
-  const { data, error } = await supabase
+  let query = supabase
     .from("massage_records")
     .select("*")
-    .eq("date", date)
     .order("created_at", { ascending: false })
+
+  if (from && to && from === to) {
+    query = query.eq("date", from)
+  } else if (from && to) {
+    query = query.gte("date", from).lte("date", to)
+  } else if (from) {
+    query = query.eq("date", from)
+  }
+
+  const { data, error } = await query
   if (error) throw error
   return data as MassageRecord[]
 }

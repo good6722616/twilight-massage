@@ -62,7 +62,7 @@ import { format } from "date-fns"
 
 interface ServiceRecordsListProps {
   records: MassageRecord[]
-  selectedDate: Date
+  dateRange: { from: Date | undefined; to: Date | undefined }
 }
 
 function formatTimeSlot(timeSlot: string) {
@@ -88,7 +88,7 @@ function formatCurrency(amount: number) {
 
 export function ServiceRecordsList({
   records,
-  selectedDate,
+  dateRange,
 }: ServiceRecordsListProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -175,7 +175,7 @@ export function ServiceRecordsList({
             </Button>
           )
         },
-        cell: ({ row }) => <div>{row.getValue("duration")} min</div>,
+        cell: ({ row }) => <div>{row.getValue("duration")} mins</div>,
       },
       {
         accessorKey: "original_price",
@@ -362,13 +362,28 @@ export function ServiceRecordsList({
     return null
   }
 
+  // 标题文案
+  let rangeTitle = ""
+  if (dateRange.from && dateRange.to) {
+    if (dateRange.from.getTime() === dateRange.to.getTime()) {
+      rangeTitle = `Service Records for ${format(dateRange.from, "M/dd/yyyy")}`
+    } else {
+      rangeTitle = `Service Records from ${format(dateRange.from, "M/dd/yyyy")} - ${format(dateRange.to, "M/dd/yyyy")}`
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          Service Records for {format(selectedDate, "MMMM dd, yyyy")}
-        </CardTitle>
-        <CardDescription>All services for the selected date</CardDescription>
+        <CardTitle>{rangeTitle}</CardTitle>
+        <CardDescription>
+          All services for the selected date
+          {dateRange.from &&
+          dateRange.to &&
+          dateRange.from.getTime() !== dateRange.to.getTime()
+            ? " range"
+            : ""}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="w-full space-y-4 overflow-x-auto">

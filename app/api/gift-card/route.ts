@@ -3,6 +3,8 @@ import {
   addGiftCardRecord,
   deleteGiftCardRecord,
   updateGiftCardRecord,
+  getGiftCardRecords,
+  getGiftCardRecordsByDate,
 } from "@/services/giftCardService"
 import { auth } from "@clerk/nextjs/server"
 
@@ -88,5 +90,27 @@ export async function PUT(req: NextRequest) {
       { error: "Failed to update gift card record" },
       { status: 500 }
     )
+  }
+}
+
+export async function GET(req: NextRequest) {
+  const { userId, getToken } = await auth()
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+  const token = await getToken({ template: "supabase" })
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+  const url = new URL(req.url)
+  const fromParam = url.searchParams.get("from")
+  const from = fromParam ?? undefined
+  const to = url.searchParams.get("to") || from
+  if (from) {
+    const records = await getGiftCardRecordsByDate(token, from, to)
+    return NextResponse.json(records)
+  } else {
+    const records = await getGiftCardRecords(token)
+    return NextResponse.json(records)
   }
 }

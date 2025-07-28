@@ -6,9 +6,12 @@ import { useAuth } from "@clerk/nextjs"
 import { H1 } from "@/components/ui/typography"
 import { getDailyLogsByDate } from "@/services/dailyLogService"
 import { getGiftCardRecordsByDate } from "@/services/giftCardService"
-import { format } from "date-fns"
+import { format, isSameDay, isValid, startOfToday } from "date-fns"
 import { DashboardStats } from "@/components/admin/dashboard/DashboardStats"
-import { DateSelector } from "@/components/admin/dashboard/DateSelector"
+import {
+  DateRangeSelector,
+  DateRange,
+} from "@/components/admin/dashboard/DateRangeSelector"
 import { ServiceRecordsList } from "@/components/admin/dashboard/ServiceRecordsList"
 import { LoadingSpinner } from "@/components/admin/dashboard/LoadingSpinner"
 import {
@@ -21,32 +24,47 @@ import {
 
 export default function DashboardPage() {
   const { getToken } = useAuth()
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const formattedDate = format(selectedDate, "yyyy-MM-dd")
+  // 默认区间为今天
+  const today = startOfToday()
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: today,
+    to: today,
+  })
 
-  // Query to fetch records for the selected date
+  // 格式化参数
+  const from =
+    dateRange.from && isValid(dateRange.from)
+      ? format(dateRange.from, "yyyy-MM-dd")
+      : undefined
+  const to =
+    dateRange.to && isValid(dateRange.to)
+      ? format(dateRange.to, "yyyy-MM-dd")
+      : undefined
+  const isSingleDay = from && to && from === to
+
+  // Query to fetch records for the selected range
   const { data: records = [], isLoading } = useQuery({
-    queryKey: ["dailyLogs", formattedDate],
+    queryKey: ["dailyLogs", from, to],
     queryFn: async () => {
       const token = await getToken({ template: "supabase" })
       if (!token) throw new Error("No authentication token")
-      return getDailyLogsByDate(token, formattedDate)
+      return getDailyLogsByDate(token, from!, to!)
     },
-    enabled: !!selectedDate,
+    enabled: !!from && !!to,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })
 
-  // Query to fetch gift card records for the selected date
+  // Query to fetch gift card records for the selected range
   const { data: giftCardRecords = [], isLoading: isLoadingGiftCards } =
     useQuery({
-      queryKey: ["giftCards", formattedDate],
+      queryKey: ["giftCards", from, to],
       queryFn: async () => {
         const token = await getToken({ template: "supabase" })
         if (!token) throw new Error("No authentication token")
-        return getGiftCardRecordsByDate(token, formattedDate)
+        return getGiftCardRecordsByDate(token, from!, to!)
       },
-      enabled: !!selectedDate,
+      enabled: !!from && !!to,
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: true,
     })
@@ -66,7 +84,7 @@ export default function DashboardPage() {
     return total + tip
   }, 0)
 
-  // Calculate gift card statistics for the selected date
+  // Calculate gift card statistics for the selected range
   const giftCardStats = {
     totalCards: giftCardRecords.length, // Number of gift cards issued
     totalValue: giftCardRecords.reduce(
@@ -150,19 +168,24 @@ export default function DashboardPage() {
     totalTips,
   }
 
+  // 标题文案
+  let rangeTitle = ""
+  if (from && to) {
+    if (from === to) {
+      rangeTitle = `Service records for ${format(dateRange.from!, "M/dd/yyyy")}`
+    } else {
+      rangeTitle = `Service records from ${format(dateRange.from!, "M/dd/yyyy")} - ${format(dateRange.to!, "M/dd/yyyy")}`
+    }
+  }
+
   return (
     <div className="min-h-screen space-y-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <H1 className="text-3xl font-bold text-gray-900">Dashboard</H1>
-          <p className="mt-2 text-base text-gray-600">
-            Service records for {format(selectedDate, "MMMM dd, yyyy")}
-          </p>
+          <p className="mt-2 text-base text-gray-600">{rangeTitle}</p>
         </div>
-        <DateSelector
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-        />
+        <DateRangeSelector value={dateRange} onChange={setDateRange} />
       </div>
 
       {isLoading || isLoadingGiftCards ? (
@@ -178,7 +201,7 @@ export default function DashboardPage() {
             paymentBreakdown={paymentBreakdown}
           />
 
-          <ServiceRecordsList records={records} selectedDate={selectedDate} />
+          <ServiceRecordsList records={records} dateRange={dateRange} />
         </>
       )}
     </div>

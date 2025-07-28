@@ -4,6 +4,7 @@ import {
   addDailyLog,
   deleteDailyLog,
   updateDailyLog,
+  getDailyLogsByDate,
 } from "@/services/dailyLogService"
 import { auth } from "@clerk/nextjs/server"
 
@@ -16,8 +17,17 @@ export async function GET(req: NextRequest) {
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
-  const logs = await getDailyLogs(token)
-  return NextResponse.json(logs)
+  const url = new URL(req.url)
+  const fromParam = url.searchParams.get("from")
+  const from = fromParam ?? undefined
+  const to = url.searchParams.get("to") || from
+  if (from) {
+    const logs = await getDailyLogsByDate(token, from, to)
+    return NextResponse.json(logs)
+  } else {
+    const logs = await getDailyLogs(token)
+    return NextResponse.json(logs)
+  }
 }
 
 export async function POST(req: NextRequest) {

@@ -89,7 +89,7 @@ export function getDailyLogColumns({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("duration")} 0min</div>,
+      cell: ({ row }) => <div>{row.getValue("duration")} mins</div>,
     },
     {
       accessorKey: "time_slot",

@@ -72,19 +72,27 @@ export async function getTodaysGiftCardRecords(
 
 export async function getGiftCardRecordsByDate(
   token: string,
-  date: string
+  from: string,
+  to?: string
 ): Promise<GiftCardRecord[]> {
   const supabase = createSupabaseClient(token)
-
-  const { data, error } = await supabase
+  let query = supabase
     .from("gift_card_records")
     .select("*")
-    .eq("date", date)
     .order("created_at", { ascending: false })
 
+  if (from && to && from === to) {
+    query = query.eq("date", from)
+  } else if (from && to) {
+    query = query.gte("date", from).lte("date", to)
+  } else if (from) {
+    query = query.eq("date", from)
+  }
+
+  const { data, error } = await query
   if (error) {
     console.error("Supabase error:", error)
-    throw new Error("Failed to fetch gift card records for date")
+    throw new Error("Failed to fetch gift card records for date range")
   }
 
   return data || []
