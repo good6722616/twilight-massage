@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { H2, Muted } from "@/components/ui/typography"
-import { Check } from "lucide-react"
+import { Check, X } from "lucide-react"
 import {
   Form,
   FormControl,
@@ -57,6 +57,7 @@ export function EditLogForm({
   isSuccess = false,
 }: EditLogFormProps) {
   const [showSuccess, setShowSuccess] = useState(false)
+  const [customDiscountMode, setCustomDiscountMode] = useState(false)
 
   // Parse time slot for edit mode
   const parseTimeSlot = (timeSlot: string) => {
@@ -88,6 +89,32 @@ export function EditLogForm({
       .filter(([_, price]) => price > 0)
       .map(([duration]) => duration)
   }, [selectedType])
+
+  // Watch discount value to handle custom mode
+  const discountValue = form.watch("discount")
+
+  // Handle discount mode changes
+  useEffect(() => {
+    if (discountValue === "custom") {
+      setCustomDiscountMode(true)
+      form.setValue("discount", "")
+    }
+  }, [discountValue, form])
+
+  // Add manual switch back to preset mode function
+  const switchToPresetMode = () => {
+    setCustomDiscountMode(false)
+    form.setValue("discount", "")
+    form.clearErrors("discount")
+  }
+
+  // Check if current discount is custom (not in DISCOUNTS array)
+  useEffect(() => {
+    const currentDiscount = record.discount?.toString()
+    if (currentDiscount && !DISCOUNTS.map(String).includes(currentDiscount)) {
+      setCustomDiscountMode(true)
+    }
+  }, [record.discount])
 
   // Handle success state animation
   useEffect(() => {
@@ -129,6 +156,20 @@ export function EditLogForm({
         values.addOns ? values.addOns.map((s) => s.trim() as Addon) : []
       )
 
+      // 处理 discount 值，支持预设值和自定义值
+      let discountValue: number
+      if (DISCOUNTS.map(String).includes(values.discount)) {
+        // 预设值
+        discountValue = parseInt(values.discount) as Discount
+      } else {
+        // 自定义值
+        discountValue = parseFloat(values.discount)
+        if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
+          console.error("Invalid custom discount value:", values.discount)
+          return
+        }
+      }
+
       // Create the massage record
       const recordData: Omit<MassageRecord, "id" | "created_at" | "user_id"> = {
         date: record.date, // Keep the original date
@@ -136,7 +177,7 @@ export function EditLogForm({
         staff: values.staff,
         service_name: massageType,
         duration,
-        discount: Number(values.discount) as Discount,
+        discount: discountValue,
         add_ons: values.addOns
           ? values.addOns.map((s) => s.trim() as Addon)
           : [],
@@ -205,7 +246,7 @@ export function EditLogForm({
                   autoFocus={false}
                   type="time"
                   {...field}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="w-full bg-white text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               )}
             />
@@ -220,7 +261,7 @@ export function EditLogForm({
                   tabIndex={-1}
                   autoFocus={false}
                   {...field}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="w-full bg-white text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               )}
             />
@@ -239,7 +280,7 @@ export function EditLogForm({
                 <FormControl>
                   <SelectTrigger
                     id="staff"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
                   >
                     <SelectValue placeholder="Select staff member" />
                   </SelectTrigger>
@@ -268,7 +309,7 @@ export function EditLogForm({
                 <FormControl>
                   <SelectTrigger
                     id="massage-type"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
                   >
                     <SelectValue placeholder="Select massage type" />
                   </SelectTrigger>
@@ -310,7 +351,7 @@ export function EditLogForm({
                 <FormControl>
                   <SelectTrigger
                     id="duration"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
                   >
                     <SelectValue placeholder="Select duration" />
                   </SelectTrigger>
@@ -341,23 +382,65 @@ export function EditLogForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel htmlFor="discount">Discount</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger
-                    id="discount"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+              {!customDiscountMode ? (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger
+                      id="discount"
+                      className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
+                    >
+                      <SelectValue placeholder="Select discount" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {DISCOUNTS.map((discount) => (
+                      <SelectItem key={discount} value={discount.toString()}>
+                        {discount}%
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="custom">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      id="discount"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      placeholder="Enter custom discount"
+                      {...field}
+                      className="h-9 w-full bg-white py-1 pr-8 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
+                      onBlur={(e) => {
+                        const value = parseFloat(e.target.value)
+                        if (isNaN(value) || value < 0 || value > 100) {
+                          form.setError("discount", {
+                            type: "manual",
+                            message:
+                              "Please enter a valid discount between 0–100%",
+                          })
+                        } else {
+                          form.clearErrors("discount")
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                    %
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-8 top-1/2 h-6 w-6 -translate-y-1/2 p-0 text-gray-400 hover:text-gray-600"
+                    onClick={switchToPresetMode}
                   >
-                    <SelectValue placeholder="Select discount" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {DISCOUNTS.map((discount) => (
-                    <SelectItem key={discount} value={discount.toString()}>
-                      {discount}%
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
             </FormItem>
           )}
@@ -371,17 +454,19 @@ export function EditLogForm({
             <FormItem>
               <FormLabel htmlFor="addOns">Add-ons</FormLabel>
               <FormControl>
-                <MultiSelect
-                  id="addOns"
-                  options={ADDONS.map((addon) => ({
-                    label: addon.name,
-                    value: addon.name,
-                  }))}
-                  onValueChange={field.onChange}
-                  value={field.value || []}
-                  placeholder="Select add-ons"
-                  className="h-11 w-full bg-white text-base hover:bg-orange-50 sm:h-12 sm:text-lg"
-                />
+                <div className="[&_span]:text-sm [&_span]:sm:text-base">
+                  <MultiSelect
+                    id="addOns"
+                    options={ADDONS.map((addon) => ({
+                      label: addon.name,
+                      value: addon.name,
+                    }))}
+                    onValueChange={field.onChange}
+                    value={field.value || []}
+                    placeholder="Select add-ons"
+                    className="h-9 w-full bg-white py-1 text-base hover:bg-orange-50 sm:text-lg"
+                  />
+                </div>
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
             </FormItem>
@@ -402,7 +487,7 @@ export function EditLogForm({
                   step="0.01"
                   placeholder="Enter tip amount"
                   {...field}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="h-9 w-full bg-white py-1 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -421,7 +506,7 @@ export function EditLogForm({
                 <FormControl>
                   <SelectTrigger
                     id="payment_method"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
                   >
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>

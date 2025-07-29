@@ -178,7 +178,7 @@ export function GiftCardForm({
                   {...field}
                   tabIndex={-1}
                   autoFocus={false}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="w-full bg-white text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -201,7 +201,7 @@ export function GiftCardForm({
                   min="0.01"
                   placeholder="Enter gift card value (what customer can spend)"
                   {...field}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="h-9 w-full bg-white py-1 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -224,7 +224,7 @@ export function GiftCardForm({
                   min="0.01"
                   placeholder="Enter actual price customer paid"
                   {...field}
-                  className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                  className="h-9 w-full bg-white py-1 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
                 />
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />
@@ -243,7 +243,7 @@ export function GiftCardForm({
                 <FormControl>
                   <SelectTrigger
                     id="payment_method"
-                    className="h-11 w-full bg-white text-base sm:h-12 sm:text-lg"
+                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
                   >
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
@@ -270,7 +270,7 @@ export function GiftCardForm({
                   id="notes"
                   placeholder="Add any additional notes..."
                   {...field}
-                  className="min-h-[100px] w-full resize-none rounded-md border border-input bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
+                  className="min-h-[100px] w-full resize-none rounded-md border border-input bg-white px-3 py-2 text-base ring-offset-background placeholder:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg sm:placeholder:text-base"
                 />
               </FormControl>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />

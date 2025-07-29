@@ -26,9 +26,21 @@ const baseSchema = {
   discount: z
     .string()
     .min(1, { message: "Please select a discount" })
-    .refine((val) => DISCOUNTS.map(String).includes(val), {
-      message: "Please select a valid discount",
-    }),
+    .refine(
+      (val) => {
+        // 允许预设值
+        if (DISCOUNTS.map(String).includes(val)) {
+          return true
+        }
+        // 允许自定义数字（0-100范围）
+        const numVal = parseFloat(val)
+        return !isNaN(numVal) && numVal >= 0 && numVal <= 100
+      },
+      {
+        message:
+          "Please select a valid discount or enter a number between 0-100",
+      }
+    ),
   addOns: z.array(z.string()).optional(),
   tip: z
     .string()
