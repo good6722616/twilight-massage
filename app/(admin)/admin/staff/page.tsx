@@ -28,11 +28,7 @@ export default function StaffPage() {
     isOpen: boolean
     staff: Staff | null
   }>({ isOpen: false, staff: null })
-  const [statusChangeDialog, setStatusChangeDialog] = useState<{
-    isOpen: boolean
-    staff: Staff | null
-    newStatus: boolean
-  }>({ isOpen: false, staff: null, newStatus: false })
+
   const queryClient = useQueryClient()
 
   const { data: staffList, isLoading } = useQuery({
@@ -103,34 +99,11 @@ export default function StaffPage() {
     id: string,
     data: { name: string; is_active: boolean }
   ) => {
-    // 检查是否是将员工状态改为离职
-    const currentStaff = staffList?.find((staff) => staff.id === id)
-    if (currentStaff && currentStaff.is_active && !data.is_active) {
-      // 显示状态变更确认对话框
-      setStatusChangeDialog({
-        isOpen: true,
-        staff: currentStaff,
-        newStatus: data.is_active,
-      })
-      return
-    }
-
     updateStaffMutation.mutate({ id, ...data })
   }
 
   const handleDeleteStaff = (staff: Staff) => {
     setDeleteConfirmDialog({ isOpen: true, staff })
-  }
-
-  const confirmStatusChange = () => {
-    if (statusChangeDialog.staff) {
-      updateStaffMutation.mutate({
-        id: statusChangeDialog.staff.id,
-        name: statusChangeDialog.staff.name,
-        is_active: statusChangeDialog.newStatus,
-      })
-    }
-    setStatusChangeDialog({ isOpen: false, staff: null, newStatus: false })
   }
 
   const confirmDelete = () => {
@@ -242,7 +215,7 @@ export default function StaffPage() {
             <p className="text-sm text-muted-foreground">
               确定要删除员工{" "}
               <span className="font-medium text-foreground">
-                "{deleteConfirmDialog.staff?.name}"
+                &ldquo;{deleteConfirmDialog.staff?.name}&rdquo;
               </span>{" "}
               吗？
             </p>
@@ -261,58 +234,6 @@ export default function StaffPage() {
                 variant="outline"
                 onClick={() =>
                   setDeleteConfirmDialog({ isOpen: false, staff: null })
-                }
-                className="flex-1"
-              >
-                取消
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* 状态变更确认对话框 */}
-      <Dialog
-        open={statusChangeDialog.isOpen}
-        onOpenChange={(open) =>
-          setStatusChangeDialog({ isOpen: open, staff: null, newStatus: false })
-        }
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>确认员工状态变更</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              确定要将员工{" "}
-              <span className="font-medium text-foreground">
-                "{statusChangeDialog.staff?.name}"
-              </span>{" "}
-              的状态改为
-              <span
-                className={`font-medium ${statusChangeDialog.newStatus ? "text-emerald-600" : "text-gray-600"}`}
-              >
-                {statusChangeDialog.newStatus ? " 在职" : " 离职"}
-              </span>{" "}
-              吗？
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {statusChangeDialog.newStatus
-                ? "员工将重新出现在员工选择列表中。"
-                : "离职员工将不会出现在员工选择列表中。"}
-            </p>
-            <div className="flex space-x-2">
-              <Button onClick={confirmStatusChange} className="flex-1">
-                确认变更
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setStatusChangeDialog({
-                    isOpen: false,
-                    staff: null,
-                    newStatus: false,
-                  })
                 }
                 className="flex-1"
               >
