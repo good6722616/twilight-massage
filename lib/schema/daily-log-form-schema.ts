@@ -3,10 +3,8 @@ import {
   MASSAGE_TYPES,
   DURATIONS,
   DISCOUNTS,
-  STAFFS,
   PAYMENT_METHODS,
   MassageType,
-  Staff,
   PaymentMethod,
 } from "@/lib/types/massage"
 
@@ -48,12 +46,7 @@ const baseSchema = {
     .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
       message: "Tip must be a non-negative number",
     }),
-  staff: z
-    .string()
-    .min(1, { message: "Please select a staff member" })
-    .refine((val) => STAFFS.includes(val as Staff), {
-      message: "Please select a valid staff member",
-    }),
+  staff: z.string().min(1, { message: "Please select a staff member" }),
   payment_method: z
     .string()
     .min(1, { message: "Please select a payment method" })

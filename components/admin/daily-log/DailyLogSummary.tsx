@@ -5,8 +5,10 @@ import {
   type MassageType,
   type Duration,
   type Addon,
-  STAFFS,
 } from "@/lib/types/massage"
+import { useQuery } from "@tanstack/react-query"
+import { useAuth } from "@clerk/nextjs"
+import { staffService } from "@/services/staffService"
 import { Badge } from "@/components/ui/badge"
 import { H2 } from "@/components/ui/typography"
 import { FileText, DollarSign } from "lucide-react"
@@ -34,7 +36,18 @@ type StaffSummary = {
 }
 
 export function DailyLogSummary({ records }: DailyLogSummaryProps) {
+  const { getToken } = useAuth()
   const totalStoreIncome = calculateStoreIncome(records)
+
+  // Get all staff from database
+  const { data: allStaff } = useQuery({
+    queryKey: ["staff"],
+    queryFn: async () => {
+      const token = await getToken({ template: "supabase" })
+      if (!token) throw new Error("No authentication token")
+      return staffService.getAllStaff(token)
+    },
+  })
 
   // Calculate staff income breakdown
   const staffIncomeBreakdown = useMemo(
@@ -76,22 +89,22 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
   )
 
   // Ensure all staff are present, even if they have zero records
-  const staffList = useMemo(
-    () =>
-      STAFFS.map((name) => {
-        const found = staffIncomeBreakdown[name]
-        return found
-          ? found
-          : {
-              name,
-              totalIncome: 0,
-              recordCount: 0,
-              totalPay: 0,
-              totalTips: 0,
-            }
-      }),
-    [staffIncomeBreakdown]
-  )
+  const staffList = useMemo(() => {
+    if (!allStaff) return []
+
+    return allStaff.map((staff) => {
+      const found = staffIncomeBreakdown[staff.name]
+      return found
+        ? found
+        : {
+            name: staff.name,
+            totalIncome: 0,
+            recordCount: 0,
+            totalPay: 0,
+            totalTips: 0,
+          }
+    })
+  }, [staffIncomeBreakdown, allStaff])
 
   return (
     <div className="space-y-6">

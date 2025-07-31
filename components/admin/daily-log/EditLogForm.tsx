@@ -31,12 +31,12 @@ import {
   MASSAGE_TYPES,
   ADDONS,
   DISCOUNTS,
-  STAFFS,
   PAYMENT_METHODS,
   Discount,
   SERVICE_PRICES,
   calculateStaffIncome,
 } from "@/lib/types/massage"
+import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 
 interface EditLogFormProps {
@@ -270,32 +270,12 @@ export function EditLogForm({
         </FormItem>
 
         {/* Staff */}
-        <FormField
+        <FormStaffSelector
           control={form.control}
           name="staff"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="staff">Staff</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger
-                    id="staff"
-                    className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
-                  >
-                    <SelectValue placeholder="Select staff member" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {STAFFS.map((staff) => (
-                    <SelectItem key={staff} value={staff}>
-                      {staff}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage className="absolute -bottom-5 left-0 text-xs" />
-            </FormItem>
-          )}
+          label="Staff"
+          placeholder="Select staff member"
+          className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
         />
 
         {/* Massage Type */}
