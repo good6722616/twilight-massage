@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
 import { Plus, Edit, Trash2, UserPlus } from "lucide-react"
@@ -249,6 +249,20 @@ export default function StaffPage() {
 
 function AddStaffForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   const [name, setName] = useState("")
+  const inputRef = React.useRef<HTMLInputElement>(null)
+  const [isInitialFocus, setIsInitialFocus] = useState(true)
+
+  // 只在初始加载时阻止自动聚焦
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (inputRef.current && isInitialFocus) {
+        inputRef.current.blur()
+        setIsInitialFocus(false)
+      }
+    }, 50)
+
+    return () => clearTimeout(timer)
+  }, [isInitialFocus])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -263,11 +277,13 @@ function AddStaffForm({ onSubmit }: { onSubmit: (name: string) => void }) {
       <div>
         <Label htmlFor="name">员工姓名</Label>
         <Input
+          ref={inputRef}
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="请输入员工姓名"
           required
+          autoFocus={false}
         />
       </div>
       <Button type="submit" className="w-full">
@@ -288,6 +304,20 @@ function EditStaffForm({
 }) {
   const [name, setName] = useState(staff.name)
   const [isActive, setIsActive] = useState(staff.is_active)
+  const inputRef = React.useRef<HTMLInputElement>(null)
+  const [isInitialFocus, setIsInitialFocus] = useState(true)
+
+  // 只在初始加载时阻止自动聚焦
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (inputRef.current && isInitialFocus) {
+        inputRef.current.blur()
+        setIsInitialFocus(false)
+      }
+    }, 50)
+
+    return () => clearTimeout(timer)
+  }, [isInitialFocus])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -322,11 +352,13 @@ function EditStaffForm({
       <div>
         <Label htmlFor="edit-name">员工姓名</Label>
         <Input
+          ref={inputRef}
           id="edit-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="请输入员工姓名"
           required
+          autoFocus={false}
         />
       </div>
       <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
