@@ -3,6 +3,7 @@ import Hero from "@/components/pages/hero"
 import AboutUs from "@/components/pages/about-us"
 import FeatureCards from "@/components/pages/feature-cards"
 import GiftCard from "@/components/pages/giftcard"
+import LoyaltyPopup from "@/components/ui/loyalty-popup"
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <AboutUs />
       <FeatureCards />
       <GiftCard />
+      <LoyaltyPopup />
     </main>
   )
 }

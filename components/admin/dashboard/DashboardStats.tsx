@@ -29,6 +29,9 @@ export function DashboardStats({
 }: DashboardStatsProps) {
   const totalStaffEarnings = totalStaffPays + totalTips
   const netProfit = totalRevenue - totalStaffPays
+  const giftCardUsedTotal = paymentBreakdown?.giftcard ?? 0
+  const giftCardDiscount = giftCardUsedTotal * 0.15
+  const profitExcludingGiftCardDiscount = netProfit - giftCardDiscount
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -75,12 +78,22 @@ export function DashboardStats({
               </span>
             </div>
           </div>
-          {/* Note */}
-          <div className="pt-2">
-            <span className="block text-xs text-muted-foreground">
-              Includes services paid with gift cards. Gift card sales not
-              included.
-            </span>
+          {/* Profit (excluding gift card discount) */}
+          <div className="space-y-1 border-t border-gray-100 pt-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">
+                Profit (excluding gift card discount)
+              </span>
+              <span className="text-xl font-bold text-orange-500">
+                ${profitExcludingGiftCardDiscount.toFixed(2)}
+              </span>
+            </div>
+            <div className="pt-1">
+              <span className="block text-xs text-muted-foreground">
+                Gift cards sold with 15% discount, so actual profit is reduced
+                by ${giftCardDiscount.toFixed(2)}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>
