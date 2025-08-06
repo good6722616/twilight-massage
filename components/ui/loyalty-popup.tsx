@@ -23,7 +23,7 @@ export default function LoyaltyPopup() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative mx-4 h-[90vh] w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+      <div className="relative mx-4 h-[60vh] w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-2xl sm:h-[50vh] sm:max-w-lg">
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -38,6 +38,12 @@ export default function LoyaltyPopup() {
           className="h-full w-full rounded-2xl"
           title="Twilight Massage Loyalty Program"
           allow="camera; microphone; geolocation"
+          style={{
+            transform: "scale(0.7)",
+            transformOrigin: "top left",
+            width: "142.86%", // 补偿缩放 (100/0.7)
+            height: "142.86%",
+          }}
         />
       </div>
     </div>
