@@ -101,23 +101,27 @@ export function ServiceRecordsList({
       {
         id: "select",
         header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
+          <div className="w-12 px-4 py-2">
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+              aria-label="Select all"
+            />
+          </div>
         ),
         cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
+          <div className="w-12">
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          </div>
         ),
         enableSorting: false,
         enableHiding: false,
@@ -126,18 +130,21 @@ export function ServiceRecordsList({
         accessorKey: "staff",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Staff
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-24 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Staff
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
-        cell: ({ row }) => <div>{row.getValue("staff")}</div>,
+        cell: ({ row }) => <div className="w-24">{row.getValue("staff")}</div>,
         enableColumnFilter: true,
         filterFn: (row, id, value) => {
           return value.length === 0 || value.includes(row.getValue(id))
@@ -147,51 +154,65 @@ export function ServiceRecordsList({
         accessorKey: "service_name",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Type
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-32 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Type
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
-        cell: ({ row }) => <div>{row.getValue("service_name")}</div>,
+        cell: ({ row }) => (
+          <div className="w-32">{row.getValue("service_name")}</div>
+        ),
       },
       {
         accessorKey: "duration",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Duration
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-20 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Duration
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
-        cell: ({ row }) => <div>{row.getValue("duration")} mins</div>,
+        cell: ({ row }) => (
+          <div className="w-20">{row.getValue("duration")} mins</div>
+        ),
       },
       {
         accessorKey: "original_price",
-        header: "Original Price",
+        header: () => <div className="w-24 px-4 py-2">Original Price</div>,
         cell: ({ row }) => {
           const record = row.original as MassageRecord
           const price =
             SERVICE_PRICES[record.service_name as MassageType]?.[
               record.duration as Duration
             ] ?? 0
-          return <span>${price.toFixed(2)}</span>
+          return (
+            <div className="w-24">
+              <span>${price.toFixed(2)}</span>
+            </div>
+          )
         },
       },
       {
         accessorKey: "discounted_price",
-        header: "Discounted Price",
+        header: () => <div className="w-24 px-4 py-2">Discounted Price</div>,
         cell: ({ row }) => {
           const record = row.original as MassageRecord
           const price =
@@ -200,58 +221,76 @@ export function ServiceRecordsList({
             ] ?? 0
           const discountAmount = (price * record.discount) / 100
           const discounted = price - discountAmount
-          return <span>${discounted.toFixed(2)}</span>
+          return (
+            <div className="w-24">
+              <span>${discounted.toFixed(2)}</span>
+            </div>
+          )
         },
       },
       {
         accessorKey: "time_slot",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Time Slot
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-24 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Time Slot
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
         cell: ({ row }) => (
-          <div>{formatTimeSlot(row.getValue("time_slot"))}</div>
+          <div className="w-24">
+            {formatTimeSlot(row.getValue("time_slot"))}
+          </div>
         ),
       },
       {
         accessorKey: "discount",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Discount
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-20 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Discount
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
-        cell: ({ row }) => <div>{row.getValue("discount")}%</div>,
+        cell: ({ row }) => (
+          <div className="w-20">{row.getValue("discount")}%</div>
+        ),
       },
       {
         accessorKey: "add_ons",
-        header: "Add-ons",
+        header: () => <div className="w-28 px-4 py-2">Add-ons</div>,
         cell: ({ row }) => {
           const addOns = row.getValue("add_ons") as string[]
-          return addOns.length > 0 ? (
-            <ul className="list-inside list-disc">
-              {addOns.map((addon: string) => (
-                <li key={addon}>{addon}</li>
-              ))}
-            </ul>
-          ) : (
-            <span className="text-muted-foreground">--</span>
+          return (
+            <div className="w-28">
+              {addOns.length > 0 ? (
+                <ul className="list-inside list-disc">
+                  {addOns.map((addon: string) => (
+                    <li key={addon}>{addon}</li>
+                  ))}
+                </ul>
+              ) : (
+                <span className="text-muted-foreground">--</span>
+              )}
+            </div>
           )
         },
       },
@@ -259,21 +298,26 @@ export function ServiceRecordsList({
         accessorKey: "tip",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Tip
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-20 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Tip
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
         cell: ({ row }) => {
           const tip = parseFloat(row.getValue("tip"))
           return (
-            <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+            <div className="w-20">
+              <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+            </div>
           )
         },
       },
@@ -281,15 +325,18 @@ export function ServiceRecordsList({
         accessorKey: "Pay",
         header: ({ column }) => {
           return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Pay
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-20 px-4 py-2">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+                className="h-auto p-0 font-medium"
+              >
+                Pay
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           )
         },
         cell: ({ row }) => {
@@ -300,8 +347,10 @@ export function ServiceRecordsList({
             (record.add_ons as string[]).map((a) => a as Addon)
           )
           return (
-            <div className="font-medium text-green-600">
-              {formatCurrency(staffIncome)}
+            <div className="w-20">
+              <div className="font-medium text-green-600">
+                {formatCurrency(staffIncome)}
+              </div>
             </div>
           )
         },
@@ -309,7 +358,7 @@ export function ServiceRecordsList({
       {
         id: "income",
         header: () => {
-          return <span>Income</span>
+          return <div className="w-20 px-4 py-2">Income</div>
         },
         cell: ({ row }) => {
           const record = row.original
@@ -322,8 +371,10 @@ export function ServiceRecordsList({
             typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
           const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
           return (
-            <div className="font-bold text-green-700">
-              {formatCurrency(overallIncome)}
+            <div className="w-20">
+              <div className="font-bold text-green-700">
+                {formatCurrency(overallIncome)}
+              </div>
             </div>
           )
         },

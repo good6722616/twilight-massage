@@ -84,15 +84,18 @@ export function getDailyLogColumns({
     {
       accessorKey: "staff",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Staff
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-24 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Staff
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
-      cell: ({ row }) => <div>{row.getValue("staff")}</div>,
+      cell: ({ row }) => <div className="w-24">{row.getValue("staff")}</div>,
       enableColumnFilter: true,
       filterFn: (row, id, value) => {
         return value.length === 0 || value.includes(row.getValue(id))
@@ -101,86 +104,115 @@ export function getDailyLogColumns({
     {
       accessorKey: "service_name",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Type
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-32 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Type
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
-      cell: ({ row }) => <div>{row.getValue("service_name")}</div>,
+      cell: ({ row }) => (
+        <div className="w-32">{row.getValue("service_name")}</div>
+      ),
     },
     {
       accessorKey: "duration",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Duration
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-20 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
-      cell: ({ row }) => <div>{row.getValue("duration")} mins</div>,
+      cell: ({ row }) => (
+        <div className="w-20">{row.getValue("duration")} mins</div>
+      ),
     },
     {
       accessorKey: "time_slot",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Time Slot
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-24 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Time Slot
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
-      cell: ({ row }) => <div>{formatTimeSlot(row.getValue("time_slot"))}</div>,
+      cell: ({ row }) => (
+        <div className="w-24">{formatTimeSlot(row.getValue("time_slot"))}</div>
+      ),
     },
     {
       accessorKey: "discount",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Discount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-20 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Discount
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
-      cell: ({ row }) => <div>{row.getValue("discount")}%</div>,
+      cell: ({ row }) => (
+        <div className="w-20">{row.getValue("discount")}%</div>
+      ),
     },
     {
       accessorKey: "add_ons",
-      header: "Add-ons",
+      header: () => <div className="w-28 px-4 py-2">Add-ons</div>,
       cell: ({ row }) => {
         const addOns = row.getValue("add_ons") as string[]
-        return addOns.length > 0 ? (
-          <ul className="list-inside list-disc">
-            {addOns.map((addon: string) => (
-              <li key={addon}>{addon}</li>
-            ))}
-          </ul>
-        ) : (
-          <span className="text-muted-foreground">--</span>
+        return (
+          <div className="w-28">
+            {addOns.length > 0 ? (
+              <ul className="list-inside list-disc">
+                {addOns.map((addon: string) => (
+                  <li key={addon}>{addon}</li>
+                ))}
+              </ul>
+            ) : (
+              <span className="text-muted-foreground">--</span>
+            )}
+          </div>
         )
       },
     },
     {
       accessorKey: "tip",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tip
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-20 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Tip
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
       cell: ({ row }) => {
         const tip = parseFloat(row.getValue("tip"))
         return (
-          <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+          <div className="w-20">
+            <div className="font-medium text-blue-600">${tip.toFixed(2)}</div>
+          </div>
         )
       },
     },
@@ -188,13 +220,16 @@ export function getDailyLogColumns({
     {
       accessorKey: "Pay",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Pay
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="w-20 px-4 py-2">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium"
+          >
+            Pay
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       ),
       cell: ({ row }) => {
         const record = row.original
@@ -204,15 +239,17 @@ export function getDailyLogColumns({
           (record.add_ons as string[]).map((a) => a as Addon)
         )
         return (
-          <div className="font-medium text-green-600">
-            {formatCurrency(staffIncome)}
+          <div className="w-20">
+            <div className="font-medium text-green-600">
+              {formatCurrency(staffIncome)}
+            </div>
           </div>
         )
       },
     },
     {
       id: "income",
-      header: () => <span className="px-2 py-2 md:px-1">Income</span>,
+      header: () => <div className="w-20 px-4 py-2">Income</div>,
       cell: ({ row }) => {
         const record = row.original
         const staffIncome = calculateStaffIncome(
@@ -224,15 +261,17 @@ export function getDailyLogColumns({
           typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
         const overallIncome = staffIncome + (isNaN(tip) ? 0 : tip)
         return (
-          <div className="font-bold text-green-700">
-            {formatCurrency(overallIncome)}
+          <div className="w-20">
+            <div className="font-bold text-green-700">
+              {formatCurrency(overallIncome)}
+            </div>
           </div>
         )
       },
     },
     {
       accessorKey: "payment_method",
-      header: () => <span className="px-2 py-2 md:px-1">Payment Method</span>,
+      header: () => <div className="w-32 px-4 py-2">Payment Method</div>,
       cell: ({ row }) => {
         const paymentMethod = row.getValue("payment_method") as Record<
           string,
@@ -243,18 +282,20 @@ export function getDailyLogColumns({
         if (typeof paymentMethod === "string") {
           const icon = getPaymentIcon(paymentMethod)
           return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
-                    {icon}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getPaymentName(paymentMethod)}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <div className="w-32">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                      {icon}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{getPaymentName(paymentMethod)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           )
         }
 
@@ -298,74 +339,82 @@ export function getDailyLogColumns({
                 )
               })
 
-            return <div className="flex flex-col gap-1">{paymentBreakdown}</div>
+            return (
+              <div className="w-32">
+                <div className="flex flex-col gap-1">{paymentBreakdown}</div>
+              </div>
+            )
           } else {
             // Single payment method (old format converted)
             const method = methods[0]
             const icon = getPaymentIcon(method)
             return (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
-                      {icon}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{getPaymentName(method)}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="w-32">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                        {icon}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{getPaymentName(method)}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             )
           }
         }
 
-        return <div>-</div>
+        return <div className="w-32">-</div>
       },
     },
     {
       id: "actions",
       enableHiding: false,
       accessorKey: "actions",
-      header: () => <span className="px-2 py-2 md:px-1">Actions</span>,
+      header: () => <div className="w-24 px-4 py-2">Actions</div>,
       cell: ({ row }) => {
         const record = row.original
         const isDeleting = deletingIds.has(record.id)
         return (
-          <div className="flex gap-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onEdit(record)}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Edit</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onDelete(record.id)}
-                    disabled={isDeleting}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    {isDeleting ? (
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <div className="w-24">
+            <div className="flex gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(record)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDelete(record.id)}
+                      disabled={isDeleting}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      {isDeleting ? (
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive border-t-transparent" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
         )
       },
