@@ -39,6 +39,8 @@ import {
 } from "@/lib/types/massage"
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
+import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
+import { getCurrentDateUTC } from "@/lib/utils"
 
 interface DailyLogFormProps {
   onSubmit: (
@@ -56,6 +58,7 @@ export function DailyLogForm({
   const today = new Date()
   const [showSuccess, setShowSuccess] = useState(false)
   const [customDiscountMode, setCustomDiscountMode] = useState(false)
+  const [customPaymentValid, setCustomPaymentValid] = useState(false)
 
   const form = useForm<DailyLogFormValues>({
     resolver: zodResolver(dailyLogFormSchema),
@@ -67,6 +70,11 @@ export function DailyLogForm({
       addOns: [],
       tip: "",
       payment_method: "",
+      custom: {
+        cash: "",
+        credit_card: "",
+        giftcard: "",
+      },
       timeSlot: { from: "", to: "" },
     },
     mode: "onSubmit", // Only validate when form is submitted
@@ -82,14 +90,26 @@ export function DailyLogForm({
       addOns: [],
       tip: "",
       payment_method: "",
+      custom: {
+        cash: "",
+        credit_card: "",
+        giftcard: "",
+      },
       timeSlot: { from: "", to: "" },
     })
     setCustomDiscountMode(false)
+    setCustomPaymentValid(false)
     // eslint-disable-next-line
   }, [])
 
   // Watch discount value to handle custom mode
   const discountValue = form.watch("discount")
+
+  // Watch form values for price calculation
+  const selectedDuration = form.watch("duration")
+  const selectedAddOns = form.watch("addOns") || []
+  const selectedDiscount = form.watch("discount")
+  const paymentMethod = form.watch("payment_method")
 
   // Handle discount mode changes
   useEffect(() => {
@@ -108,6 +128,31 @@ export function DailyLogForm({
   }
 
   const selectedType = form.watch("type") as MassageType | undefined
+
+  // Calculate expected amount
+  const expectedAmount = useMemo(() => {
+    if (!selectedType || !selectedDuration) return 0
+
+    const duration = parseInt(selectedDuration) as Duration
+    const basePrice = SERVICE_PRICES[selectedType][duration] || 0
+
+    // Calculate add-ons total
+    const addOnsTotal = selectedAddOns.reduce((sum, addon) => {
+      const addonPrice = ADDONS.find((a) => a.name === addon)?.price || 0
+      return sum + addonPrice
+    }, 0)
+
+    // Calculate discount
+    let discountAmount = 0
+    if (selectedDiscount && selectedDiscount !== "custom") {
+      const discountPercent = parseFloat(selectedDiscount)
+      discountAmount = (basePrice * discountPercent) / 100
+    }
+
+    // Total expected amount = base price + add-ons - discount
+    return basePrice + addOnsTotal - discountAmount
+  }, [selectedType, selectedDuration, selectedAddOns, selectedDiscount])
+
   const availableDurations = useMemo(() => {
     if (!selectedType || !SERVICE_PRICES[selectedType]) return []
     return Object.entries(SERVICE_PRICES[selectedType])
@@ -162,9 +207,32 @@ export function DailyLogForm({
         }
       }
 
+      // Handle payment method - now supports both single and custom payments
+      let finalPaymentMethod: Record<string, number | null>
+      if (values.payment_method === "custom" && values.custom) {
+        // Custom payment breakdown
+        finalPaymentMethod = {
+          cash: parseFloat(values.custom.cash || "0") || null,
+          credit_card: parseFloat(values.custom.credit_card || "0") || null,
+          giftcard: parseFloat(values.custom.giftcard || "0") || null,
+        }
+        // Remove null values for cleaner storage
+        Object.keys(finalPaymentMethod).forEach((key) => {
+          if (
+            finalPaymentMethod[key] === null ||
+            finalPaymentMethod[key] === 0
+          ) {
+            delete finalPaymentMethod[key]
+          }
+        })
+      } else {
+        // Single payment method - store as {method: null} for old records
+        finalPaymentMethod = { [values.payment_method]: null }
+      }
+
       // Create the massage record
       const record = {
-        date: today.toLocaleDateString("en-CA"),
+        date: getCurrentDateUTC(),
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
         service_name: massageType,
@@ -175,7 +243,7 @@ export function DailyLogForm({
           : [],
         tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
         income: staffIncome / (isCouple ? 2 : 1),
-        payment_method: values.payment_method,
+        payment_method: finalPaymentMethod,
       }
 
       // Call the parent's onSubmit function
@@ -190,9 +258,15 @@ export function DailyLogForm({
         addOns: [],
         tip: "",
         payment_method: "",
+        custom: {
+          cash: "",
+          credit_card: "",
+          giftcard: "",
+        },
         timeSlot: { from: "", to: "" },
       })
       setCustomDiscountMode(false)
+      setCustomPaymentValid(false)
     } catch (error) {
       console.error("Error preparing form data:", error)
     }
@@ -495,6 +569,7 @@ export function DailyLogForm({
                       {method === "cash" && "Cash"}
                       {method === "credit_card" && "Credit Card"}
                       {method === "giftcard" && "Gift Card"}
+                      {method === "custom" && "Custom Payment"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -504,9 +579,21 @@ export function DailyLogForm({
           )}
         />
 
+        {/* Custom Payment Breakdown */}
+        {paymentMethod === "custom" && (
+          <CustomPaymentBreakdown
+            expectedAmount={expectedAmount}
+            onValidationChange={setCustomPaymentValid}
+          />
+        )}
+
         <Button
           type="submit"
-          disabled={isSubmitting || showSuccess}
+          disabled={
+            isSubmitting ||
+            showSuccess ||
+            (paymentMethod === "custom" && !customPaymentValid)
+          }
           className="w-32"
         >
           {getButtonContent()}

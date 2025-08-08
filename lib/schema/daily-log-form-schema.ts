@@ -53,6 +53,13 @@ const baseSchema = {
     .refine((val) => PAYMENT_METHODS.includes(val as PaymentMethod), {
       message: "Please select a valid payment method",
     }),
+  custom: z
+    .object({
+      cash: z.string().optional(),
+      credit_card: z.string().optional(),
+      giftcard: z.string().optional(),
+    })
+    .optional(),
   timeSlot: z
     .object({
       from: z.string().min(1, "Start time is required"),

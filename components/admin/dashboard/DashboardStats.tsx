@@ -11,6 +11,10 @@ interface DashboardStatsProps {
     totalCards: number // Number of gift cards issued
     totalValue: number // Total face value of all gift cards
     totalSold: number // Total revenue from gift card sales
+    paymentBreakdown?: {
+      cash: number // Total sold via cash
+      credit_card: number // Total sold via credit card
+    }
   }
   paymentBreakdown?: {
     cash: number
@@ -167,6 +171,36 @@ export function DashboardStats({
               ${giftCardStats?.totalSold?.toFixed(2) ?? "0.00"}
             </span>
           </div>
+
+          {/* Payment Method Breakdown */}
+          {giftCardStats?.paymentBreakdown && (
+            <div className="space-y-2 border-t border-gray-100 pt-3">
+              <div className="text-xs font-medium text-gray-600">
+                Payment Methods:
+              </div>
+              <div className="flex items-center justify-between text-sm text-gray-700">
+                <span className="flex items-center gap-1">
+                  <Wallet className="h-3 w-3 text-gray-400" />
+                  Cash
+                </span>
+                <span className="font-semibold">
+                  ${giftCardStats.paymentBreakdown.cash?.toFixed(2) ?? "0.00"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-gray-700">
+                <span className="flex items-center gap-1">
+                  <CreditCard className="h-3 w-3 text-gray-400" />
+                  Credit Card
+                </span>
+                <span className="font-semibold">
+                  $
+                  {giftCardStats.paymentBreakdown.credit_card?.toFixed(2) ??
+                    "0.00"}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="pt-2">
             <span className="block text-xs text-muted-foreground">
               These sales are <b>not</b> included in today&apos;s revenue.

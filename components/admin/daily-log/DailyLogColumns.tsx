@@ -1,4 +1,11 @@
-import { ArrowUpDown, Edit, Trash2 } from "lucide-react"
+import {
+  ArrowUpDown,
+  Edit,
+  Trash2,
+  CircleDollarSign,
+  CreditCard,
+  Gift,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -34,6 +41,32 @@ function formatTimeSlot(timeSlot: string) {
 
 function formatCurrency(amount: number) {
   return `$${amount.toFixed(2)}`
+}
+
+function getPaymentIcon(method: string) {
+  switch (method) {
+    case "cash":
+      return <CircleDollarSign className="h-4 w-4" />
+    case "credit_card":
+      return <CreditCard className="h-4 w-4" />
+    case "giftcard":
+      return <Gift className="h-4 w-4" />
+    default:
+      return null
+  }
+}
+
+function getPaymentName(method: string) {
+  switch (method) {
+    case "cash":
+      return "Cash"
+    case "credit_card":
+      return "Credit Card"
+    case "giftcard":
+      return "Gift Card"
+    default:
+      return method
+  }
 }
 
 interface GetDailyLogColumnsParams {
@@ -201,15 +234,93 @@ export function getDailyLogColumns({
       accessorKey: "payment_method",
       header: () => <span className="px-2 py-2 md:px-1">Payment Method</span>,
       cell: ({ row }) => {
-        const paymentMethod = row.getValue("payment_method") as string
-        const displayName =
-          {
-            cash: "Cash",
-            credit_card: "Credit Card",
-            giftcard: "Gift Card",
-          }[paymentMethod] || paymentMethod
+        const paymentMethod = row.getValue("payment_method") as Record<
+          string,
+          number | null
+        >
 
-        return <div>{displayName}</div>
+        // Handle both old string format and new JSONB format
+        if (typeof paymentMethod === "string") {
+          const icon = getPaymentIcon(paymentMethod)
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                    {icon}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{getPaymentName(paymentMethod)}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )
+        }
+
+        // New JSONB format
+        if (typeof paymentMethod === "object" && paymentMethod !== null) {
+          const methods = Object.keys(paymentMethod)
+          const amounts = Object.values(paymentMethod)
+
+          // Check if it's a custom payment (multiple methods with amounts)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+
+          if (hasAmounts) {
+            // Custom payment - show breakdown with icons
+            const paymentBreakdown = methods
+              .filter(
+                (method) =>
+                  paymentMethod[method] !== null && paymentMethod[method]! > 0
+              )
+              .map((method) => {
+                const icon = getPaymentIcon(method)
+                return (
+                  <TooltipProvider key={method}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex cursor-pointer items-center gap-1 rounded-md p-1 transition-colors hover:bg-green-100">
+                          {icon}
+                          <span className="text-sm">
+                            ${paymentMethod[method]}
+                          </span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {getPaymentName(method)}: ${paymentMethod[method]}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )
+              })
+
+            return <div className="flex flex-col gap-1">{paymentBreakdown}</div>
+          } else {
+            // Single payment method (old format converted)
+            const method = methods[0]
+            const icon = getPaymentIcon(method)
+            return (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                      {icon}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{getPaymentName(method)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )
+          }
+        }
+
+        return <div>-</div>
       },
     },
     {

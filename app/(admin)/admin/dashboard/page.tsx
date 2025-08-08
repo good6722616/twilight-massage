@@ -95,70 +95,159 @@ export default function DashboardPage() {
       (sum, record) => sum + (Number(record.sold_price) || 0),
       0
     ), // Total revenue from gift card sales
+    paymentBreakdown: {
+      cash: giftCardRecords
+        .filter((record) => record.payment_method === "cash")
+        .reduce((sum, record) => sum + (Number(record.sold_price) || 0), 0),
+      credit_card: giftCardRecords
+        .filter((record) => record.payment_method === "credit_card")
+        .reduce((sum, record) => sum + (Number(record.sold_price) || 0), 0),
+    },
   }
 
   // Payment method breakdown for massage records
   const paymentBreakdown = {
     cash: records
-      .filter((r) => r.payment_method === "cash")
-      .reduce(
-        (sum, r) =>
-          sum +
-          (function () {
-            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
-            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
-            const discountAmount = (price * r.discount) / 100
-            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
-              const addonPrice =
-                ADDONS.find(
-                  (a: { name: string; price: number }) => a.name === addon
-                )?.price || 0
-              return addonSum + addonPrice
-            }, 0)
-            return price - discountAmount + addOnsTotal
-          })(),
-        0
-      ),
+      .filter((r) => {
+        // Handle both old string format and new JSONB format
+        if (typeof r.payment_method === "string") {
+          return r.payment_method === "cash"
+        }
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          // For custom payments, check if cash has an amount
+          if (r.payment_method.cash !== null && r.payment_method.cash! > 0) {
+            return true
+          }
+          // For single payments, check if cash is the only method
+          const methods = Object.keys(r.payment_method)
+          const amounts = Object.values(r.payment_method)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+          if (!hasAmounts && methods[0] === "cash") {
+            return true
+          }
+        }
+        return false
+      })
+      .reduce((sum, r) => {
+        // For custom payments, use the stored amount
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          const amount = r.payment_method.cash
+          if (amount !== null && amount > 0) {
+            return sum + amount
+          }
+        }
+
+        // For single payments, calculate the amount
+        const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+        const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+        const discountAmount = (price * r.discount) / 100
+        const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+          const addonPrice =
+            ADDONS.find(
+              (a: { name: string; price: number }) => a.name === addon
+            )?.price || 0
+          return addonSum + addonPrice
+        }, 0)
+        return sum + price - discountAmount + addOnsTotal
+      }, 0),
     credit_card: records
-      .filter((r) => r.payment_method === "credit_card")
-      .reduce(
-        (sum, r) =>
-          sum +
-          (function () {
-            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
-            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
-            const discountAmount = (price * r.discount) / 100
-            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
-              const addonPrice =
-                ADDONS.find(
-                  (a: { name: string; price: number }) => a.name === addon
-                )?.price || 0
-              return addonSum + addonPrice
-            }, 0)
-            return price - discountAmount + addOnsTotal
-          })(),
-        0
-      ),
+      .filter((r) => {
+        // Handle both old string format and new JSONB format
+        if (typeof r.payment_method === "string") {
+          return r.payment_method === "credit_card"
+        }
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          // For custom payments, check if credit_card has an amount
+          if (
+            r.payment_method.credit_card !== null &&
+            r.payment_method.credit_card! > 0
+          ) {
+            return true
+          }
+          // For single payments, check if credit_card is the only method
+          const methods = Object.keys(r.payment_method)
+          const amounts = Object.values(r.payment_method)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+          if (!hasAmounts && methods[0] === "credit_card") {
+            return true
+          }
+        }
+        return false
+      })
+      .reduce((sum, r) => {
+        // For custom payments, use the stored amount
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          const amount = r.payment_method.credit_card
+          if (amount !== null && amount > 0) {
+            return sum + amount
+          }
+        }
+
+        // For single payments, calculate the amount
+        const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+        const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+        const discountAmount = (price * r.discount) / 100
+        const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+          const addonPrice =
+            ADDONS.find(
+              (a: { name: string; price: number }) => a.name === addon
+            )?.price || 0
+          return addonSum + addonPrice
+        }, 0)
+        return sum + price - discountAmount + addOnsTotal
+      }, 0),
     giftcard: records
-      .filter((r) => r.payment_method === "giftcard")
-      .reduce(
-        (sum, r) =>
-          sum +
-          (function () {
-            const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
-            const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
-            const discountAmount = (price * r.discount) / 100
-            const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
-              const addonPrice =
-                ADDONS.find(
-                  (a: { name: string; price: number }) => a.name === addon
-                )?.price || 0
-              return addonSum + addonPrice
-            }, 0)
-            return price - discountAmount + addOnsTotal
-          })(),
-        0
-      ),
+      .filter((r) => {
+        // Handle both old string format and new JSONB format
+        if (typeof r.payment_method === "string") {
+          return r.payment_method === "giftcard"
+        }
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          // For custom payments, check if giftcard has an amount
+          if (
+            r.payment_method.giftcard !== null &&
+            r.payment_method.giftcard! > 0
+          ) {
+            return true
+          }
+          // For single payments, check if giftcard is the only method
+          const methods = Object.keys(r.payment_method)
+          const amounts = Object.values(r.payment_method)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+          if (!hasAmounts && methods[0] === "giftcard") {
+            return true
+          }
+        }
+        return false
+      })
+      .reduce((sum, r) => {
+        // For custom payments, use the stored amount
+        if (typeof r.payment_method === "object" && r.payment_method !== null) {
+          const amount = r.payment_method.giftcard
+          if (amount !== null && amount > 0) {
+            return sum + amount
+          }
+        }
+
+        // For single payments, calculate the amount
+        const { SERVICE_PRICES, ADDONS } = require("@/lib/types/massage")
+        const price = SERVICE_PRICES[r.service_name]?.[r.duration] || 0
+        const discountAmount = (price * r.discount) / 100
+        const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+          const addonPrice =
+            ADDONS.find(
+              (a: { name: string; price: number }) => a.name === addon
+            )?.price || 0
+          return addonSum + addonPrice
+        }, 0)
+        return sum + price - discountAmount + addOnsTotal
+      }, 0),
   }
 
   const todayStats = {

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select"
 
 import { giftCardFormSchema, GiftCardFormValues } from "@/lib/schema"
+import { getCurrentDateUTC } from "@/lib/utils"
 
 interface GiftCardRecord {
   id: string
@@ -58,7 +59,7 @@ export function GiftCardForm({
   const form = useForm<GiftCardFormValues>({
     resolver: zodResolver(giftCardFormSchema),
     defaultValues: {
-      date: editingRecord?.date || today.toLocaleDateString("en-CA"), // YYYY-MM-DD format
+      date: editingRecord?.date || getCurrentDateUTC(), // Use consistent UTC date
       amount: editingRecord?.amount?.toString() || "",
       sold_price: editingRecord?.sold_price?.toString() || "",
       payment_method: editingRecord?.payment_method || undefined,
@@ -70,7 +71,7 @@ export function GiftCardForm({
   // Reset form every time the component mounts (sheet opens) or editingRecord changes
   useEffect(() => {
     form.reset({
-      date: editingRecord?.date || today.toLocaleDateString("en-CA"),
+      date: editingRecord?.date || getCurrentDateUTC(),
       amount: editingRecord?.amount?.toString() || "",
       sold_price: editingRecord?.sold_price?.toString() || "",
       payment_method: editingRecord?.payment_method || undefined,
@@ -113,7 +114,7 @@ export function GiftCardForm({
 
       // Reset form on successful submission
       form.reset({
-        date: today.toLocaleDateString("en-CA"),
+        date: getCurrentDateUTC(),
         amount: "",
         sold_price: "",
         payment_method: undefined,

@@ -1,4 +1,5 @@
 import { createSupabaseClient } from "./supabaseClient"
+import { getCurrentDateUTC } from "@/lib/utils"
 
 export interface GiftCardRecord {
   id: string
@@ -54,7 +55,7 @@ export async function getTodaysGiftCardRecords(
 ): Promise<GiftCardRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  const today = new Date().toLocaleDateString("en-CA") // YYYY-MM-DD format
+  const today = getCurrentDateUTC() // Use consistent UTC date
 
   const { data, error } = await supabase
     .from("gift_card_records")

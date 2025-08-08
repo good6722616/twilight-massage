@@ -1,5 +1,6 @@
 import { createSupabaseClient } from "./supabaseClient"
 import { MassageRecord } from "@/lib/types/massage"
+import { getCurrentDateUTC } from "@/lib/utils"
 
 // Fetch today's daily logs for the daily log page
 export async function getTodaysDailyLogs(
@@ -7,7 +8,7 @@ export async function getTodaysDailyLogs(
 ): Promise<MassageRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  const today = new Date().toLocaleDateString("en-CA") // YYYY-MM-DD format in local timezone
+  const today = getCurrentDateUTC() // Use consistent UTC date
 
   const { data, error } = await supabase
     .from("massage_records")

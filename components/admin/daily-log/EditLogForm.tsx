@@ -38,6 +38,7 @@ import {
 } from "@/lib/types/massage"
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
+import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
 
 interface EditLogFormProps {
   record: MassageRecord
@@ -58,6 +59,7 @@ export function EditLogForm({
 }: EditLogFormProps) {
   const [showSuccess, setShowSuccess] = useState(false)
   const [customDiscountMode, setCustomDiscountMode] = useState(false)
+  const [customPaymentValid, setCustomPaymentValid] = useState(false)
 
   // Parse time slot for edit mode
   const parseTimeSlot = (timeSlot: string) => {
@@ -74,7 +76,57 @@ export function EditLogForm({
       discount: record.discount?.toString() || "",
       addOns: record.add_ons || [],
       tip: record.tip?.toString() || "",
-      payment_method: record.payment_method || "",
+      payment_method: (() => {
+        // Handle both old string format and new JSONB format
+        if (typeof record.payment_method === "string") {
+          return record.payment_method
+        }
+        if (
+          typeof record.payment_method === "object" &&
+          record.payment_method !== null
+        ) {
+          const methods = Object.keys(record.payment_method)
+          const amounts = Object.values(record.payment_method)
+
+          // Check if it's a custom payment (multiple methods with amounts)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+
+          if (hasAmounts) {
+            return "custom"
+          } else {
+            // Single payment method (old format converted)
+            return methods[0] || ""
+          }
+        }
+        return ""
+      })(),
+      custom: (() => {
+        // Initialize custom payment fields if it's a custom payment
+        if (
+          typeof record.payment_method === "object" &&
+          record.payment_method !== null
+        ) {
+          const amounts = Object.values(record.payment_method)
+          const hasAmounts = amounts.some(
+            (amount) => amount !== null && amount > 0
+          )
+
+          if (hasAmounts) {
+            return {
+              cash: record.payment_method.cash?.toString() || "",
+              credit_card: record.payment_method.credit_card?.toString() || "",
+              giftcard: record.payment_method.giftcard?.toString() || "",
+            }
+          }
+        }
+        return {
+          cash: "",
+          credit_card: "",
+          giftcard: "",
+        }
+      })(),
       timeSlot: record.time_slot
         ? parseTimeSlot(record.time_slot)
         : { from: "", to: "" },
@@ -83,12 +135,33 @@ export function EditLogForm({
   })
 
   const selectedType = form.watch("type") as MassageType | undefined
+  const selectedDuration = form.watch("duration")
+  const selectedAddOns = form.watch("addOns") || []
+  const selectedDiscount = form.watch("discount")
+  const paymentMethod = form.watch("payment_method")
+
   const availableDurations = useMemo(() => {
     if (!selectedType || !SERVICE_PRICES[selectedType]) return []
     return Object.entries(SERVICE_PRICES[selectedType])
       .filter(([_, price]) => price > 0)
       .map(([duration]) => duration)
   }, [selectedType])
+
+  const expectedAmount = useMemo(() => {
+    if (!selectedType || !selectedDuration) return 0
+    const duration = parseInt(selectedDuration) as Duration
+    const basePrice = SERVICE_PRICES[selectedType][duration] || 0
+    const addOnsTotal = selectedAddOns.reduce((sum, addon) => {
+      const addonPrice = ADDONS.find((a) => a.name === addon)?.price || 0
+      return sum + addonPrice
+    }, 0)
+    let discountAmount = 0
+    if (selectedDiscount && selectedDiscount !== "custom") {
+      const discountPercent = parseFloat(selectedDiscount)
+      discountAmount = (basePrice * discountPercent) / 100
+    }
+    return basePrice + addOnsTotal - discountAmount
+  }, [selectedType, selectedDuration, selectedAddOns, selectedDiscount])
 
   // Watch discount value to handle custom mode
   const discountValue = form.watch("discount")
@@ -183,7 +256,27 @@ export function EditLogForm({
           : [],
         tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
         income: staffIncome / (isCouple ? 2 : 1),
-        payment_method: values.payment_method,
+        payment_method: (() => {
+          // Handle payment method - now supports both single and custom payments
+          if (values.payment_method === "custom" && values.custom) {
+            // Custom payment breakdown
+            const customBreakdown: Record<string, number | null> = {
+              cash: parseFloat(values.custom.cash || "0") || null,
+              credit_card: parseFloat(values.custom.credit_card || "0") || null,
+              giftcard: parseFloat(values.custom.giftcard || "0") || null,
+            }
+            // Remove null values for cleaner storage
+            Object.keys(customBreakdown).forEach((key) => {
+              if (customBreakdown[key] === null || customBreakdown[key] === 0) {
+                delete customBreakdown[key]
+              }
+            })
+            return customBreakdown
+          } else {
+            // Single payment method - store as {method: null} for old records
+            return { [values.payment_method]: null }
+          }
+        })(),
       }
 
       // Call the parent's onSubmit function
@@ -497,6 +590,7 @@ export function EditLogForm({
                       {method === "cash" && "Cash"}
                       {method === "credit_card" && "Credit Card"}
                       {method === "giftcard" && "Gift Card"}
+                      {method === "custom" && "Custom Payment"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -506,10 +600,22 @@ export function EditLogForm({
           )}
         />
 
+        {/* Custom Payment Breakdown */}
+        {paymentMethod === "custom" && (
+          <CustomPaymentBreakdown
+            expectedAmount={expectedAmount}
+            onValidationChange={setCustomPaymentValid}
+          />
+        )}
+
         <div className="flex gap-2">
           <Button
             type="submit"
-            disabled={isSubmitting || showSuccess}
+            disabled={
+              isSubmitting ||
+              showSuccess ||
+              (paymentMethod === "custom" && !customPaymentValid)
+            }
             className={getButtonClassName()}
           >
             {getButtonContent()}

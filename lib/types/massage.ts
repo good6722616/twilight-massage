@@ -10,7 +10,7 @@ export interface MassageRecord {
   add_ons: string[]
   tip: number
   income: number
-  payment_method: string
+  payment_method: Record<string, number | null>
   user_id: string
 }
 
@@ -35,14 +35,6 @@ export type MassageType = (typeof MASSAGE_TYPES)[number]
 
 export type Duration = 30 | 45 | 60 | 90
 export type Addon = "Hot Stone" | "Essential Oil" | "Body Scrub" | "CBD Oil"
-
-export type Staff =
-  | "Vivian Zhang"
-  | "Sarah Jin"
-  | "Yoyo Lu"
-  | "Anna"
-  | "Temp Staff 1"
-  | "Temp Staff 2"
 
 export const DURATIONS: Duration[] = [30, 45, 60, 90]
 
@@ -73,6 +65,7 @@ export const STAFF_SERVICE_INCOME: Record<
   "Foot Massage": {
     30: 20,
     60: 30,
+    90: 45,
   },
   "Twilight Special Combo (Swedish)": {
     90: 42,
@@ -99,12 +92,12 @@ export const STAFF_SERVICE_INCOME: Record<
     90: 50,
   },
   "Chest Care Massage": {
-    30: 30,
+    30: 23,
     60: 40,
     90: 60,
   },
   "Abdominal Detox Massage": {
-    30: 25,
+    30: 23,
     60: 40,
     90: 55,
   },
@@ -138,6 +131,7 @@ export const SERVICE_PRICES: Record<
   "Foot Massage": {
     30: 45,
     60: 65,
+    90: 90,
   },
   "Twilight Special Combo (Swedish)": {
     90: 110,
@@ -235,19 +229,11 @@ export function calculateStoreIncome(records: MassageRecord[]): number {
   }, 0)
 }
 
-export const STAFFS: Staff[] = [
-  "Vivian Zhang",
-  "Sarah Jin",
-  "Yoyo Lu",
-  "Anna",
-  "Temp Staff 1",
-  "Temp Staff 2",
-]
-
-export type PaymentMethod = "cash" | "credit_card" | "giftcard"
+export type PaymentMethod = "cash" | "credit_card" | "giftcard" | "custom"
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
   "cash",
   "credit_card",
   "giftcard",
+  "custom",
 ]
