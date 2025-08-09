@@ -1,6 +1,6 @@
 import { createSupabaseClient } from "./supabaseClient"
 import { MassageRecord } from "@/lib/types/massage"
-import { getCurrentDateUTC, getTimezoneAwareDateRange } from "@/lib/utils"
+import { getCurrentBusinessDate, getTimezoneAwareDateRange } from "@/lib/utils"
 
 // Fetch today's daily logs for the daily log page
 export async function getTodaysDailyLogs(
@@ -9,8 +9,8 @@ export async function getTodaysDailyLogs(
 ): Promise<MassageRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  // Get today's date in the specified timezone
-  const today = getCurrentDateUTC()
+  // Get today's business date and create timezone-aware range
+  const today = getCurrentBusinessDate()
   const { start, end } = getTimezoneAwareDateRange(today, timezone)
 
   const { data, error } = await supabase

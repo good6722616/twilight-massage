@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import type { MassageRecord, MassageType, Duration } from "@/lib/types/massage"
 import { SERVICE_PRICES, ADDONS } from "@/lib/types/massage"
+import { toZonedTime, fromZonedTime } from "date-fns-tz"
+import { startOfDay, endOfDay, format } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -76,6 +78,31 @@ export function getCurrentDateUTC(): string {
 }
 
 /**
+ * Get current business date in YYYY-MM-DD format using Pacific timezone
+ * This ensures we use the business timezone for date classification
+ */
+export function getCurrentBusinessDate(): string {
+  const now = new Date()
+
+  // Get the date in Pacific timezone for business purposes
+  const laDate = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/Los_Angeles",
+  })
+
+  // Debug logging to help diagnose timezone issues
+  console.log(`getCurrentBusinessDate Debug:`)
+  console.log(`  UTC time: ${now.toISOString()}`)
+  console.log(`  UTC date: ${now.toISOString().split("T")[0]}`)
+  console.log(
+    `  LA time: ${now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}`
+  )
+  console.log(`  LA date: ${laDate}`)
+  console.log(`  Using LA date for business: ${laDate}`)
+
+  return laDate
+}
+
+/**
  * Get date in YYYY-MM-DD format from a Date object using UTC
  */
 export function formatDateUTC(date: Date): string {
@@ -84,28 +111,64 @@ export function formatDateUTC(date: Date): string {
 
 /**
  * Get timezone-aware date range for querying records
- * This calculates the UTC timestamps for start and end of a day in a specific timezone
+ * This calculates the UTC timestamps for start and end of a day in Pacific timezone
  */
 export function getTimezoneAwareDateRange(
   dateStr: string,
   timezone: string = "America/Los_Angeles"
 ): { start: string; end: string } {
-  // Calculate offset for the timezone (simplified for PST/PDT)
-  const now = new Date()
-  const isPDT = now.getTimezoneOffset() === 420 // PDT is UTC-7, PST is UTC-8
-  const offsetHours = isPDT ? 7 : 8 // Pacific timezone offset
+  // Create a date object for midnight of the given date
+  const baseDate = new Date(`${dateStr}T00:00:00`)
 
-  // Create date at midnight in the target timezone
-  const localMidnight = new Date(`${dateStr}T00:00:00`)
-  const utcMidnight = new Date(
-    localMidnight.getTime() + offsetHours * 60 * 60 * 1000
+  // Create start of day (00:00:00) and end of day (23:59:59.999) in the target timezone
+  const startOfDayInTimezone = new Date(baseDate.getTime())
+  const endOfDayInTimezone = new Date(
+    baseDate.getTime() + 24 * 60 * 60 * 1000 - 1
   )
 
-  // End of day is 23:59:59.999
-  const utcEndOfDay = new Date(utcMidnight.getTime() + 24 * 60 * 60 * 1000 - 1)
+  // Convert these timezone-specific times to UTC
+  const startUTC = fromZonedTime(startOfDayInTimezone, timezone)
+  const endUTC = fromZonedTime(endOfDayInTimezone, timezone)
 
   return {
-    start: utcMidnight.toISOString(),
-    end: utcEndOfDay.toISOString(),
+    start: startUTC.toISOString(),
+    end: endUTC.toISOString(),
   }
 }
+
+/**
+ * Convert UTC timestamp to Los Angeles time for display
+ * This ensures all timestamps are shown in business timezone regardless of user location
+ */
+export function formatTimestampForLA(
+  utcTimestamp: string,
+  formatString: string = "MMM dd, yyyy 'at' h:mm a"
+): string {
+  try {
+    const utcDate = new Date(utcTimestamp)
+    const laTime = toZonedTime(utcDate, "America/Los_Angeles")
+    return format(laTime, formatString)
+  } catch (error) {
+    console.error("Error formatting timestamp:", error)
+    return utcTimestamp // Fallback to original value
+  }
+}
+
+/**
+ * Convert UTC timestamp to LA date only (YYYY-MM-DD)
+ */
+export function formatDateForLA(utcTimestamp: string): string {
+  return formatTimestampForLA(utcTimestamp, "yyyy-MM-dd")
+}
+
+/**
+ * Convert UTC timestamp to LA time only (h:mm a)
+ */
+export function formatTimeForLA(utcTimestamp: string): string {
+  return formatTimestampForLA(utcTimestamp, "h:mm a")
+}
+
+/**
+ * Test function to verify timezone conversion logic
+ * This helps debug timezone issues
+ */

@@ -1,5 +1,5 @@
 import { createSupabaseClient } from "./supabaseClient"
-import { getCurrentDateUTC, getTimezoneAwareDateRange } from "@/lib/utils"
+import { getCurrentBusinessDate, getTimezoneAwareDateRange } from "@/lib/utils"
 
 export interface GiftCardRecord {
   id: string
@@ -56,7 +56,7 @@ export async function getTodaysGiftCardRecords(
 ): Promise<GiftCardRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  const today = getCurrentDateUTC()
+  const today = getCurrentBusinessDate()
   const { start, end } = getTimezoneAwareDateRange(today, timezone)
 
   const { data, error } = await supabase

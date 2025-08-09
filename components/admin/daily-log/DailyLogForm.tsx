@@ -40,7 +40,7 @@ import {
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
-import { getCurrentDateUTC } from "@/lib/utils"
+import { getCurrentBusinessDate } from "@/lib/utils"
 
 interface DailyLogFormProps {
   onSubmit: (
@@ -232,7 +232,7 @@ export function DailyLogForm({
 
       // Create the massage record
       const record = {
-        date: getCurrentDateUTC(),
+        date: getCurrentBusinessDate(),
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
         service_name: massageType,

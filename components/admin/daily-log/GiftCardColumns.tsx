@@ -35,7 +35,10 @@ export function getGiftCardColumns({
       ),
       cell: ({ row }) => {
         const date = row.getValue("date") as string
-        return <div>{format(new Date(date), "MMM dd")}</div>
+        // Parse the date string as local date to avoid timezone issues
+        const [year, month, day] = date.split("-").map(Number)
+        const localDate = new Date(year, month - 1, day) // month is 0-indexed
+        return <div>{format(localDate, "MMM dd")}</div>
       },
     },
     {
