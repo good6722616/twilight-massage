@@ -27,9 +27,28 @@ export function CustomPaymentBreakdown({
   const [selectedMethods, setSelectedMethods] = useState<string[]>([])
 
   // Watch all custom payment amounts
-  const customCash = watch("custom.cash") || ""
-  const customCard = watch("custom.credit_card") || ""
-  const customGiftCard = watch("custom.giftcard") || ""
+  const customCash = watch("custom.cash")
+  const customCard = watch("custom.credit_card")
+  const customGiftCard = watch("custom.giftcard")
+
+  // Initialize and maintain selectedMethods based on form values
+  useEffect(() => {
+    const currentSelectedMethods: string[] = []
+
+    // Check if any field has a meaningful value
+    if (customCash && String(customCash).trim() !== "") {
+      currentSelectedMethods.push("cash")
+    }
+    if (customCard && String(customCard).trim() !== "") {
+      currentSelectedMethods.push("credit_card")
+    }
+    if (customGiftCard && String(customGiftCard).trim() !== "") {
+      currentSelectedMethods.push("giftcard")
+    }
+
+    // Always update selectedMethods to match current form values
+    setSelectedMethods(currentSelectedMethods)
+  }, [customCash, customCard, customGiftCard])
 
   // Calculate total entered amount (only for selected methods)
   const totalEntered = [

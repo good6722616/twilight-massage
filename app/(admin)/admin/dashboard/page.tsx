@@ -14,6 +14,7 @@ import {
 } from "@/components/admin/dashboard/DateRangeSelector"
 import { ServiceRecordsList } from "@/components/admin/dashboard/ServiceRecordsList"
 import { LoadingSpinner } from "@/components/admin/dashboard/LoadingSpinner"
+import { CompactStaffSummary } from "@/components/admin/dashboard/CompactStaffSummary"
 import {
   calculateStoreIncome,
   calculateStaffIncome,
@@ -290,7 +291,34 @@ export default function DashboardPage() {
             paymentBreakdown={paymentBreakdown}
           />
 
-          <ServiceRecordsList records={records} dateRange={dateRange} />
+          {/* Mobile Layout */}
+          <div className="space-y-6 xl:hidden">
+            <CompactStaffSummary
+              records={records}
+              title={
+                isSingleDay
+                  ? `Staff - ${format(dateRange.from!, "M/dd")}`
+                  : `Staff - ${format(dateRange.from!, "M/dd")} to ${format(dateRange.to!, "M/dd")}`
+              }
+            />
+            <ServiceRecordsList records={records} dateRange={dateRange} />
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden gap-6 xl:grid xl:grid-cols-3">
+            <CompactStaffSummary
+              records={records}
+              title={
+                isSingleDay
+                  ? `Staff Breakdown - ${format(dateRange.from!, "M/dd/yyyy")}`
+                  : `Staff Breakdown - ${format(dateRange.from!, "M/dd")} to ${format(dateRange.to!, "M/dd")}`
+              }
+              className="xl:col-span-1"
+            />
+            <div className="xl:col-span-2">
+              <ServiceRecordsList records={records} dateRange={dateRange} />
+            </div>
+          </div>
         </>
       )}
     </div>
