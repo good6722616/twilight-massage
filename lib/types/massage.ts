@@ -65,7 +65,7 @@ export const STAFF_SERVICE_INCOME: Record<
   "Foot Massage": {
     30: 20,
     60: 30,
-    90: 45,
+    90: 40,
   },
   "Twilight Special Combo (Swedish)": {
     90: 42,
@@ -131,7 +131,7 @@ export const SERVICE_PRICES: Record<
   "Foot Massage": {
     30: 45,
     60: 65,
-    90: 90,
+    90: 95,
   },
   "Twilight Special Combo (Swedish)": {
     90: 110,

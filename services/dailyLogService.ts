@@ -1,19 +1,23 @@
 import { createSupabaseClient } from "./supabaseClient"
 import { MassageRecord } from "@/lib/types/massage"
-import { getCurrentDateUTC } from "@/lib/utils"
+import { getCurrentDateUTC, getTimezoneAwareDateRange } from "@/lib/utils"
 
 // Fetch today's daily logs for the daily log page
 export async function getTodaysDailyLogs(
-  token: string
+  token: string,
+  timezone: string = "America/Los_Angeles"
 ): Promise<MassageRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  const today = getCurrentDateUTC() // Use consistent UTC date
+  // Get today's date in the specified timezone
+  const today = getCurrentDateUTC()
+  const { start, end } = getTimezoneAwareDateRange(today, timezone)
 
   const { data, error } = await supabase
     .from("massage_records")
     .select("*")
-    .eq("date", today)
+    .gte("created_at", start)
+    .lte("created_at", end)
     .order("created_at", { ascending: false })
 
   if (error) throw error
@@ -59,23 +63,57 @@ export async function deleteDailyLog(id: string, token: string): Promise<void> {
 export async function getDailyLogsByDate(
   token: string,
   from: string,
-  to?: string
+  to?: string,
+  timezone: string = "America/Los_Angeles"
 ): Promise<MassageRecord[]> {
   const supabase = createSupabaseClient(token)
-  let query = supabase
+
+  if (from && to && from === to) {
+    // Single day - use timezone-aware range
+    const { start, end } = getTimezoneAwareDateRange(from, timezone)
+    const { data, error } = await supabase
+      .from("massage_records")
+      .select("*")
+      .gte("created_at", start)
+      .lte("created_at", end)
+      .order("created_at", { ascending: false })
+
+    if (error) throw error
+    return data as MassageRecord[]
+  } else if (from && to) {
+    // Date range - use timezone-aware ranges
+    const fromRange = getTimezoneAwareDateRange(from, timezone)
+    const toRange = getTimezoneAwareDateRange(to, timezone)
+
+    const { data, error } = await supabase
+      .from("massage_records")
+      .select("*")
+      .gte("created_at", fromRange.start)
+      .lte("created_at", toRange.end)
+      .order("created_at", { ascending: false })
+
+    if (error) throw error
+    return data as MassageRecord[]
+  } else if (from) {
+    // Single day fallback
+    const { start, end } = getTimezoneAwareDateRange(from, timezone)
+    const { data, error } = await supabase
+      .from("massage_records")
+      .select("*")
+      .gte("created_at", start)
+      .lte("created_at", end)
+      .order("created_at", { ascending: false })
+
+    if (error) throw error
+    return data as MassageRecord[]
+  }
+
+  // Fallback to all records
+  const { data, error } = await supabase
     .from("massage_records")
     .select("*")
     .order("created_at", { ascending: false })
 
-  if (from && to && from === to) {
-    query = query.eq("date", from)
-  } else if (from && to) {
-    query = query.gte("date", from).lte("date", to)
-  } else if (from) {
-    query = query.eq("date", from)
-  }
-
-  const { data, error } = await query
   if (error) throw error
   return data as MassageRecord[]
 }

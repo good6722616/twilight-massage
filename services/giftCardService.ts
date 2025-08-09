@@ -1,5 +1,5 @@
 import { createSupabaseClient } from "./supabaseClient"
-import { getCurrentDateUTC } from "@/lib/utils"
+import { getCurrentDateUTC, getTimezoneAwareDateRange } from "@/lib/utils"
 
 export interface GiftCardRecord {
   id: string
@@ -51,16 +51,19 @@ export async function getGiftCardRecords(
 }
 
 export async function getTodaysGiftCardRecords(
-  token: string
+  token: string,
+  timezone: string = "America/Los_Angeles"
 ): Promise<GiftCardRecord[]> {
   const supabase = createSupabaseClient(token)
 
-  const today = getCurrentDateUTC() // Use consistent UTC date
+  const today = getCurrentDateUTC()
+  const { start, end } = getTimezoneAwareDateRange(today, timezone)
 
   const { data, error } = await supabase
     .from("gift_card_records")
     .select("*")
-    .eq("date", today)
+    .gte("created_at", start)
+    .lte("created_at", end)
     .order("created_at", { ascending: false })
 
   if (error) {
@@ -74,26 +77,69 @@ export async function getTodaysGiftCardRecords(
 export async function getGiftCardRecordsByDate(
   token: string,
   from: string,
-  to?: string
+  to?: string,
+  timezone: string = "America/Los_Angeles"
 ): Promise<GiftCardRecord[]> {
   const supabase = createSupabaseClient(token)
-  let query = supabase
+
+  if (from && to && from === to) {
+    // Single day - use timezone-aware range
+    const { start, end } = getTimezoneAwareDateRange(from, timezone)
+    const { data, error } = await supabase
+      .from("gift_card_records")
+      .select("*")
+      .gte("created_at", start)
+      .lte("created_at", end)
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("Supabase error:", error)
+      throw new Error("Failed to fetch gift card records for date range")
+    }
+    return data || []
+  } else if (from && to) {
+    // Date range - use timezone-aware ranges
+    const fromRange = getTimezoneAwareDateRange(from, timezone)
+    const toRange = getTimezoneAwareDateRange(to, timezone)
+
+    const { data, error } = await supabase
+      .from("gift_card_records")
+      .select("*")
+      .gte("created_at", fromRange.start)
+      .lte("created_at", toRange.end)
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("Supabase error:", error)
+      throw new Error("Failed to fetch gift card records for date range")
+    }
+    return data || []
+  } else if (from) {
+    // Single day fallback
+    const { start, end } = getTimezoneAwareDateRange(from, timezone)
+    const { data, error } = await supabase
+      .from("gift_card_records")
+      .select("*")
+      .gte("created_at", start)
+      .lte("created_at", end)
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("Supabase error:", error)
+      throw new Error("Failed to fetch gift card records for date range")
+    }
+    return data || []
+  }
+
+  // Fallback to all records
+  const { data, error } = await supabase
     .from("gift_card_records")
     .select("*")
     .order("created_at", { ascending: false })
 
-  if (from && to && from === to) {
-    query = query.eq("date", from)
-  } else if (from && to) {
-    query = query.gte("date", from).lte("date", to)
-  } else if (from) {
-    query = query.eq("date", from)
-  }
-
-  const { data, error } = await query
   if (error) {
     console.error("Supabase error:", error)
-    throw new Error("Failed to fetch gift card records for date range")
+    throw new Error("Failed to fetch gift card records")
   }
 
   return data || []

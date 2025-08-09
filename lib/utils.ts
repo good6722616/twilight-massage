@@ -81,3 +81,31 @@ export function getCurrentDateUTC(): string {
 export function formatDateUTC(date: Date): string {
   return date.toISOString().split("T")[0]
 }
+
+/**
+ * Get timezone-aware date range for querying records
+ * This calculates the UTC timestamps for start and end of a day in a specific timezone
+ */
+export function getTimezoneAwareDateRange(
+  dateStr: string,
+  timezone: string = "America/Los_Angeles"
+): { start: string; end: string } {
+  // Calculate offset for the timezone (simplified for PST/PDT)
+  const now = new Date()
+  const isPDT = now.getTimezoneOffset() === 420 // PDT is UTC-7, PST is UTC-8
+  const offsetHours = isPDT ? 7 : 8 // Pacific timezone offset
+
+  // Create date at midnight in the target timezone
+  const localMidnight = new Date(`${dateStr}T00:00:00`)
+  const utcMidnight = new Date(
+    localMidnight.getTime() + offsetHours * 60 * 60 * 1000
+  )
+
+  // End of day is 23:59:59.999
+  const utcEndOfDay = new Date(utcMidnight.getTime() + 24 * 60 * 60 * 1000 - 1)
+
+  return {
+    start: utcMidnight.toISOString(),
+    end: utcEndOfDay.toISOString(),
+  }
+}
