@@ -14,6 +14,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
   MassageRecord,
   calculateStaffIncome,
   MassageType,
@@ -104,7 +109,7 @@ export function getDailyLogColumns({
     {
       accessorKey: "service_name",
       header: ({ column }) => (
-        <div className="w-32 px-4 py-2">
+        <div className="w-40 px-4 py-2 sm:w-36 lg:w-40">
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -115,9 +120,39 @@ export function getDailyLogColumns({
           </Button>
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="w-32">{row.getValue("service_name")}</div>
-      ),
+      cell: ({ row }) => {
+        const serviceName = row.getValue("service_name") as string
+
+        return (
+          <div className="w-40 min-w-0 pr-2 sm:w-36 lg:w-40">
+            {/* 桌面版 - 使用 Tooltip */}
+            <div className="hidden sm:block">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="cursor-help truncate">{serviceName}</div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{serviceName}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            {/* 移动版 - 使用 Popover */}
+            <div className="block sm:hidden">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="cursor-pointer truncate">{serviceName}</div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-2">
+                  <p className="text-sm">{serviceName}</p>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        )
+      },
     },
     {
       accessorKey: "duration",
@@ -286,7 +321,7 @@ export function getDailyLogColumns({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                    <div className="flex cursor-pointer items-center rounded-md p-1 transition-colors hover:bg-green-100">
                       {icon}
                     </div>
                   </TooltipTrigger>
@@ -353,7 +388,7 @@ export function getDailyLogColumns({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-green-100">
+                      <div className="flex cursor-pointer items-center rounded-md p-1 transition-colors hover:bg-green-100">
                         {icon}
                       </div>
                     </TooltipTrigger>

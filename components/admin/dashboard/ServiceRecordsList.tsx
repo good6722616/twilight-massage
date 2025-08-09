@@ -52,6 +52,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   Card,
   CardContent,
   CardDescription,
@@ -99,34 +105,6 @@ export function ServiceRecordsList({
   const columns: ColumnDef<MassageRecord>[] = useMemo(
     () => [
       {
-        id: "select",
-        header: ({ table }) => (
-          <div className="w-12 px-4 py-2">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(!!value)
-              }
-              aria-label="Select all"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="w-12">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-            />
-          </div>
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
         accessorKey: "staff",
         header: ({ column }) => {
           return (
@@ -154,7 +132,7 @@ export function ServiceRecordsList({
         accessorKey: "service_name",
         header: ({ column }) => {
           return (
-            <div className="w-32 px-4 py-2">
+            <div className="w-40 px-4 py-2 sm:w-36 lg:w-40">
               <Button
                 variant="ghost"
                 onClick={() =>
@@ -168,9 +146,39 @@ export function ServiceRecordsList({
             </div>
           )
         },
-        cell: ({ row }) => (
-          <div className="w-32">{row.getValue("service_name")}</div>
-        ),
+        cell: ({ row }) => {
+          const serviceName = row.getValue("service_name") as string
+
+          return (
+            <div className="w-40 min-w-0 pr-2 sm:w-36 lg:w-40">
+              {/* 桌面版 - 使用 Tooltip */}
+              <div className="hidden sm:block">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="cursor-help truncate">{serviceName}</div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{serviceName}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
+              {/* 移动版 - 使用 Popover */}
+              <div className="block sm:hidden">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <div className="cursor-pointer truncate">{serviceName}</div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2">
+                    <p className="text-sm">{serviceName}</p>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "duration",
@@ -276,11 +284,11 @@ export function ServiceRecordsList({
       },
       {
         accessorKey: "add_ons",
-        header: () => <div className="w-28 px-4 py-2">Add-ons</div>,
+        header: () => <div className="w-20 px-4 py-2">Add-ons</div>,
         cell: ({ row }) => {
           const addOns = row.getValue("add_ons") as string[]
           return (
-            <div className="w-28">
+            <div className="w-20">
               {addOns.length > 0 ? (
                 <ul className="list-inside list-disc">
                   {addOns.map((addon: string) => (
@@ -618,8 +626,8 @@ export function ServiceRecordsList({
           </div>
 
           {/* Table */}
-          <div className="rounded-md border bg-white">
-            <Table>
+          <div className="overflow-x-auto rounded-md border bg-white">
+            <Table className="min-w-full">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
