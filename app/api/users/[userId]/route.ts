@@ -5,7 +5,7 @@ import { permissionService } from "@/services/permissionService"
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const { userId, getToken } = await auth()
@@ -34,8 +34,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
+    // 获取 params
+    const { userId: targetUserId } = await params
+
     // 不能删除自己
-    if (userId === params.userId) {
+    if (userId === targetUserId) {
       return NextResponse.json(
         { error: "Cannot delete yourself" },
         { status: 400 }
@@ -44,7 +47,7 @@ export async function DELETE(
 
     // 删除用户
     const clerk = await clerkClient()
-    await clerk.users.deleteUser(params.userId)
+    await clerk.users.deleteUser(targetUserId)
 
     return NextResponse.json({ success: true })
   } catch (error) {

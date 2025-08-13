@@ -4,7 +4,7 @@ import { permissionService } from "@/services/permissionService"
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const { userId, getToken } = await auth()
@@ -39,8 +39,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid role" }, { status: 400 })
     }
 
+    // 获取 params
+    const { userId: targetUserId } = await params
+
     // 更新用户角色
-    await permissionService.updateUserRole(token, params.userId, role)
+    await permissionService.updateUserRole(token, targetUserId, role)
 
     return NextResponse.json({ success: true })
   } catch (error) {
