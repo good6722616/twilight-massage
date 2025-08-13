@@ -89,16 +89,6 @@ export function getCurrentBusinessDate(): string {
     timeZone: "America/Los_Angeles",
   })
 
-  // Debug logging to help diagnose timezone issues
-  console.log(`getCurrentBusinessDate Debug:`)
-  console.log(`  UTC time: ${now.toISOString()}`)
-  console.log(`  UTC date: ${now.toISOString().split("T")[0]}`)
-  console.log(
-    `  LA time: ${now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}`
-  )
-  console.log(`  LA date: ${laDate}`)
-  console.log(`  Using LA date for business: ${laDate}`)
-
   return laDate
 }
 

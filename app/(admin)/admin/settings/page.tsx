@@ -35,7 +35,6 @@ export default function AdminSettings() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
     setIsSaving(false)
     // In a real app, you'd save to your backend/database
-    console.log("Settings saved:", settings)
   }
 
   return (

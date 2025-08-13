@@ -96,7 +96,48 @@ export function getGiftCardColumns({
       header: () => <span className="px-4 py-2 md:px-1">Notes</span>,
       cell: ({ row }) => {
         const notes = row.getValue("notes") as string
-        return <div className="text-sm text-gray-600">{notes || "-"}</div>
+        const displayText = notes || "-"
+        const isLongText = displayText.length > 20
+
+        return (
+          <div className="relative">
+            {/* Mobile: Show full text on tap */}
+            <div className="block sm:hidden">
+              {isLongText ? (
+                <details className="group">
+                  <summary className="cursor-pointer list-none">
+                    <div className="truncate text-sm text-gray-600">
+                      {displayText.slice(0, 20)}...
+                    </div>
+                  </summary>
+                  <div className="mt-1 whitespace-pre-wrap break-words text-sm text-gray-600">
+                    {displayText}
+                  </div>
+                </details>
+              ) : (
+                <div className="text-sm text-gray-600">{displayText}</div>
+              )}
+            </div>
+
+            {/* Desktop: Show tooltip on hover */}
+            <div className="hidden sm:block">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="max-w-[150px] truncate text-sm text-gray-600 lg:max-w-[200px] xl:max-w-[250px]">
+                      {displayText}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs">
+                    <p className="whitespace-pre-wrap break-words">
+                      {displayText}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        )
       },
     },
     {

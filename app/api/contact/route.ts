@@ -7,12 +7,6 @@ export async function POST(request: Request) {
   try {
     const { name, email, phone, message } = await request.json()
 
-    console.log("Received form submission:", { name, email, phone, message })
-    console.log(
-      "Using API key:",
-      process.env.RESEND_API_KEY ? "Present" : "Missing"
-    )
-
     if (!process.env.RESEND_API_KEY) {
       console.error("RESEND_API_KEY is not configured")
       return NextResponse.json(
@@ -35,7 +29,6 @@ export async function POST(request: Request) {
       `,
     })
 
-    console.log("Email sent successfully:", data)
     return NextResponse.json({ success: true, data })
   } catch (error) {
     console.error("Error sending email:", error)
