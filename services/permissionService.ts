@@ -30,7 +30,7 @@ const ROLE_PERMISSIONS = {
     daily_logs: ["create", "read", "update", "delete"] as Action[],
     services: ["create", "read", "update", "delete"] as Action[],
     reports: ["read"] as Action[],
-    settings: ["read", "update"] as Action[],
+    settings: ["read", "update", "delete"] as Action[],
   },
   staff: {
     staff: ["read"] as Action[],
@@ -38,7 +38,7 @@ const ROLE_PERMISSIONS = {
     daily_logs: ["create", "read", "update"] as Action[],
     services: ["read"] as Action[],
     reports: ["read"] as Action[],
-    settings: ["read"] as Action[],
+    settings: [] as Action[],
   },
 } as const
 
@@ -80,13 +80,36 @@ export const permissionService = {
     role: UserRole
   ): Promise<void> {
     const supabase = createSupabaseClient(token)
-    const { error } = await supabase
+
+    // 先检查用户是否已有角色记录
+    const { data: existingRole } = await supabase
       .from("user_roles")
-      .upsert({ user_id: userId, role })
+      .select("id")
+      .eq("user_id", userId)
       .single()
 
-    if (error) {
-      throw new Error(`更新用户角色失败: ${error.message}`)
+    if (existingRole) {
+      // 如果存在，更新角色
+      const { error } = await supabase
+        .from("user_roles")
+        .update({ role, updated_at: new Date().toISOString() })
+        .eq("user_id", userId)
+
+      if (error) {
+        throw new Error(`更新用户角色失败: ${error.message}`)
+      }
+    } else {
+      // 如果不存在，插入新记录
+      const { error } = await supabase.from("user_roles").insert({
+        user_id: userId,
+        role,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+
+      if (error) {
+        throw new Error(`创建用户角色失败: ${error.message}`)
+      }
     }
   },
 
@@ -110,7 +133,12 @@ export const permissionService = {
     const supabase = createSupabaseClient(token)
     const { error } = await supabase
       .from("user_roles")
-      .insert({ user_id: userId, role: "staff" })
+      .insert({
+        user_id: userId,
+        role: "staff",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .single()
 
     if (error && error.code !== "23505") {

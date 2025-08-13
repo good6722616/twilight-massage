@@ -15,6 +15,8 @@ import {
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { usePermissions } from "@/hooks/usePermissions"
+import { PermissionGate } from "@/components/auth/PermissionGate"
 
 const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: Home },
@@ -29,6 +31,7 @@ const adminTools = [
 export function AppSidebar() {
   const pathname = usePathname()
   const { user, isLoaded } = useUser()
+  const { userRole, isLoading: permissionsLoading } = usePermissions()
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
@@ -113,41 +116,44 @@ export function AppSidebar() {
         </div>
 
         {/* Admin Tools */}
-        <div>
-          <h3 className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Administration
-          </h3>
-          <nav className="space-y-1">
-            {adminTools.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href
-              return (
-                <div
-                  key={item.name}
-                  className={`group flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 opacity-50 transition-all duration-200 ${
-                    isActive
-                      ? "bg-orange-50 text-orange-700 shadow-sm"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
+        {!permissionsLoading && userRole === "admin" && (
+          <div>
+            <h3 className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              Administration
+            </h3>
+            <nav className="space-y-1">
+              {adminTools.map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
                       isActive
-                        ? "bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg"
-                        : "bg-gray-200 text-gray-600"
+                        ? "bg-orange-50 text-orange-700 shadow-sm"
+                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <span className="font-medium">{item.name}</span>
-                  {isActive && (
-                    <div className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-orange-500 to-red-600" />
-                  )}
-                </div>
-              )
-            })}
-          </nav>
-        </div>
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg"
+                          : "bg-gray-200 text-gray-600 group-hover:bg-gray-300"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <span className="font-medium">{item.name}</span>
+                    {isActive && (
+                      <div className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-orange-500 to-red-600" />
+                    )}
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -168,7 +174,9 @@ export function AppSidebar() {
                 variant="secondary"
                 className="border-green-200 bg-green-100 px-2 py-0.5 text-xs text-green-700"
               >
-                Online
+                {!permissionsLoading && userRole === "admin"
+                  ? "Admin"
+                  : "Staff"}
               </Badge>
             </div>
             <span className="block truncate text-xs text-gray-500">

@@ -2,6 +2,7 @@
 
 import { type Staff } from "@/services/staffService"
 import { StaffCard } from "./StaffCard"
+import { Spinner } from "@/components/ui/loading"
 
 interface StaffListProps {
   staffList?: Staff[]
@@ -16,11 +17,11 @@ export function StaffList({
   onUpdate,
   onDelete,
 }: StaffListProps) {
-  // 如果正在加载或者还没有数据，显示空状态
+  // 如果正在加载或者还没有数据，显示 loading spinner
   if (isLoading || !staffList) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* 可以在这里添加一个简单的加载提示或者空状态 */}
+      <div className="flex min-h-[200px] items-center justify-center">
+        <Spinner size="large" />
       </div>
     )
   }
