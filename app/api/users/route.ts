@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { clerkClient } from "@clerk/nextjs/server"
 import { permissionService } from "@/services/permissionService"
+import { createSupabaseClient } from "@/services/supabaseClient"
 
 export async function GET(request: NextRequest) {
   try {
@@ -54,38 +55,36 @@ export async function GET(request: NextRequest) {
 
     console.log("API: Found users:", usersResponse.data.length)
 
-    // 获取用户角色信息
-    const usersWithRoles = await Promise.all(
-      usersResponse.data.map(async (user: any) => {
-        try {
-          const role = await permissionService.getUserRole(token, user.id)
-          return {
-            id: user.id,
-            email: user.emailAddresses[0]?.emailAddress || "",
-            firstName: user.firstName,
-            lastName: user.lastName,
-            fullName: user.fullName,
-            imageUrl: user.imageUrl,
-            createdAt: user.createdAt,
-            lastSignInAt: user.lastSignInAt,
-            role,
-          }
-        } catch (error) {
-          // 如果获取角色失败，默认为 staff
-          return {
-            id: user.id,
-            email: user.emailAddresses[0]?.emailAddress || "",
-            firstName: user.firstName,
-            lastName: user.lastName,
-            fullName: user.fullName,
-            imageUrl: user.imageUrl,
-            createdAt: user.createdAt,
-            lastSignInAt: user.lastSignInAt,
-            role: "staff" as const,
-          }
-        }
+    // 批量获取用户角色信息 - 优化性能
+    const userIds = usersResponse.data.map((user: any) => user.id)
+    const supabase = createSupabaseClient(token)
+
+    // 一次性获取所有用户角色
+    const { data: userRoles, error: rolesError } = await supabase
+      .from("user_roles")
+      .select("user_id, role")
+      .in("user_id", userIds)
+
+    // 创建角色映射
+    const roleMap = new Map<string, string>()
+    if (userRoles) {
+      userRoles.forEach((userRole: any) => {
+        roleMap.set(userRole.user_id, userRole.role)
       })
-    )
+    }
+
+    // 构建用户列表
+    const usersWithRoles = usersResponse.data.map((user: any) => ({
+      id: user.id,
+      email: user.emailAddresses[0]?.emailAddress || "",
+      firstName: user.firstName,
+      lastName: user.lastName,
+      fullName: user.fullName,
+      imageUrl: user.imageUrl,
+      createdAt: user.createdAt,
+      lastSignInAt: user.lastSignInAt,
+      role: roleMap.get(user.id) || "staff",
+    }))
 
     console.log("API: Returning users with roles")
     return NextResponse.json(usersWithRoles)

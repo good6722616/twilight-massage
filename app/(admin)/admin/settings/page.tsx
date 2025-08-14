@@ -252,14 +252,14 @@ export default function AdminSettings() {
               return (
                 <div
                   key={user.id}
-                  className={`flex items-center justify-between rounded-lg border p-4 transition-all ${
+                  className={`flex flex-col rounded-lg border p-4 transition-all sm:flex-row sm:items-center sm:justify-between ${
                     isCurrentUser
                       ? "border-blue-200 bg-blue-50 shadow-sm"
                       : "hover:bg-gray-50"
                   }`}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="relative">
+                  <div className="flex min-w-0 flex-1 items-start space-x-3 sm:items-center sm:space-x-4">
+                    <div className="relative flex-shrink-0">
                       <Avatar className="h-10 w-10">
                         <AvatarImage
                           src={user.imageUrl}
@@ -275,10 +275,10 @@ export default function AdminSettings() {
                         </div>
                       )}
                     </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-2">
                         <p
-                          className={`font-medium ${isCurrentUser ? "text-blue-900" : "text-gray-900"}`}
+                          className={`truncate font-medium ${isCurrentUser ? "text-blue-900" : "text-gray-900"}`}
                         >
                           {user.fullName || user.email}
                           {isCurrentUser && (
@@ -293,48 +293,50 @@ export default function AdminSettings() {
                           }
                           className={
                             user.role === "admin"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-600"
+                              ? "w-fit bg-red-100 text-red-800"
+                              : "w-fit bg-gray-100 text-gray-600"
                           }
                         >
                           {user.role === "admin" ? "管理员" : "员工"}
                         </Badge>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <div className="mt-1 flex flex-col gap-2 text-sm text-gray-500 sm:flex-row sm:items-center sm:space-x-4">
                         <div className="flex items-center space-x-1">
-                          <Mail className="h-3 w-3" />
-                          <span>{user.email}</span>
+                          <Mail className="h-3 w-3 flex-shrink-0" />
+                          <span className="truncate">{user.email}</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-3 w-3 flex-shrink-0" />
                           <span>注册于 {formatDate(user.createdAt)}</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => handleRoleDialogOpen(user)}
-                      >
-                        <Edit className="mr-2 h-4 w-4" />
-                        更改角色
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteClick(user)}
-                        className={`${isCurrentUser ? "cursor-not-allowed text-gray-400" : "text-red-600"}`}
-                        disabled={isCurrentUser}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        {isCurrentUser ? "删除用户 (不可用)" : "删除用户"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div className="mt-3 flex justify-end sm:ml-4 sm:mt-0">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleRoleDialogOpen(user)}
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          更改角色
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(user)}
+                          className={`${isCurrentUser ? "cursor-not-allowed text-gray-400" : "text-red-600"}`}
+                          disabled={isCurrentUser}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          {isCurrentUser ? "删除用户 (不可用)" : "删除用户"}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               )
             })}
