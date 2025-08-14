@@ -83,7 +83,10 @@ export default function DailyLogPage() {
   // Mutation to add a new record
   const addRecordMutation = useMutation({
     mutationFn: async (
-      record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+      record: Omit<
+        MassageRecord,
+        "id" | "created_at" | "updated_at" | "user_id"
+      >
     ) => {
       const response = await fetch("/api/daily-log", {
         method: "POST",
@@ -114,6 +117,7 @@ export default function DailyLogPage() {
           const optimisticRecord: MassageRecord = {
             id: `temp-${Date.now()}`,
             created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             user_id: "",
             ...newRecord,
           }
@@ -152,7 +156,10 @@ export default function DailyLogPage() {
       record,
     }: {
       id: string
-      record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+      record: Omit<
+        MassageRecord,
+        "id" | "created_at" | "updated_at" | "user_id"
+      >
     }) => {
       const response = await fetch(`/api/daily-log?id=${id}`, {
         method: "PUT",
@@ -364,13 +371,13 @@ export default function DailyLogPage() {
   })
 
   const handleAddRecord = (
-    record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+    record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">
   ) => {
     addRecordMutation.mutate(record)
   }
 
   const handleUpdateRecord = (
-    record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+    record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">
   ) => {
     if (editingRecord) {
       updateRecordMutation.mutate({ id: editingRecord.id, record })

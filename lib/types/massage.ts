@@ -1,6 +1,7 @@
 export interface MassageRecord {
   id: string
   created_at: string
+  updated_at: string
   date: string
   time_slot: string
   staff: string

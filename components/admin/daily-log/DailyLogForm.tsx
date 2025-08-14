@@ -44,7 +44,7 @@ import { getCurrentBusinessDate } from "@/lib/utils"
 
 interface DailyLogFormProps {
   onSubmit: (
-    record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+    record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">
   ) => void
   isSubmitting?: boolean
   isSuccess?: boolean

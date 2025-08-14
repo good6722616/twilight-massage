@@ -121,7 +121,7 @@ export async function getDailyLogsByDate(
 // Update a daily log by id
 export async function updateDailyLog(
   id: string,
-  record: Omit<MassageRecord, "id" | "created_at" | "user_id">,
+  record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">,
   token: string
 ): Promise<MassageRecord> {
   const supabase = createSupabaseClient(token)

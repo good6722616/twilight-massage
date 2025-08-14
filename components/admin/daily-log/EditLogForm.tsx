@@ -43,7 +43,7 @@ import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
 interface EditLogFormProps {
   record: MassageRecord
   onSubmit: (
-    record: Omit<MassageRecord, "id" | "created_at" | "user_id">
+    record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">
   ) => void
   onCancel: () => void
   isSubmitting?: boolean
@@ -244,7 +244,10 @@ export function EditLogForm({
       }
 
       // Create the massage record
-      const recordData: Omit<MassageRecord, "id" | "created_at" | "user_id"> = {
+      const recordData: Omit<
+        MassageRecord,
+        "id" | "created_at" | "updated_at" | "user_id"
+      > = {
         date: record.date, // Keep the original date
         time_slot: `${values.timeSlot.from}–${values.timeSlot.to}`,
         staff: values.staff,
