@@ -1,112 +1,152 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { StaffSwitch } from "@/components/ui/staff-switch"
+import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { CheckCircle, XCircle } from "lucide-react"
 import { type Staff } from "@/services/staffService"
 
+const editStaffSchema = z.object({
+  name: z.string().min(1, "姓名不能为空"),
+  is_active: z.boolean(),
+})
+
+type EditStaffFormData = z.infer<typeof editStaffSchema>
+
 interface EditStaffFormProps {
-  staff: Staff
-  onSubmit: (id: string, data: { name: string; is_active: boolean }) => void
-  onCancel: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  staff: { id: string; name: string; is_active: boolean } | null
+  onSubmit: (data: EditStaffFormData) => void
+  isLoading: boolean
 }
 
 export function EditStaffForm({
+  open,
+  onOpenChange,
   staff,
   onSubmit,
-  onCancel,
+  isLoading,
 }: EditStaffFormProps) {
-  const [name, setName] = useState(staff.name)
-  const [isActive, setIsActive] = useState(staff.is_active)
-  const inputRef = React.useRef<HTMLInputElement>(null)
-  const [isInitialFocus, setIsInitialFocus] = useState(true)
+  const form = useForm<EditStaffFormData>({
+    resolver: zodResolver(editStaffSchema),
+    defaultValues: {
+      name: "",
+      is_active: true,
+    },
+  })
 
-  // 只在初始加载时阻止自动聚焦
+  // 当staff数据变化时，更新表单
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (inputRef.current && isInitialFocus) {
-        inputRef.current.blur()
-        setIsInitialFocus(false)
-      }
-    }, 50)
-
-    return () => clearTimeout(timer)
-  }, [isInitialFocus])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (name.trim()) {
-      onSubmit(staff.id, { name: name.trim(), is_active: isActive })
+    if (staff) {
+      form.reset({
+        name: staff.name,
+        is_active: staff.is_active,
+      })
     }
+  }, [staff, form])
+
+  const handleSubmit = (data: EditStaffFormData) => {
+    onSubmit(data)
   }
 
-  // 当状态改变时提供即时反馈
-  const handleStatusChange = (checked: boolean) => {
-    setIsActive(checked)
+  const handleCancel = () => {
+    onOpenChange(false)
   }
+
+  if (!staff) return null
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* 当前状态指示器 */}
-      <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-        <span className="text-sm font-medium text-gray-700">当前状态</span>
-        <Badge
-          variant={isActive ? "default" : "secondary"}
-          className={
-            isActive
-              ? "bg-emerald-100 text-emerald-800"
-              : "bg-gray-100 text-gray-600"
-          }
-        >
-          {isActive ? "在职" : "离职"}
-        </Badge>
-      </div>
-
-      <div>
-        <Label htmlFor="edit-name">员工姓名</Label>
-        <Input
-          ref={inputRef}
-          id="edit-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="请输入员工姓名"
-          required
-          autoFocus={false}
-        />
-      </div>
-      <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-        <div className="space-y-0.5">
-          <Label htmlFor="is-active" className="text-sm font-medium">
-            在职状态
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {isActive
-              ? "员工当前在职，可以正常安排工作"
-              : "员工已离职，不会出现在选择列表中"}
-          </p>
-        </div>
-        <StaffSwitch
-          id="is-active"
-          checked={isActive}
-          onCheckedChange={handleStatusChange}
-        />
-      </div>
-      <div className="flex space-x-2">
-        <Button type="submit" className="flex-1">
-          保存
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          className="flex-1"
-        >
-          取消
-        </Button>
-      </div>
-    </form>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>编辑员工</DialogTitle>
+          <DialogDescription>修改员工信息</DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>姓名</FormLabel>
+                  <FormControl>
+                    <Input placeholder="输入员工姓名" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="is_active"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">在职状态</FormLabel>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      {field.value ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <span>员工当前在职</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-4 w-4 text-gray-400" />
+                          <span>员工已离职</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                disabled={isLoading}
+              >
+                取消
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "保存中..." : "保存更改"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }

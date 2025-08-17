@@ -80,9 +80,7 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
   const { data: allStaff } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.getAllStaff(token)
+      return staffService.getAllStaff()
     },
   })
 

@@ -1,38 +1,62 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { toast } from "sonner"
-import { staffService, type Staff } from "../../../../services/staffService"
 import { usePermissions } from "@/hooks/usePermissions"
-import { PermissionGate } from "@/components/auth/PermissionGate"
-import {
-  StaffList,
-  AddStaffForm,
-  DeleteConfirmDialog,
-} from "@/components/admin/staff"
+import { staffService } from "@/services/staffService"
+import { StaffTable } from "@/components/admin/staff/StaffTable"
+import { AddStaffForm } from "@/components/admin/staff/AddStaffForm"
+import { EditStaffForm } from "@/components/admin/staff/EditStaffForm"
+import { DeleteConfirmDialog } from "@/components/admin/staff/DeleteConfirmDialog"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 
 export default function StaffPage() {
-  const { getToken } = useAuth()
-  const { isLoading: permissionsLoading } = usePermissions()
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{
-    isOpen: boolean
-    staff: Staff | null
-  }>({ isOpen: false, staff: null })
-
+  const { userId, getToken } = useAuth()
+  const { isLoading: permissionsLoading, hasPermission } = usePermissions()
   const queryClient = useQueryClient()
 
+  const [canCreate, setCanCreate] = useState(false)
+  const [canUpdate, setCanUpdate] = useState(false)
+  const [canDelete, setCanDelete] = useState(false)
+  const [permissionsChecked, setPermissionsChecked] = useState(false)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [editingStaff, setEditingStaff] = useState<{
+    id: string
+    name: string
+    is_active: boolean
+  } | null>(null)
+  const [deletingStaff, setDeletingStaff] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+
+  // 检查权限
+  useEffect(() => {
+    const checkPermissions = async () => {
+      if (!permissionsLoading && userId) {
+        const token = await getToken({ template: "supabase" })
+        if (token) {
+          const [createPerm, updatePerm, deletePerm] = await Promise.all([
+            hasPermission("staff", "create"),
+            hasPermission("staff", "update"),
+            hasPermission("staff", "delete"),
+          ])
+          setCanCreate(createPerm)
+          setCanUpdate(updatePerm)
+          setCanDelete(deletePerm)
+        }
+        setPermissionsChecked(true)
+      }
+    }
+
+    if (!permissionsLoading) {
+      checkPermissions()
+    }
+  }, [hasPermission, permissionsLoading, userId, getToken])
+
+  // 获取员工列表
   const {
     data: staffList,
     isPending,
@@ -40,130 +64,127 @@ export default function StaffPage() {
   } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.getAllStaff(token)
+      return staffService.getAllStaff()
     },
-    staleTime: 5 * 60 * 1000, // 5分钟内的数据认为是新鲜的
-    gcTime: 10 * 60 * 1000, // 10分钟的垃圾回收时间
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 
+  // 添加员工
   const addStaffMutation = useMutation({
-    mutationFn: async (data: { name: string }) => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.addStaff(data, token)
+    mutationFn: async (data: { name: string; is_active: boolean }) => {
+      return staffService.addStaff(data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] })
       setIsAddDialogOpen(false)
-      toast.success("员工添加成功")
-    },
-    onError: (error) => {
-      toast.error("添加员工失败: " + error.message)
     },
   })
 
+  // 更新员工
   const updateStaffMutation = useMutation({
     mutationFn: async (data: {
       id: string
       name: string
       is_active: boolean
     }) => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.updateStaff(data, token)
+      return staffService.updateStaff(data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] })
-      toast.success("员工信息更新成功")
-    },
-    onError: (error) => {
-      toast.error("更新员工信息失败: " + error.message)
+      setEditingStaff(null)
     },
   })
 
+  // 删除员工
   const deleteStaffMutation = useMutation({
     mutationFn: async (id: string) => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.deleteStaff(id, token)
+      return staffService.deleteStaff(id)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] })
-      toast.success("员工删除成功")
-    },
-    onError: (error) => {
-      toast.error("删除员工失败: " + error.message)
+      setDeletingStaff(null)
     },
   })
 
-  const handleAddStaff = (name: string) => {
-    addStaffMutation.mutate({ name })
+  const handleAddStaff = (data: { name: string; is_active: boolean }) => {
+    addStaffMutation.mutate(data)
   }
 
-  const handleUpdateStaff = (
-    id: string,
-    data: { name: string; is_active: boolean }
-  ) => {
-    updateStaffMutation.mutate({ id, ...data })
-  }
-
-  const handleDeleteStaff = (staff: Staff) => {
-    setDeleteConfirmDialog({ isOpen: true, staff })
-  }
-
-  const confirmDelete = () => {
-    if (deleteConfirmDialog.staff) {
-      deleteStaffMutation.mutate(deleteConfirmDialog.staff.id)
+  const handleUpdateStaff = (data: { name: string; is_active: boolean }) => {
+    if (editingStaff) {
+      updateStaffMutation.mutate({
+        id: editingStaff.id,
+        name: data.name,
+        is_active: data.is_active,
+      })
     }
-    setDeleteConfirmDialog({ isOpen: false, staff: null })
   }
 
-  const cancelDelete = () => {
-    setDeleteConfirmDialog({ isOpen: false, staff: null })
+  const handleDeleteStaff = (id: string) => {
+    deleteStaffMutation.mutate(id)
   }
 
-  // 计算是否应该显示加载状态
   const shouldShowLoading =
-    isPending || permissionsLoading || (!staffList && !isError)
+    isPending ||
+    (!staffList && !isError) ||
+    (!permissionsChecked && !permissionsLoading)
+
+  // 在权限检查完成之前不显示任何内容
+  if (!permissionsChecked && permissionsLoading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">员工管理</h1>
-        {!permissionsLoading && (
-          <PermissionGate resource="staff" action="create">
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="transition-all hover:scale-105 hover:shadow-md">
-                  <Plus className="mr-2 h-4 w-4" />
-                  添加员工
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>添加新员工</DialogTitle>
-                </DialogHeader>
-                <AddStaffForm onSubmit={handleAddStaff} />
-              </DialogContent>
-            </Dialog>
-          </PermissionGate>
+        {canCreate && (
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            添加员工
+          </Button>
         )}
       </div>
 
-      <StaffList
+      <StaffTable
         staffList={staffList}
         isLoading={shouldShowLoading}
-        onUpdate={handleUpdateStaff}
-        onDelete={handleDeleteStaff}
+        onUpdate={(staff) => setEditingStaff(staff)}
+        onDelete={setDeletingStaff}
+        canUpdate={canUpdate}
+        canDelete={canDelete}
       />
 
+      {/* 添加员工对话框 */}
+      <AddStaffForm
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSubmit={handleAddStaff}
+        isLoading={addStaffMutation.isPending}
+      />
+
+      {/* 编辑员工对话框 */}
+      <EditStaffForm
+        open={!!editingStaff}
+        onOpenChange={(open) => !open && setEditingStaff(null)}
+        staff={editingStaff}
+        onSubmit={handleUpdateStaff}
+        isLoading={updateStaffMutation.isPending}
+      />
+
+      {/* 删除确认对话框 */}
       <DeleteConfirmDialog
-        isOpen={deleteConfirmDialog.isOpen}
-        staff={deleteConfirmDialog.staff}
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
+        open={!!deletingStaff}
+        onOpenChange={(open) => !open && setDeletingStaff(null)}
+        staff={deletingStaff}
+        onConfirm={handleDeleteStaff}
+        isLoading={deleteStaffMutation.isPending}
       />
     </div>
   )

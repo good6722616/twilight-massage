@@ -45,19 +45,36 @@ const ROLE_PERMISSIONS = {
 export const permissionService = {
   // 获取用户角色
   async getUserRole(token: string, userId: string): Promise<UserRole> {
-    const supabase = createSupabaseClient(token)
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .single()
+    console.log("Getting user role for:", userId, "token length:", token.length)
 
-    if (error) {
-      // 如果用户没有角色记录，默认为 staff
+    try {
+      const supabase = createSupabaseClient(token)
+      console.log("Supabase client created successfully")
+
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .single()
+
+      if (error) {
+        console.error("Error getting user role:", error, "for user:", userId)
+        console.error("Error details:", {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        })
+        // 如果用户没有角色记录，默认为 staff
+        return "staff"
+      }
+
+      console.log("User role found:", data.role, "for user:", userId)
+      return data.role
+    } catch (err) {
+      console.error("Exception in getUserRole:", err)
       return "staff"
     }
-
-    return data.role
   },
 
   // 检查用户权限
@@ -69,8 +86,18 @@ export const permissionService = {
   ): Promise<boolean> {
     const role = await this.getUserRole(token, userId)
     const permissions = ROLE_PERMISSIONS[role]
+    const hasPermission = permissions[resource]?.includes(action) || false
 
-    return permissions[resource]?.includes(action) || false
+    console.log("Permission check:", {
+      userId,
+      role,
+      resource,
+      action,
+      availablePermissions: permissions[resource],
+      hasPermission,
+    })
+
+    return hasPermission
   },
 
   // 更新用户角色（仅管理员可用）

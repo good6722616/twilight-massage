@@ -38,11 +38,9 @@ export function StaffSelector({
   const { data: staffList, isLoading } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
       return showInactive
-        ? staffService.getAllStaff(token)
-        : staffService.getActiveStaff(token)
+        ? staffService.getAllStaff()
+        : staffService.getActiveStaff()
     },
   })
 

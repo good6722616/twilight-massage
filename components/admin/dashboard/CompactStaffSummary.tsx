@@ -46,7 +46,7 @@ export function CompactStaffSummary({
   const { getToken } = useAuth()
 
   // 使用动态服务数据
-  const { serviceDetails } = useServices()
+  const { serviceDetails, loading: servicesLoading } = useServices()
 
   // 构建员工收入映射
   const serviceStaffIncomes = useMemo(() => {
@@ -68,9 +68,7 @@ export function CompactStaffSummary({
   const { data: allStaff } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      return staffService.getAllStaff(token)
+      return staffService.getAllStaff()
     },
   })
 
@@ -144,6 +142,25 @@ export function CompactStaffSummary({
       { totalIncome: 0, totalPay: 0, totalTips: 0, totalServices: 0 }
     )
   }, [staffList])
+
+  // 如果服务数据还在加载中，显示loading状态
+  if (servicesLoading) {
+    return (
+      <Card className={className}>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-gray-900 sm:text-lg">
+            <Users className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
+            <span className="truncate">{title}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex min-h-[200px] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (!staffList.length) {
     return (

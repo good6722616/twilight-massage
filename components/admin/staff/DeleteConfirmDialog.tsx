@@ -1,58 +1,57 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { type Staff } from "@/services/staffService"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface DeleteConfirmDialogProps {
-  isOpen: boolean
-  staff: Staff | null
-  onConfirm: () => void
-  onCancel: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  staff: { id: string; name: string } | null
+  onConfirm: (id: string) => void
+  isLoading: boolean
 }
 
 export function DeleteConfirmDialog({
-  isOpen,
+  open,
+  onOpenChange,
   staff,
   onConfirm,
-  onCancel,
+  isLoading,
 }: DeleteConfirmDialogProps) {
+  const handleConfirm = () => {
+    if (staff) {
+      onConfirm(staff.id)
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onCancel}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>确认删除员工</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            确定要删除员工{" "}
-            <span className="font-medium text-foreground">
-              &ldquo;{staff?.name}&rdquo;
-            </span>{" "}
-            吗？
-          </p>
-          <p className="text-xs text-muted-foreground">
-            此操作无法撤销，员工的所有信息将被永久删除。
-          </p>
-          <div className="flex space-x-2">
-            <Button
-              variant="destructive"
-              onClick={onConfirm}
-              className="flex-1"
-            >
-              确认删除
-            </Button>
-            <Button variant="outline" onClick={onCancel} className="flex-1">
-              取消
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>确认删除</AlertDialogTitle>
+          <AlertDialogDescription>
+            您确定要删除员工 "{staff?.name}" 吗？此操作无法撤销。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isLoading}>取消</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={isLoading}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {isLoading ? "删除中..." : "删除"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

@@ -103,7 +103,7 @@ export function ServiceRecordsList({
   const [globalFilter, setGlobalFilter] = useState("")
 
   // 使用动态服务数据
-  const { serviceDetails } = useServices()
+  const { serviceDetails, loading: servicesLoading } = useServices()
 
   // 构建员工收入映射
   const serviceStaffIncomes = useMemo(() => {
@@ -449,6 +449,23 @@ export function ServiceRecordsList({
       },
     },
   })
+
+  // 如果服务数据还在加载中，显示loading状态
+  if (servicesLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Service Records</CardTitle>
+          <CardDescription>Loading service data...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex min-h-[200px] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (records.length === 0) {
     return null

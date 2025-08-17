@@ -10,6 +10,7 @@ export interface Staff {
 
 export interface CreateStaffData {
   name: string
+  is_active?: boolean
 }
 
 export interface UpdateStaffData {
@@ -20,99 +21,76 @@ export interface UpdateStaffData {
 
 export const staffService = {
   // 获取所有员工
-  async getAllStaff(token: string): Promise<Staff[]> {
-    const supabase = createSupabaseClient(token)
-    const { data, error } = await supabase
-      .from("staff")
-      .select("*")
-      .order("name")
+  async getAllStaff(): Promise<Staff[]> {
+    const response = await fetch("/api/staff")
 
-    if (error) {
-      throw new Error(`获取员工列表失败: ${error.message}`)
+    if (!response.ok) {
+      throw new Error("Failed to fetch staff")
     }
 
-    return data || []
+    return response.json()
   },
 
   // 获取在职员工
-  async getActiveStaff(token: string): Promise<Staff[]> {
-    const supabase = createSupabaseClient(token)
-    const { data, error } = await supabase
-      .from("staff")
-      .select("*")
-      .eq("is_active", true)
-      .order("name")
-
-    if (error) {
-      throw new Error(`获取在职员工失败: ${error.message}`)
-    }
-
-    return data || []
+  async getActiveStaff(): Promise<Staff[]> {
+    const allStaff = await this.getAllStaff()
+    return allStaff.filter((staff) => staff.is_active)
   },
 
   // 添加员工
-  async addStaff(data: CreateStaffData, token: string): Promise<Staff> {
-    const supabase = createSupabaseClient(token)
-    const { data: newStaff, error } = await supabase
-      .from("staff")
-      .insert([data])
-      .select()
-      .single()
+  async addStaff(data: CreateStaffData): Promise<Staff> {
+    const response = await fetch("/api/staff", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
 
-    if (error) {
-      throw new Error(`添加员工失败: ${error.message}`)
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to add staff")
     }
 
-    return newStaff
+    return response.json()
   },
 
   // 更新员工信息
-  async updateStaff(data: UpdateStaffData, token: string): Promise<Staff> {
-    const supabase = createSupabaseClient(token)
-    const { data: updatedStaff, error } = await supabase
-      .from("staff")
-      .update({
+  async updateStaff(data: UpdateStaffData): Promise<Staff> {
+    const response = await fetch(`/api/staff/${data.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         name: data.name,
         is_active: data.is_active,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", data.id)
-      .select()
-      .single()
+      }),
+    })
 
-    if (error) {
-      throw new Error(`更新员工信息失败: ${error.message}`)
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to update staff")
     }
 
-    return updatedStaff
+    return response.json()
   },
 
   // 删除员工
-  async deleteStaff(id: string, token: string): Promise<void> {
-    const supabase = createSupabaseClient(token)
-    const { error } = await supabase.from("staff").delete().eq("id", id)
+  async deleteStaff(id: string): Promise<void> {
+    const response = await fetch(`/api/staff/${id}`, {
+      method: "DELETE",
+    })
 
-    if (error) {
-      throw new Error(`删除员工失败: ${error.message}`)
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to delete staff")
     }
   },
 
   // 根据ID获取员工
-  async getStaffById(id: string, token: string): Promise<Staff | null> {
-    const supabase = createSupabaseClient(token)
-    const { data, error } = await supabase
-      .from("staff")
-      .select("*")
-      .eq("id", id)
-      .single()
-
-    if (error) {
-      if (error.code === "PGRST116") {
-        return null // 员工不存在
-      }
-      throw new Error(`获取员工信息失败: ${error.message}`)
-    }
-
-    return data
+  async getStaffById(id: string): Promise<Staff | null> {
+    const allStaff = await this.getAllStaff()
+    return allStaff.find((staff) => staff.id === id) || null
   },
 }
