@@ -103,15 +103,12 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log("Checking permissions for user:", userId)
     const hasPermission = await permissionService.hasPermission(
       token,
       userId,
       "services",
       "update"
     )
-
-    console.log("Permission check result:", hasPermission)
 
     if (!hasPermission) {
       console.error(

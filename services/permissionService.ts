@@ -53,8 +53,6 @@ const ROLE_PERMISSIONS = {
 export const permissionService = {
   // 获取用户角色
   async getUserRole(token: string, userId: string): Promise<UserRole> {
-    console.log("Getting user role for:", userId, "token length:", token.length)
-
     try {
       // 检查是否在服务器端环境
       if (
@@ -63,7 +61,6 @@ export const permissionService = {
       ) {
         // 服务器端：使用 service role key
         const supabase = createServerSupabaseClient()
-        console.log("Supabase client created successfully with service role")
 
         const { data, error } = await supabase
           .from("user_roles")
@@ -72,23 +69,14 @@ export const permissionService = {
           .single()
 
         if (error) {
-          console.error("Error getting user role:", error, "for user:", userId)
-          console.error("Error details:", {
-            code: error.code,
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-          })
           // 如果用户没有角色记录，默认为 staff
           return "staff"
         }
 
-        console.log("User role found:", data.role, "for user:", userId)
         return data.role
       } else {
         // 客户端：使用 Clerk token
         const supabase = createSupabaseClient(token)
-        console.log("Supabase client created successfully with Clerk token")
 
         const { data, error } = await supabase
           .from("user_roles")
@@ -97,22 +85,13 @@ export const permissionService = {
           .single()
 
         if (error) {
-          console.error("Error getting user role:", error, "for user:", userId)
-          console.error("Error details:", {
-            code: error.code,
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-          })
           // 如果用户没有角色记录，默认为 staff
           return "staff"
         }
 
-        console.log("User role found:", data.role, "for user:", userId)
         return data.role
       }
     } catch (err) {
-      console.error("Exception in getUserRole:", err)
       return "staff"
     }
   },
@@ -127,15 +106,6 @@ export const permissionService = {
     const role = await this.getUserRole(token, userId)
     const permissions = ROLE_PERMISSIONS[role]
     const hasPermission = permissions[resource]?.includes(action) || false
-
-    console.log("Permission check:", {
-      userId,
-      role,
-      resource,
-      action,
-      availablePermissions: permissions[resource],
-      hasPermission,
-    })
 
     return hasPermission
   },
