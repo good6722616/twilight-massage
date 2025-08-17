@@ -60,16 +60,8 @@ export default function ServicesPage() {
     return <LoadingSpinner />
   }
 
-  // 如果角色不是 admin，显示拒绝信息
-  if (userRole !== "admin") {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-muted-foreground">
-          Access denied. Admin only. Current role: {userRole}
-        </p>
-      </div>
-    )
-  }
+  // Staff 可以查看服务列表，但不能进行管理操作
+  const isAdmin = userRole === "admin"
 
   if (loading) {
     return <LoadingSpinner />
@@ -94,12 +86,14 @@ export default function ServicesPage() {
             Manage your massage services, durations, and pricing
           </p>
         </div>
-        <Link href="/admin/services/add">
-          <Button className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Service
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link href="/admin/services/add">
+            <Button className="w-full sm:w-auto">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Service
+            </Button>
+          </Link>
+        )}
       </div>
 
       <Card>
@@ -153,16 +147,22 @@ export default function ServicesPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="px-0 text-right">
-                      <Link href={`/admin/services/${service.id}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-2 sm:h-9 sm:px-3"
-                        >
-                          <Eye className="mr-1 h-3 w-3" />
-                          <span className="hidden sm:inline">View</span>
-                        </Button>
-                      </Link>
+                      {isAdmin ? (
+                        <Link href={`/admin/services/${service.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 sm:h-9 sm:px-3"
+                          >
+                            <Eye className="mr-1 h-3 w-3" />
+                            <span className="hidden sm:inline">View</span>
+                          </Button>
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          Admin only
+                        </span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -173,12 +173,14 @@ export default function ServicesPage() {
           {services.length === 0 && (
             <div className="flex h-32 flex-col items-center justify-center">
               <p className="mb-4 text-muted-foreground">No services found</p>
-              <Link href="/admin/services/add">
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Your First Service
-                </Button>
-              </Link>
+              {isAdmin && (
+                <Link href="/admin/services/add">
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Your First Service
+                  </Button>
+                </Link>
+              )}
             </div>
           )}
         </CardContent>
