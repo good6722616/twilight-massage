@@ -12,6 +12,7 @@ import {
   FileText,
   TrendingUp,
   Shield,
+  Package,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: Home },
   { name: "Daily Log", href: "/admin/daily-log", icon: Calendar },
   { name: "Staff", href: "/admin/staff", icon: Users },
+  { name: "Services", href: "/admin/services", icon: Package },
 ]
 
 const adminTools = [
@@ -85,7 +87,9 @@ export function AppSidebar() {
           <nav className="space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon
-              const isActive = pathname === item.href
+              // Check if current path starts with the navigation item href
+              const isActive =
+                pathname === item.href || pathname.startsWith(item.href + "/")
               return (
                 <Link
                   key={item.name}
@@ -124,7 +128,9 @@ export function AppSidebar() {
             <nav className="space-y-1">
               {adminTools.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href
+                // Check if current path starts with the navigation item href
+                const isActive =
+                  pathname === item.href || pathname.startsWith(item.href + "/")
                 return (
                   <Link
                     key={item.name}

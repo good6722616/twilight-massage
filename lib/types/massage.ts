@@ -103,7 +103,8 @@ export const STAFF_SERVICE_INCOME: Record<
     90: 55,
   },
   "Full Core Detox Massage": {
-    60: 40,
+    30: 23, // 30分钟 员工收入$23
+    60: 40, // 60分钟 员工收入$40
   },
   "Head-to-Toe Reset": {
     60: 32,
