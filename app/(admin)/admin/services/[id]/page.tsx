@@ -343,9 +343,9 @@ export default function ServiceDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Service</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{service.name}"? This action
-              cannot be undone and will also delete all associated durations and
-              pricing information.
+              Are you sure you want to delete &quot;{service.name}&quot;? This
+              action cannot be undone and will also delete all associated
+              durations and pricing information.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
