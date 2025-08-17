@@ -38,7 +38,7 @@ export function DeleteConfirmDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>确认删除</AlertDialogTitle>
           <AlertDialogDescription>
-            您确定要删除员工 "{staff?.name}" 吗？此操作无法撤销。
+            您确定要删除员工 &quot;{staff?.name}&quot; 吗？此操作无法撤销。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
