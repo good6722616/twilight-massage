@@ -96,7 +96,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // 暂时跳过权限检查，但保留日志用于调试
+    // 检查用户是否有权限更新服务
     const token = await getToken()
     if (!token) {
       console.error("No token available for user:", userId)
@@ -104,20 +104,22 @@ export async function PUT(
     }
 
     console.log("Checking permissions for user:", userId)
-    try {
-      const hasPermission = await permissionService.hasPermission(
-        token,
-        userId,
-        "services",
-        "update"
-      )
-      console.log("Permission check result:", hasPermission)
+    const hasPermission = await permissionService.hasPermission(
+      token,
+      userId,
+      "services",
+      "update"
+    )
 
-      // 暂时跳过权限检查，允许所有认证用户访问
-      console.log("Temporarily bypassing permission check for debugging")
-    } catch (error) {
-      console.error("Error during permission check:", error)
-      console.log("Temporarily bypassing permission check due to error")
+    console.log("Permission check result:", hasPermission)
+
+    if (!hasPermission) {
+      console.error(
+        "Permission denied for user:",
+        userId,
+        "action: services:update"
+      )
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     const { id: serviceId } = await params

@@ -22,9 +22,14 @@ export function usePermissions() {
     queryKey: ["userRole", userId],
     queryFn: async () => {
       if (!userId) return null
-      const token = await getToken({ template: "supabase" })
-      if (!token) throw new Error("No authentication token")
-      const role = await permissionService.getUserRole(token, userId)
+
+      // 通过 API 调用获取用户角色
+      const response = await fetch("/api/permissions/user-role")
+      if (!response.ok) {
+        throw new Error("Failed to get user role")
+      }
+
+      const { role } = await response.json()
       return role
     },
     enabled: !!userId,
@@ -46,14 +51,17 @@ export function usePermissions() {
       }
 
       try {
-        const token = await getToken({ template: "supabase" })
-        if (!token) return false
-        const result = await permissionService.hasPermission(
-          token,
-          userId,
-          resource,
-          action
+        // 通过 API 调用检查权限
+        const response = await fetch(
+          `/api/permissions?resource=${resource}&action=${action}`
         )
+
+        if (!response.ok) {
+          console.error("Permission check failed:", response.statusText)
+          return false
+        }
+
+        const { hasPermission: result } = await response.json()
 
         // 缓存结果，5分钟内有效
         queryClient.setQueryData(cacheKey, result)
@@ -63,7 +71,7 @@ export function usePermissions() {
         return false
       }
     },
-    [userId, getToken, queryClient]
+    [userId, queryClient]
   )
 
   // 角色检查函数
