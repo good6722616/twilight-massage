@@ -184,10 +184,18 @@ export const SERVICE_PRICES: Record<
 export function calculateStaffIncome(
   type: MassageType,
   duration: Duration,
-  addOns: Addon[]
+  addOns: Addon[],
+  serviceStaffIncomes?: Record<string, Record<number, number>>
 ): number {
-  // Get base staff income from mapping
-  const baseStaffIncome = STAFF_SERVICE_INCOME[type][duration] ?? 0
+  let baseStaffIncome = 0
+
+  if (serviceStaffIncomes && serviceStaffIncomes[type]) {
+    // Use dynamic staff income if provided
+    baseStaffIncome = serviceStaffIncomes[type][duration] ?? 0
+  } else {
+    // Fallback to hardcoded staff income for backward compatibility
+    baseStaffIncome = STAFF_SERVICE_INCOME[type]?.[duration] ?? 0
+  }
 
   // Only non-CBD Oil add-ons give $3 to staff
   const addonIncome = addOns.filter((a) => a !== "CBD Oil").length * 3
@@ -198,13 +206,23 @@ export function calculateStaffIncome(
   return totalStaffIncome
 }
 
-export function calculateStoreIncome(records: MassageRecord[]): number {
+export function calculateStoreIncome(
+  records: MassageRecord[],
+  servicePrices?: Record<string, Record<number, number>>
+): number {
   return records.reduce((sum, record) => {
-    // Get full service price from SERVICE_PRICES
-    const baseServicePrice =
-      SERVICE_PRICES[record.service_name as MassageType][
-        record.duration as Duration
-      ]
+    let baseServicePrice: number | undefined
+
+    if (servicePrices && servicePrices[record.service_name]) {
+      // Use dynamic service prices if provided
+      baseServicePrice = servicePrices[record.service_name][record.duration]
+    } else {
+      // Fallback to hardcoded prices for backward compatibility
+      baseServicePrice =
+        SERVICE_PRICES[record.service_name as MassageType]?.[
+          record.duration as Duration
+        ]
+    }
 
     // If the price is undefined, skip this record
     if (baseServicePrice === undefined) {

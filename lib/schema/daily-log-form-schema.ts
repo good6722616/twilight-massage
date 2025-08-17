@@ -1,26 +1,9 @@
 import * as z from "zod"
-import {
-  MASSAGE_TYPES,
-  DURATIONS,
-  DISCOUNTS,
-  PAYMENT_METHODS,
-  MassageType,
-  PaymentMethod,
-} from "@/lib/types/massage"
+import { DISCOUNTS, PAYMENT_METHODS, PaymentMethod } from "@/lib/types/massage"
 
 const baseSchema = {
-  type: z
-    .string()
-    .min(1, { message: "Please select a massage type" })
-    .refine((val) => MASSAGE_TYPES.includes(val as MassageType), {
-      message: "Please select a valid massage type",
-    }),
-  duration: z
-    .string()
-    .min(1, { message: "Please select a duration" })
-    .refine((val) => DURATIONS.map(String).includes(val), {
-      message: "Please select a valid duration",
-    }),
+  type: z.string().min(1, { message: "Please select a massage type" }),
+  duration: z.string().min(1, { message: "Please select a duration" }),
   discount: z
     .string()
     .min(1, { message: "Please select a discount" })

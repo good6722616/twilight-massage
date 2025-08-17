@@ -25,6 +25,7 @@ import {
   Duration,
   Addon,
 } from "@/lib/types/massage"
+import { useServices } from "@/hooks/useServices"
 import { ColumnDef } from "@tanstack/react-table"
 
 function formatTimeSlot(timeSlot: string) {
@@ -78,12 +79,14 @@ interface GetDailyLogColumnsParams {
   onEdit: (record: MassageRecord) => void
   onDelete: (recordId: string) => void
   deletingIds: Set<string>
+  serviceStaffIncomes?: Record<string, Record<number, number>>
 }
 
 export function getDailyLogColumns({
   onEdit,
   onDelete,
   deletingIds,
+  serviceStaffIncomes,
 }: GetDailyLogColumnsParams): ColumnDef<MassageRecord>[] {
   return [
     {
@@ -271,7 +274,8 @@ export function getDailyLogColumns({
         const staffIncome = calculateStaffIncome(
           record.service_name as MassageType,
           record.duration as Duration,
-          (record.add_ons as string[]).map((a) => a as Addon)
+          (record.add_ons as string[]).map((a) => a as Addon),
+          serviceStaffIncomes
         )
         return (
           <div className="w-20">
@@ -290,7 +294,8 @@ export function getDailyLogColumns({
         const staffIncome = calculateStaffIncome(
           record.service_name as MassageType,
           record.duration as Duration,
-          (record.add_ons as string[]).map((a) => a as Addon)
+          (record.add_ons as string[]).map((a) => a as Addon),
+          serviceStaffIncomes
         )
         const tip =
           typeof record.tip === "number" ? record.tip : parseFloat(record.tip)

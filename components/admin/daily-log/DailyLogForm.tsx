@@ -26,21 +26,17 @@ import {
 } from "@/components/ui/select"
 import {
   MassageRecord,
-  MassageType,
-  Duration,
   Addon,
-  MASSAGE_TYPES,
   ADDONS,
   DISCOUNTS,
   PAYMENT_METHODS,
   Discount,
-  SERVICE_PRICES,
-  calculateStaffIncome,
 } from "@/lib/types/massage"
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
 import { getCurrentBusinessDate } from "@/lib/utils"
+import { useServices } from "@/hooks/useServices"
 
 interface DailyLogFormProps {
   onSubmit: (
@@ -59,6 +55,18 @@ export function DailyLogForm({
   const [showSuccess, setShowSuccess] = useState(false)
   const [customDiscountMode, setCustomDiscountMode] = useState(false)
   const [customPaymentValid, setCustomPaymentValid] = useState(false)
+
+  // 使用动态服务数据
+  const {
+    services,
+    loading: servicesLoading,
+    error: servicesError,
+    getServiceNames,
+    getServiceByName,
+    getServiceDurations,
+    getServicePrice,
+    getStaffIncome,
+  } = useServices()
 
   const form = useForm<DailyLogFormValues>({
     resolver: zodResolver(dailyLogFormSchema),
@@ -127,14 +135,21 @@ export function DailyLogForm({
     form.clearErrors("discount")
   }
 
-  const selectedType = form.watch("type") as MassageType | undefined
+  const selectedType = form.watch("type") as string | undefined
+
+  // 当选择服务时，加载服务详情
+  useEffect(() => {
+    if (selectedType) {
+      getServiceByName(selectedType)
+    }
+  }, [selectedType, getServiceByName])
 
   // Calculate expected amount
   const expectedAmount = useMemo(() => {
     if (!selectedType || !selectedDuration) return 0
 
-    const duration = parseInt(selectedDuration) as Duration
-    const basePrice = SERVICE_PRICES[selectedType][duration] || 0
+    const duration = parseInt(selectedDuration)
+    const basePrice = getServicePrice(selectedType, duration)
 
     // Calculate add-ons total
     const addOnsTotal = selectedAddOns.reduce((sum, addon) => {
@@ -151,14 +166,19 @@ export function DailyLogForm({
 
     // Total expected amount = base price + add-ons - discount
     return basePrice + addOnsTotal - discountAmount
-  }, [selectedType, selectedDuration, selectedAddOns, selectedDiscount])
+  }, [
+    selectedType,
+    selectedDuration,
+    selectedAddOns,
+    selectedDiscount,
+    getServicePrice,
+  ])
 
   const availableDurations = useMemo(() => {
-    if (!selectedType || !SERVICE_PRICES[selectedType]) return []
-    return Object.entries(SERVICE_PRICES[selectedType])
-      .filter(([_, price]) => price > 0)
-      .map(([duration]) => duration)
-  }, [selectedType])
+    if (!selectedType) return []
+    const durations = getServiceDurations(selectedType)
+    return durations.map((d) => d.duration.toString())
+  }, [selectedType, getServiceDurations])
 
   // Handle success state animation
   useEffect(() => {
@@ -171,27 +191,46 @@ export function DailyLogForm({
     }
   }, [isSuccess])
 
-  const isCoupleMassage = useMemo(() => {
-    return (type: MassageType) => type.includes("(Couple)")
-  }, [])
-
   const handleSubmit = async (values: DailyLogFormValues) => {
     try {
-      const duration = parseInt(values.duration) as Duration
+      const duration = parseInt(values.duration)
 
-      // Validate that type is a valid MassageType
-      if (!values.type || !MASSAGE_TYPES.includes(values.type as MassageType)) {
-        console.error("Invalid massage type:", values.type)
+      // Validate that type exists in our services
+      if (!values.type || !getServiceNames().includes(values.type)) {
+        form.setError("type", {
+          type: "manual",
+          message: "Please select a valid massage type",
+        })
         return
       }
 
-      const massageType = values.type as MassageType
-      const isCouple = isCoupleMassage(massageType)
-      const staffIncome = calculateStaffIncome(
-        massageType,
-        duration,
-        values.addOns ? values.addOns.map((s) => s.trim() as Addon) : []
+      // Ensure service details are loaded before validation
+      const serviceDetail = await getServiceByName(values.type)
+      if (!serviceDetail) {
+        form.setError("type", {
+          type: "manual",
+          message: "Failed to load service details. Please try again.",
+        })
+        return
+      }
+
+      // Validate that duration exists for the selected service
+      const availableDurations = serviceDetail.durations.filter(
+        (d) => d.is_active
       )
+      const durationExists = availableDurations.some(
+        (d) => d.duration === duration
+      )
+      if (!durationExists) {
+        form.setError("duration", {
+          type: "manual",
+          message: "Please select a valid duration for this service",
+        })
+        return
+      }
+
+      const massageType = values.type
+      const staffIncome = getStaffIncome(massageType, duration)
 
       // 处理 discount 值，支持预设值和自定义值
       let discountValue: number
@@ -241,8 +280,8 @@ export function DailyLogForm({
         add_ons: values.addOns
           ? values.addOns.map((s) => s.trim() as Addon)
           : [],
-        tip: values.tip ? parseFloat(values.tip) / (isCouple ? 2 : 1) : 0,
-        income: staffIncome / (isCouple ? 2 : 1),
+        tip: values.tip ? parseFloat(values.tip) : 0,
+        income: staffIncome,
         payment_method: finalPaymentMethod,
       }
 
@@ -367,11 +406,21 @@ export function DailyLogForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {MASSAGE_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
+                  {servicesLoading ? (
+                    <SelectItem value="loading" disabled>
+                      Loading services...
                     </SelectItem>
-                  ))}
+                  ) : servicesError ? (
+                    <SelectItem value="error" disabled>
+                      Error loading services
+                    </SelectItem>
+                  ) : (
+                    getServiceNames().map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage className="absolute -bottom-5 left-0 text-xs" />

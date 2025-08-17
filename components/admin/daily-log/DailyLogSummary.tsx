@@ -22,6 +22,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { useServices } from "@/hooks/useServices"
 
 interface DailyLogSummaryProps {
   records: MassageRecord[]
@@ -37,7 +38,43 @@ type StaffSummary = {
 
 export function DailyLogSummary({ records }: DailyLogSummaryProps) {
   const { getToken } = useAuth()
-  const totalStoreIncome = calculateStoreIncome(records)
+
+  // 使用动态服务数据
+  const { serviceDetails } = useServices()
+
+  // 构建服务价格映射
+  const servicePrices = useMemo(() => {
+    const prices: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        prices[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            prices[service.name][duration.duration] = duration.customer_price
+          }
+        })
+      }
+    })
+    return prices
+  }, [serviceDetails])
+
+  // 构建员工收入映射
+  const serviceStaffIncomes = useMemo(() => {
+    const incomes: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        incomes[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            incomes[service.name][duration.duration] = duration.staff_income
+          }
+        })
+      }
+    })
+    return incomes
+  }, [serviceDetails])
+
+  const totalStoreIncome = calculateStoreIncome(records, servicePrices)
 
   // Get all staff from database
   const { data: allStaff } = useQuery({
@@ -58,7 +95,8 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
           const staffIncome = calculateStaffIncome(
             record.service_name as MassageType,
             record.duration as Duration,
-            record.add_ons as Addon[]
+            record.add_ons as Addon[],
+            serviceStaffIncomes
           )
           const tip =
             typeof record.tip === "number"
@@ -85,7 +123,7 @@ export function DailyLogSummary({ records }: DailyLogSummaryProps) {
         },
         {} as Record<string, StaffSummary>
       ),
-    [records]
+    [records, serviceStaffIncomes]
   )
 
   // Ensure all staff are present, even if they have zero records

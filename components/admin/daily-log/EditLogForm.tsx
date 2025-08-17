@@ -28,14 +28,13 @@ import {
   MassageType,
   Duration,
   Addon,
-  MASSAGE_TYPES,
   ADDONS,
   DISCOUNTS,
   PAYMENT_METHODS,
   Discount,
-  SERVICE_PRICES,
   calculateStaffIncome,
 } from "@/lib/types/massage"
+import { useServices } from "@/hooks/useServices"
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
@@ -60,6 +59,30 @@ export function EditLogForm({
   const [showSuccess, setShowSuccess] = useState(false)
   const [customDiscountMode, setCustomDiscountMode] = useState(false)
   const [customPaymentValid, setCustomPaymentValid] = useState(false)
+
+  // 使用动态服务数据
+  const {
+    serviceDetails,
+    getServiceNames,
+    getServiceDurations,
+    getServicePrice,
+  } = useServices()
+
+  // 构建员工收入映射
+  const serviceStaffIncomes = useMemo(() => {
+    const incomes: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        incomes[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            incomes[service.name][duration.duration] = duration.staff_income
+          }
+        })
+      }
+    })
+    return incomes
+  }, [serviceDetails])
 
   // Parse time slot for edit mode
   const parseTimeSlot = (timeSlot: string) => {
@@ -141,16 +164,15 @@ export function EditLogForm({
   const paymentMethod = form.watch("payment_method")
 
   const availableDurations = useMemo(() => {
-    if (!selectedType || !SERVICE_PRICES[selectedType]) return []
-    return Object.entries(SERVICE_PRICES[selectedType])
-      .filter(([_, price]) => price > 0)
-      .map(([duration]) => duration)
-  }, [selectedType])
+    if (!selectedType) return []
+    const durations = getServiceDurations(selectedType)
+    return durations.map((d) => d.duration.toString())
+  }, [selectedType, getServiceDurations])
 
   const expectedAmount = useMemo(() => {
     if (!selectedType || !selectedDuration) return 0
     const duration = parseInt(selectedDuration) as Duration
-    const basePrice = SERVICE_PRICES[selectedType][duration] || 0
+    const basePrice = getServicePrice(selectedType, duration) || 0
     const addOnsTotal = selectedAddOns.reduce((sum, addon) => {
       const addonPrice = ADDONS.find((a) => a.name === addon)?.price || 0
       return sum + addonPrice
@@ -161,7 +183,13 @@ export function EditLogForm({
       discountAmount = (basePrice * discountPercent) / 100
     }
     return basePrice + addOnsTotal - discountAmount
-  }, [selectedType, selectedDuration, selectedAddOns, selectedDiscount])
+  }, [
+    selectedType,
+    selectedDuration,
+    selectedAddOns,
+    selectedDiscount,
+    getServicePrice,
+  ])
 
   // Watch discount value to handle custom mode
   const discountValue = form.watch("discount")
@@ -216,7 +244,10 @@ export function EditLogForm({
       const duration = parseInt(values.duration) as Duration
 
       // Validate that type is a valid MassageType
-      if (!values.type || !MASSAGE_TYPES.includes(values.type as MassageType)) {
+      if (
+        !values.type ||
+        !getServiceNames().includes(values.type as MassageType)
+      ) {
         console.error("Invalid massage type:", values.type)
         return
       }
@@ -226,7 +257,8 @@ export function EditLogForm({
       const staffIncome = calculateStaffIncome(
         massageType,
         duration,
-        values.addOns ? values.addOns.map((s) => s.trim() as Addon) : []
+        values.addOns ? values.addOns.map((s) => s.trim() as Addon) : [],
+        serviceStaffIncomes
       )
 
       // 处理 discount 值，支持预设值和自定义值
@@ -391,7 +423,7 @@ export function EditLogForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {MASSAGE_TYPES.map((type) => (
+                  {getServiceNames().map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
                     </SelectItem>

@@ -22,6 +22,7 @@ import {
   type Duration,
   type Addon,
 } from "@/lib/types/massage"
+import { useServices } from "@/hooks/useServices"
 
 interface CompactStaffSummaryProps {
   records: MassageRecord[]
@@ -44,6 +45,25 @@ export function CompactStaffSummary({
 }: CompactStaffSummaryProps) {
   const { getToken } = useAuth()
 
+  // 使用动态服务数据
+  const { serviceDetails } = useServices()
+
+  // 构建员工收入映射
+  const serviceStaffIncomes = useMemo(() => {
+    const incomes: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        incomes[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            incomes[service.name][duration.duration] = duration.staff_income
+          }
+        })
+      }
+    })
+    return incomes
+  }, [serviceDetails])
+
   // Get all staff from database
   const { data: allStaff } = useQuery({
     queryKey: ["staff"],
@@ -63,7 +83,8 @@ export function CompactStaffSummary({
           const staffIncome = calculateStaffIncome(
             record.service_name as MassageType,
             record.duration as Duration,
-            record.add_ons as Addon[]
+            record.add_ons as Addon[],
+            serviceStaffIncomes
           )
           const tip =
             typeof record.tip === "number"
@@ -90,7 +111,7 @@ export function CompactStaffSummary({
         },
         {} as Record<string, StaffSummary>
       ),
-    [records]
+    [records, serviceStaffIncomes]
   )
 
   // Ensure all staff are present, even if they have zero records

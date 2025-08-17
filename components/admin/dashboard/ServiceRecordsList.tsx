@@ -19,8 +19,8 @@ import {
   MassageType,
   Duration,
   Addon,
-  SERVICE_PRICES,
 } from "@/lib/types/massage"
+import { useServices } from "@/hooks/useServices"
 import { Search, ChevronDown, ArrowUpDown, Funnel } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -101,6 +101,41 @@ export function ServiceRecordsList({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
+
+  // 使用动态服务数据
+  const { serviceDetails } = useServices()
+
+  // 构建员工收入映射
+  const serviceStaffIncomes = useMemo(() => {
+    const incomes: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        incomes[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            incomes[service.name][duration.duration] = duration.staff_income
+          }
+        })
+      }
+    })
+    return incomes
+  }, [serviceDetails])
+
+  // 构建服务价格映射
+  const servicePrices = useMemo(() => {
+    const prices: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        prices[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            prices[service.name][duration.duration] = duration.customer_price
+          }
+        })
+      }
+    })
+    return prices
+  }, [serviceDetails])
 
   const columns: ColumnDef<MassageRecord>[] = useMemo(
     () => [
@@ -208,9 +243,7 @@ export function ServiceRecordsList({
         cell: ({ row }) => {
           const record = row.original as MassageRecord
           const price =
-            SERVICE_PRICES[record.service_name as MassageType]?.[
-              record.duration as Duration
-            ] ?? 0
+            servicePrices[record.service_name]?.[record.duration] ?? 0
           return (
             <div className="w-24">
               <span>${price.toFixed(2)}</span>
@@ -224,9 +257,7 @@ export function ServiceRecordsList({
         cell: ({ row }) => {
           const record = row.original as MassageRecord
           const price =
-            SERVICE_PRICES[record.service_name as MassageType]?.[
-              record.duration as Duration
-            ] ?? 0
+            servicePrices[record.service_name]?.[record.duration] ?? 0
           const discountAmount = (price * record.discount) / 100
           const discounted = price - discountAmount
           return (
@@ -352,7 +383,8 @@ export function ServiceRecordsList({
           const staffIncome = calculateStaffIncome(
             record.service_name as MassageType,
             record.duration as Duration,
-            (record.add_ons as string[]).map((a) => a as Addon)
+            (record.add_ons as string[]).map((a) => a as Addon),
+            serviceStaffIncomes
           )
           return (
             <div className="w-20">
@@ -373,7 +405,8 @@ export function ServiceRecordsList({
           const staffIncome = calculateStaffIncome(
             record.service_name as MassageType,
             record.duration as Duration,
-            (record.add_ons as string[]).map((a) => a as Addon)
+            (record.add_ons as string[]).map((a) => a as Addon),
+            serviceStaffIncomes
           )
           const tip =
             typeof record.tip === "number" ? record.tip : parseFloat(record.tip)
@@ -388,7 +421,7 @@ export function ServiceRecordsList({
         },
       },
     ],
-    []
+    [serviceStaffIncomes, servicePrices]
   )
 
   const table = useReactTable({

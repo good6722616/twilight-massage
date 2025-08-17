@@ -43,6 +43,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { getDailyLogColumns } from "./DailyLogColumns"
+import { useServices } from "@/hooks/useServices"
 
 interface DailyLogTableProps {
   records: MassageRecord[]
@@ -65,6 +66,25 @@ export const DailyLogTable = memo(function DailyLogTable({
   const [globalFilter, setGlobalFilter] = useState("")
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
 
+  // 使用动态服务数据
+  const { serviceDetails } = useServices()
+
+  // 构建员工收入映射
+  const serviceStaffIncomes = useMemo(() => {
+    const incomes: Record<string, Record<number, number>> = {}
+    Object.values(serviceDetails).forEach((service: any) => {
+      if (service && service.is_active) {
+        incomes[service.name] = {}
+        service.durations.forEach((duration: any) => {
+          if (duration.is_active) {
+            incomes[service.name][duration.duration] = duration.staff_income
+          }
+        })
+      }
+    })
+    return incomes
+  }, [serviceDetails])
+
   const handleDelete = async (recordId: string) => {
     try {
       setDeletingIds((prev) => new Set([...Array.from(prev), recordId]))
@@ -82,8 +102,14 @@ export const DailyLogTable = memo(function DailyLogTable({
   }
 
   const columns = useMemo(
-    () => getDailyLogColumns({ onEdit, onDelete: handleDelete, deletingIds }),
-    [onEdit, onDelete, deletingIds]
+    () =>
+      getDailyLogColumns({
+        onEdit,
+        onDelete: handleDelete,
+        deletingIds,
+        serviceStaffIncomes,
+      }),
+    [onEdit, onDelete, deletingIds, serviceStaffIncomes]
   )
 
   const table = useReactTable({
