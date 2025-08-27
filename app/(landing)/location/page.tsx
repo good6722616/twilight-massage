@@ -47,8 +47,8 @@ export default function LocationPage() {
             Visit Us
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Find us in the heart of Lake Forest. We're conveniently located with
-            easy access and plenty of parking.
+            Find us in the heart of Lake Forest. We&#39;re conveniently located
+            with easy access and plenty of parking.
           </p>
         </div>
 
