@@ -4,34 +4,34 @@ import { Card } from "../ui/card"
 const AboutSection = () => {
   const images: SlideItem[] = [
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/butterfly_room.jpeg",
+      src: "/homepage/butterfly_room-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/aisle.jpeg",
+      src: "/homepage/aisle-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/lobby.jpeg",
+      src: "/homepage/lobby-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/lobby_sofa.jpeg",
+      src: "/homepage/lobby_sofa-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/sun_room.jpeg",
+      src: "/homepage/sun_room-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/leaf_room.jpeg",
+      src: "/homepage/leaf_room-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/table.jpeg",
+      src: "/homepage/table-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/foot_room.jpeg",
+      src: "/homepage/foot_room-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/cloud_room.jpeg",
+      src: "/homepage/cloud_room-min.jpeg",
     },
     {
-      src: "https://whwiqtjg4ira7qw5.public.blob.vercel-storage.com/public%20images/bamboo_room.jpeg",
+      src: "/homepage/bamboo_room-min.jpeg",
     },
   ]
 

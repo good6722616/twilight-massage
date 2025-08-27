@@ -3,6 +3,12 @@ import { siteConfig } from "@/config/site"
 import { navLinks } from "@/lib/links"
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import Image from "next/image"
 
 export default function Footer() {
@@ -13,20 +19,20 @@ export default function Footer() {
         <div className="mx-auto flex max-w-screen-2xl flex-col items-center justify-between gap-8 px-4 py-12 md:flex-row md:gap-12">
           {/* Images */}
           <div className="flex gap-6">
-            <div className="relative h-40 w-40 overflow-hidden rounded-md bg-[#e5ded3]">
+            <div className="relative h-40 w-60 overflow-hidden">
               <Image
-                src="/twilight_aisle.jpg"
-                alt="Relaxing bath"
+                src="/TM-Gift-Orange.jpg"
+                alt="Orange Gift Card"
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
-            <div className="relative h-40 w-40 overflow-hidden rounded-md bg-[#e5ded3]">
+            <div className="relative h-40 w-60 overflow-hidden">
               <Image
-                src="/twilight_plant.jpg"
-                alt="Spa products"
+                src="/TM_Gift_Black.jpg"
+                alt="Black Gift Card"
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           </div>
@@ -90,15 +96,46 @@ export default function Footer() {
                 </button>
               </form>
               <div className="flex justify-center space-x-4 md:justify-start">
-                <Button variant="ghost" size="icon" aria-label="Facebook">
-                  <Facebook className="h-5 w-5 text-[#342b20]" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Facebook"
+                  asChild
+                >
+                  <a
+                    href="https://www.facebook.com/people/Twilight-Massage-Spa/61568853612590/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Facebook className="h-5 w-5 text-[#342b20]" />
+                  </a>
                 </Button>
-                <Button variant="ghost" size="icon" aria-label="Instagram">
-                  <Instagram className="h-5 w-5 text-[#342b20]" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Instagram"
+                  asChild
+                >
+                  <a
+                    href="https://www.instagram.com/twilight.massage"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Instagram className="h-5 w-5 text-[#342b20]" />
+                  </a>
                 </Button>
-                <Button variant="ghost" size="icon" aria-label="Twitter">
-                  <Twitter className="h-5 w-5 text-[#342b20]" />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" aria-label="Twitter">
+                        <Twitter className="h-5 w-5 text-[#342b20]" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Coming Soon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 

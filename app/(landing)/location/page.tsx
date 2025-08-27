@@ -2,7 +2,6 @@ import { MapPin, Clock, Phone, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import GoogleMap from "@/components/pages/googlemap"
-import LocationHero from "@/components/pages/location-hero"
 import Image from "next/image"
 import Link from "next/link"
 import { Metadata } from "next"
@@ -42,12 +41,20 @@ export default function LocationPage() {
 
   return (
     <main>
-      <LocationHero />
+      <section className="container mx-auto px-4 py-32 lg:py-32">
+        <div className="mb-16 text-center">
+          <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
+            Visit Us
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
+            Find us in the heart of Lake Forest. We're conveniently located with
+            easy access and plenty of parking.
+          </p>
+        </div>
 
-      <section className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Main Content Card */}
-          <Card className="overflow-hidden shadow-lg">
+          <Card className="overflow-hidden border-none shadow-none">
             <CardContent className="grid gap-6 p-4 md:grid-cols-2 md:gap-8 md:p-8">
               {/* Left Column - Location Info and Image */}
               <div className="space-y-6">

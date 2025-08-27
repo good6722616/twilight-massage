@@ -16,8 +16,8 @@ export const heroHeader: HeroHeader = {
 // ... existing code ...
 
 export const featureCards: ContentSection = {
-  header: `Our Popular Treatments`,
-  subheader: `Step into a world of relaxation and rejuvenation with our wide range of treatments.`,
+  header: ``,
+  subheader: ``,
   content: [
     {
       text: `Swedish Massage`,

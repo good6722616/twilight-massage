@@ -20,7 +20,7 @@ export default function GiftCards() {
           {/* Left: Image */}
           <div className="relative mx-auto h-[260px] w-[260px] overflow-hidden rounded-t-[50%] bg-[#e5ded3] md:h-[520px] md:w-[480px] lg:h-[700px] lg:w-[600px]">
             <Image
-              src="/gift_hero_img.jpg"
+              src="/about-us.jpg"
               alt="Gift Card Room"
               fill
               className="object-cover"

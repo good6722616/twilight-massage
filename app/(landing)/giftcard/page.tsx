@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import GiftCardHero from "@/components/pages/giftcard-hero"
 import { Button } from "@/components/ui/button"
 
 import Image from "next/image"
@@ -33,15 +32,13 @@ export default function GiftCardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      <GiftCardHero />
-
-      <section className="container mx-auto px-4 py-12 lg:py-20">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
-            Choose Your Gift Card Design
-          </h2>
-          <p className="mx-auto max-w-2xl text-gray-600">
+    <main className="container bg-gradient-to-b from-orange-50 to-white">
+      <section className="container mx-auto px-4 py-32 lg:py-32">
+        <div className="mb-16 text-center">
+          <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
+            Gift Cards
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
             Give the perfect gift of relaxation. Select your preferred design
             and customize the amount during checkout.
           </p>
