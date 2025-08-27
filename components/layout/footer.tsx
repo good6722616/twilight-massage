@@ -18,7 +18,7 @@ export default function Footer() {
       <section className="bg-[#f7f2ef] py-12">
         <div className="mx-auto flex max-w-screen-2xl flex-col items-center justify-between gap-8 px-4 py-12 md:flex-row md:gap-12">
           {/* Images */}
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-6 md:flex-row">
             <div className="relative h-40 w-60 overflow-hidden">
               <Image
                 src="/TM-Gift-Orange.jpg"
@@ -27,7 +27,7 @@ export default function Footer() {
                 className="object-contain"
               />
             </div>
-            <div className="relative h-40 w-60 overflow-hidden">
+            <div className="relative h-40 w-60 overflow-hidden bg-[#e5ded3]">
               <Image
                 src="/TM_Gift_Black.jpg"
                 alt="Black Gift Card"
