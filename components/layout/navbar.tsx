@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { navLinks } from "@/lib/links"
 import { Menu, X } from "lucide-react"
 import Image from "next/image"
@@ -9,6 +10,7 @@ import Image from "next/image"
 export default function Navbar() {
   const [navbar, setNavbar] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +19,11 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // Reset navbar state when route changes
+  useEffect(() => {
+    setNavbar(false)
+  }, [pathname])
 
   return (
     <header className="fixed top-0 z-50 w-full bg-[#FFF9F5]">
