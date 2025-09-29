@@ -31,6 +31,22 @@ export function DiscountSelector({
   const watchedDiscountType = watch("discount_type")
   const watchedDiscountValue = watch("discount_value")
 
+  // 初始化模式 - 根据折扣值判断显示模式
+  useEffect(() => {
+    if (watchedDiscountValue && watchedDiscountType) {
+      const isPresetValue = DISCOUNTS.map(String).includes(watchedDiscountValue)
+      if (isPresetValue && watchedDiscountType === "percentage") {
+        // 预设百分比折扣
+        setDiscountMode("preset")
+        setDiscountType("percentage")
+      } else {
+        // 自定义折扣 - 根据 discount_type 判断类型
+        setDiscountMode("custom")
+        setDiscountType(watchedDiscountType)
+      }
+    }
+  }, [watchedDiscountValue, watchedDiscountType])
+
   // 监听折扣类型变化
   useEffect(() => {
     if (watchedDiscountType) {
@@ -107,7 +123,10 @@ export function DiscountSelector({
       {discountMode === "preset" ? (
         <div className="space-y-2">
           <Label htmlFor="discount-preset">Discount</Label>
-          <Select onValueChange={handlePresetDiscountSelect}>
+          <Select
+            onValueChange={handlePresetDiscountSelect}
+            value={watchedDiscountValue}
+          >
             <SelectTrigger
               id="discount-preset"
               className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
@@ -139,7 +158,10 @@ export function DiscountSelector({
             </Button>
           </div>
 
-          <Select value={discountType} onValueChange={handleDiscountTypeChange}>
+          <Select
+            value={watchedDiscountType}
+            onValueChange={handleDiscountTypeChange}
+          >
             <SelectTrigger
               id="discount-type"
               className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
