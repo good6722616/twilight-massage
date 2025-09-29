@@ -19,6 +19,8 @@ import {
   MassageType,
   Duration,
   Addon,
+  calculateDiscountAmount,
+  decodeDiscount,
 } from "@/lib/types/massage"
 import { useServices } from "@/hooks/useServices"
 import { Search, ChevronDown, ArrowUpDown, Funnel } from "lucide-react"
@@ -258,7 +260,7 @@ export function ServiceRecordsList({
           const record = row.original as MassageRecord
           const price =
             servicePrices[record.service_name]?.[record.duration] ?? 0
-          const discountAmount = (price * record.discount) / 100
+          const discountAmount = calculateDiscountAmount(price, record.discount)
           const discounted = price - discountAmount
           return (
             <div className="w-24">
@@ -309,9 +311,16 @@ export function ServiceRecordsList({
             </div>
           )
         },
-        cell: ({ row }) => (
-          <div className="w-20">{row.getValue("discount")}%</div>
-        ),
+        cell: ({ row }) => {
+          const discountValue = row.getValue("discount") as number
+          const discountInfo = decodeDiscount(discountValue)
+
+          if (discountInfo.type === "percentage") {
+            return <div className="w-20">{discountInfo.value}%</div>
+          } else {
+            return <div className="w-20">${discountInfo.value}</div>
+          }
+        },
       },
       {
         accessorKey: "add_ons",

@@ -1,7 +1,11 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import type { MassageRecord, MassageType, Duration } from "@/lib/types/massage"
-import { SERVICE_PRICES, ADDONS } from "@/lib/types/massage"
+import {
+  SERVICE_PRICES,
+  ADDONS,
+  calculateDiscountAmount,
+} from "@/lib/types/massage"
 import { toZonedTime, fromZonedTime } from "date-fns-tz"
 import { startOfDay, endOfDay, format } from "date-fns"
 
@@ -51,7 +55,7 @@ export function calculatePaymentBreakdown(records: MassageRecord[]) {
           SERVICE_PRICES[r.service_name as MassageType]?.[
             r.duration as Duration
           ] || 0
-        const discountAmount = (price * r.discount) / 100
+        const discountAmount = calculateDiscountAmount(price, r.discount)
         const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
           const addonPrice =
             ADDONS.find(

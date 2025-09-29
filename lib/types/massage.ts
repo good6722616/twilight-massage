@@ -7,7 +7,7 @@ export interface MassageRecord {
   staff: string
   service_name: string
   duration: number
-  discount: number
+  discount: number // 保持为数字类型，在应用层处理逻辑
   add_ons: string[]
   tip: number
   income: number
@@ -48,6 +48,48 @@ export const ADDONS: { name: Addon; price: number }[] = [
 
 export const DISCOUNTS = [0, 5, 10, 15, 20] as const
 export type Discount = (typeof DISCOUNTS)[number]
+
+// 新增折扣类型定义
+export type DiscountType = "percentage" | "fixed_amount"
+export interface DiscountInfo {
+  type: DiscountType
+  value: number
+}
+
+// 折扣类型选项
+export const DISCOUNT_TYPES = [
+  { value: "percentage", label: "Percentage (%)" },
+  { value: "fixed_amount", label: "Fixed Amount ($)" },
+] as const
+
+// 折扣存储策略：
+// - 百分比折扣：直接存储百分比值 (0-100)
+// - 固定金额折扣：存储负值，通过负数来标识固定金额折扣
+// 例如：-50 表示 $50 固定金额折扣，15 表示 15% 百分比折扣
+export function encodeDiscount(discountInfo: DiscountInfo): number {
+  if (discountInfo.type === "percentage") {
+    return discountInfo.value
+  } else {
+    // 固定金额折扣存储为负值
+    return -discountInfo.value
+  }
+}
+
+export function decodeDiscount(discountValue: number): DiscountInfo {
+  if (discountValue < 0) {
+    // 负值表示固定金额折扣
+    return {
+      type: "fixed_amount",
+      value: Math.abs(discountValue),
+    }
+  } else {
+    // 正值表示百分比折扣
+    return {
+      type: "percentage",
+      value: discountValue,
+    }
+  }
+}
 
 export const STAFF_SERVICE_INCOME: Record<
   MassageType,
@@ -206,6 +248,21 @@ export function calculateStaffIncome(
   return totalStaffIncome
 }
 
+// 新增：计算折扣金额的辅助函数
+export function calculateDiscountAmount(
+  basePrice: number,
+  discount: number
+): number {
+  const discountInfo = decodeDiscount(discount)
+
+  if (discountInfo.type === "percentage") {
+    return (basePrice * discountInfo.value) / 100
+  } else {
+    // 固定金额折扣，但不能超过原价
+    return Math.min(discountInfo.value, basePrice)
+  }
+}
+
 export function calculateStoreIncome(
   records: MassageRecord[],
   servicePrices?: Record<string, Record<number, number>>
@@ -232,8 +289,11 @@ export function calculateStoreIncome(
     // Calculate full price before discount
     const priceBeforeDiscount = baseServicePrice
 
-    // Apply discount to service price
-    const discountAmount = (priceBeforeDiscount * record.discount) / 100
+    // Apply discount to service price using the new helper function
+    const discountAmount = calculateDiscountAmount(
+      priceBeforeDiscount,
+      record.discount
+    )
     const servicePriceAfterDiscount = priceBeforeDiscount - discountAmount
 
     // Add full addon prices (addons are not discounted)

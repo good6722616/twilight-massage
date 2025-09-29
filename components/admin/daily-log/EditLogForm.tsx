@@ -32,12 +32,17 @@ import {
   DISCOUNTS,
   PAYMENT_METHODS,
   Discount,
+  DiscountInfo,
   calculateStaffIncome,
+  calculateDiscountAmount,
+  encodeDiscount,
+  decodeDiscount,
 } from "@/lib/types/massage"
 import { useServices } from "@/hooks/useServices"
 import { FormStaffSelector } from "@/components/admin/StaffSelector"
 import { dailyLogFormSchema, DailyLogFormValues } from "@/lib/schema"
 import { CustomPaymentBreakdown } from "./CustomPaymentBreakdown"
+import { DiscountSelector } from "./DiscountSelector"
 
 interface EditLogFormProps {
   record: MassageRecord
@@ -57,8 +62,8 @@ export function EditLogForm({
   isSuccess = false,
 }: EditLogFormProps) {
   const [showSuccess, setShowSuccess] = useState(false)
-  const [customDiscountMode, setCustomDiscountMode] = useState(false)
   const [customPaymentValid, setCustomPaymentValid] = useState(false)
+  const [discountValid, setDiscountValid] = useState(false)
 
   // 使用动态服务数据
   const {
@@ -90,13 +95,22 @@ export function EditLogForm({
     return { from: from || "", to: to || "" }
   }
 
+  // 处理折扣格式转换
+  const parseDiscount = (discount: number) => {
+    const discountInfo = decodeDiscount(discount)
+    return {
+      discount_type: discountInfo.type,
+      discount_value: discountInfo.value.toString(),
+    }
+  }
+
   const form = useForm<DailyLogFormValues>({
     resolver: zodResolver(dailyLogFormSchema),
     defaultValues: {
       staff: record.staff || "",
       type: record.service_name || "",
       duration: record.duration?.toString() || "",
-      discount: record.discount?.toString() || "",
+      ...parseDiscount(record.discount),
       addOns: record.add_ons || [],
       tip: record.tip?.toString() || "",
       payment_method: (() => {
@@ -160,7 +174,8 @@ export function EditLogForm({
   const selectedType = form.watch("type") as MassageType | undefined
   const selectedDuration = form.watch("duration")
   const selectedAddOns = form.watch("addOns") || []
-  const selectedDiscount = form.watch("discount")
+  const selectedDiscountType = form.watch("discount_type")
+  const selectedDiscountValue = form.watch("discount_value")
   const paymentMethod = form.watch("payment_method")
 
   const availableDurations = useMemo(() => {
@@ -177,45 +192,31 @@ export function EditLogForm({
       const addonPrice = ADDONS.find((a) => a.name === addon)?.price || 0
       return sum + addonPrice
     }, 0)
+
+    // Calculate discount using new logic
     let discountAmount = 0
-    if (selectedDiscount && selectedDiscount !== "custom") {
-      const discountPercent = parseFloat(selectedDiscount)
-      discountAmount = (basePrice * discountPercent) / 100
+    if (selectedDiscountValue) {
+      const discountValue = parseFloat(selectedDiscountValue)
+      if (!isNaN(discountValue)) {
+        // 构建折扣信息并编码
+        const discountInfo: DiscountInfo = {
+          type: selectedDiscountType as "percentage" | "fixed_amount",
+          value: discountValue,
+        }
+        const encodedDiscount = encodeDiscount(discountInfo)
+        discountAmount = calculateDiscountAmount(basePrice, encodedDiscount)
+      }
     }
+
     return basePrice + addOnsTotal - discountAmount
   }, [
     selectedType,
     selectedDuration,
     selectedAddOns,
-    selectedDiscount,
+    selectedDiscountType,
+    selectedDiscountValue,
     getServicePrice,
   ])
-
-  // Watch discount value to handle custom mode
-  const discountValue = form.watch("discount")
-
-  // Handle discount mode changes
-  useEffect(() => {
-    if (discountValue === "custom") {
-      setCustomDiscountMode(true)
-      form.setValue("discount", "")
-    }
-  }, [discountValue, form])
-
-  // Add manual switch back to preset mode function
-  const switchToPresetMode = () => {
-    setCustomDiscountMode(false)
-    form.setValue("discount", "")
-    form.clearErrors("discount")
-  }
-
-  // Check if current discount is custom (not in DISCOUNTS array)
-  useEffect(() => {
-    const currentDiscount = record.discount?.toString()
-    if (currentDiscount && !DISCOUNTS.map(String).includes(currentDiscount)) {
-      setCustomDiscountMode(true)
-    }
-  }, [record.discount])
 
   // Handle success state animation
   useEffect(() => {
@@ -261,18 +262,40 @@ export function EditLogForm({
         serviceStaffIncomes
       )
 
-      // 处理 discount 值，支持预设值和自定义值
+      // 处理新的折扣格式
       let discountValue: number
-      if (DISCOUNTS.map(String).includes(values.discount)) {
-        // 预设值
-        discountValue = parseInt(values.discount) as Discount
+      const discountVal = parseFloat(values.discount_value)
+
+      if (values.discount_type === "percentage") {
+        // 百分比折扣
+        if (DISCOUNTS.map(String).includes(values.discount_value)) {
+          // 预设百分比值
+          discountValue = parseInt(values.discount_value) as Discount
+        } else {
+          // 自定义百分比值
+          if (isNaN(discountVal) || discountVal < 0 || discountVal > 100) {
+            console.error(
+              "Invalid percentage discount value:",
+              values.discount_value
+            )
+            return
+          }
+          discountValue = discountVal
+        }
       } else {
-        // 自定义值
-        discountValue = parseFloat(values.discount)
-        if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
-          console.error("Invalid custom discount value:", values.discount)
+        // 固定金额折扣
+        if (isNaN(discountVal) || discountVal < 0) {
+          console.error(
+            "Invalid fixed amount discount value:",
+            values.discount_value
+          )
           return
         }
+        // 使用编码函数将固定金额折扣转换为负数存储
+        discountValue = encodeDiscount({
+          type: "fixed_amount",
+          value: discountVal,
+        })
       }
 
       // Create the massage record
@@ -484,75 +507,9 @@ export function EditLogForm({
         />
 
         {/* Discount */}
-        <FormField
-          control={form.control}
-          name="discount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="discount">Discount</FormLabel>
-              {!customDiscountMode ? (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger
-                      id="discount"
-                      className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
-                    >
-                      <SelectValue placeholder="Select discount" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {DISCOUNTS.map((discount) => (
-                      <SelectItem key={discount} value={discount.toString()}>
-                        {discount}%
-                      </SelectItem>
-                    ))}
-                    <SelectItem value="custom">Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="relative">
-                  <FormControl>
-                    <Input
-                      id="discount"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.1"
-                      placeholder="Enter custom discount"
-                      {...field}
-                      className="h-9 w-full bg-white py-1 pr-8 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
-                      onBlur={(e) => {
-                        const value = parseFloat(e.target.value)
-                        if (isNaN(value) || value < 0 || value > 100) {
-                          form.setError("discount", {
-                            type: "manual",
-                            message:
-                              "Please enter a valid discount between 0–100%",
-                          })
-                        } else {
-                          form.clearErrors("discount")
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
-                    %
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-8 top-1/2 h-6 w-6 -translate-y-1/2 p-0 text-gray-400 hover:text-gray-600"
-                    onClick={switchToPresetMode}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
-              <FormMessage className="absolute -bottom-5 left-0 text-xs" />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-2">
+          <DiscountSelector onValidationChange={setDiscountValid} />
+        </div>
 
         {/* Add-ons */}
         <FormField
@@ -649,7 +606,8 @@ export function EditLogForm({
             disabled={
               isSubmitting ||
               showSuccess ||
-              (paymentMethod === "custom" && !customPaymentValid)
+              (paymentMethod === "custom" && !customPaymentValid) ||
+              !discountValid
             }
             className={getButtonClassName()}
           >

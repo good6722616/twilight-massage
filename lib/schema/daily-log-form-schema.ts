@@ -1,26 +1,29 @@
 import * as z from "zod"
-import { DISCOUNTS, PAYMENT_METHODS, PaymentMethod } from "@/lib/types/massage"
+import {
+  DISCOUNTS,
+  PAYMENT_METHODS,
+  PaymentMethod,
+  DISCOUNT_TYPES,
+} from "@/lib/types/massage"
 
 const baseSchema = {
   type: z.string().min(1, { message: "Please select a massage type" }),
   duration: z.string().min(1, { message: "Please select a duration" }),
-  discount: z
+  discount_type: z
     .string()
-    .min(1, { message: "Please select a discount" })
+    .min(1, { message: "Please select a discount type" })
+    .refine((val) => DISCOUNT_TYPES.some((type) => type.value === val), {
+      message: "Please select a valid discount type",
+    }),
+  discount_value: z
+    .string()
+    .min(1, { message: "Please enter a discount value" })
     .refine(
       (val) => {
-        // 允许预设值
-        if (DISCOUNTS.map(String).includes(val)) {
-          return true
-        }
-        // 允许自定义数字（0-100范围）
         const numVal = parseFloat(val)
-        return !isNaN(numVal) && numVal >= 0 && numVal <= 100
+        return !isNaN(numVal) && numVal >= 0
       },
-      {
-        message:
-          "Please select a valid discount or enter a number between 0-100",
-      }
+      { message: "Please enter a valid discount value" }
     ),
   addOns: z.array(z.string()).optional(),
   tip: z

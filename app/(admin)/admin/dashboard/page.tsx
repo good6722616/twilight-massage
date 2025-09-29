@@ -18,6 +18,7 @@ import { CompactStaffSummary } from "@/components/admin/dashboard/CompactStaffSu
 import {
   calculateStoreIncome,
   calculateStaffIncome,
+  calculateDiscountAmount,
   type MassageType,
   type Duration,
   type Addon,
@@ -163,7 +164,7 @@ export default function DashboardPage() {
 
           // For single payments, calculate the amount
           const price = servicePrices[r.service_name]?.[r.duration] || 0
-          const discountAmount = (price * r.discount) / 100
+          const discountAmount = calculateDiscountAmount(price, r.discount)
           const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
             const addonPrice =
               ADDONS.find(
@@ -216,7 +217,7 @@ export default function DashboardPage() {
 
           // For single payments, calculate the amount
           const price = servicePrices[r.service_name]?.[r.duration] || 0
-          const discountAmount = (price * r.discount) / 100
+          const discountAmount = calculateDiscountAmount(price, r.discount)
           const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
             const addonPrice =
               ADDONS.find(
@@ -269,7 +270,7 @@ export default function DashboardPage() {
 
           // For single payments, calculate the amount
           const price = servicePrices[r.service_name]?.[r.duration] || 0
-          const discountAmount = (price * r.discount) / 100
+          const discountAmount = calculateDiscountAmount(price, r.discount)
           const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
             const addonPrice =
               ADDONS.find(

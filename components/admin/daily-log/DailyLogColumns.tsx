@@ -24,6 +24,7 @@ import {
   MassageType,
   Duration,
   Addon,
+  decodeDiscount,
 } from "@/lib/types/massage"
 import { useServices } from "@/hooks/useServices"
 import { ColumnDef } from "@tanstack/react-table"
@@ -207,9 +208,16 @@ export function getDailyLogColumns({
           </Button>
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="w-20">{row.getValue("discount")}%</div>
-      ),
+      cell: ({ row }) => {
+        const discountValue = row.getValue("discount") as number
+        const discountInfo = decodeDiscount(discountValue)
+
+        if (discountInfo.type === "percentage") {
+          return <div className="w-20">{discountInfo.value}%</div>
+        } else {
+          return <div className="w-20">${discountInfo.value}</div>
+        }
+      },
     },
     {
       accessorKey: "add_ons",
