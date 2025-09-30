@@ -70,6 +70,7 @@ export function calculatePaymentBreakdown(records: MassageRecord[]) {
     cash: getTotal("cash"),
     credit_card: getTotal("credit_card"),
     giftcard: getTotal("giftcard"),
+    classpass: getTotal("classpass"),
   }
 }
 

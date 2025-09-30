@@ -280,6 +280,59 @@ export default function DashboardPage() {
           }, 0)
           return sum + price - discountAmount + addOnsTotal
         }, 0),
+      classpass: records
+        .filter((r) => {
+          // Handle both old string format and new JSONB format
+          if (typeof r.payment_method === "string") {
+            return r.payment_method === "classpass"
+          }
+          if (
+            typeof r.payment_method === "object" &&
+            r.payment_method !== null
+          ) {
+            // For custom payments, check if classpass has an amount
+            if (
+              r.payment_method.classpass !== null &&
+              r.payment_method.classpass! > 0
+            ) {
+              return true
+            }
+            // For single payments, check if classpass is the only method
+            const methods = Object.keys(r.payment_method)
+            const amounts = Object.values(r.payment_method)
+            const hasAmounts = amounts.some(
+              (amount) => amount !== null && amount > 0
+            )
+            if (!hasAmounts && methods[0] === "classpass") {
+              return true
+            }
+          }
+          return false
+        })
+        .reduce((sum, r) => {
+          // For custom payments, use the stored amount
+          if (
+            typeof r.payment_method === "object" &&
+            r.payment_method !== null
+          ) {
+            const amount = r.payment_method.classpass
+            if (amount !== null && amount > 0) {
+              return sum + amount
+            }
+          }
+
+          // For single payments, calculate the amount
+          const price = servicePrices[r.service_name]?.[r.duration] || 0
+          const discountAmount = calculateDiscountAmount(price, r.discount)
+          const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+            const addonPrice =
+              ADDONS.find(
+                (a: { name: string; price: number }) => a.name === addon
+              )?.price || 0
+            return addonSum + addonPrice
+          }, 0)
+          return sum + price - discountAmount + addOnsTotal
+        }, 0),
     }
   }, [records, servicePrices])
 

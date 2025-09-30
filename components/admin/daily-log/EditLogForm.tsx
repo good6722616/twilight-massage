@@ -582,6 +582,7 @@ export function EditLogForm({
                       {method === "cash" && "Cash"}
                       {method === "credit_card" && "Credit Card"}
                       {method === "giftcard" && "Gift Card"}
+                      {method === "classpass" && "ClassPass"}
                       {method === "custom" && "Custom Payment"}
                     </SelectItem>
                   ))}

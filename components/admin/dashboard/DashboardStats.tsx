@@ -20,6 +20,7 @@ interface DashboardStatsProps {
     cash: number
     credit_card: number
     giftcard: number
+    classpass: number
   }
 }
 
@@ -135,6 +136,19 @@ export function DashboardStats({
             </span>
             <span className="font-semibold">
               ${paymentBreakdown?.giftcard?.toFixed(2) ?? "0.00"}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-gray-700">
+            <span className="flex items-center gap-1">
+              <img
+                src="/classpass_icon.png"
+                alt="ClassPass"
+                className="h-4 w-4"
+              />
+              ClassPass
+            </span>
+            <span className="font-semibold">
+              ${paymentBreakdown?.classpass?.toFixed(2) ?? "0.00"}
             </span>
           </div>
           <div className="pt-2">

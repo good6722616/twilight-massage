@@ -309,11 +309,17 @@ export function calculateStoreIncome(
   }, 0)
 }
 
-export type PaymentMethod = "cash" | "credit_card" | "giftcard" | "custom"
+export type PaymentMethod =
+  | "cash"
+  | "credit_card"
+  | "giftcard"
+  | "classpass"
+  | "custom"
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
   "cash",
   "credit_card",
   "giftcard",
+  "classpass",
   "custom",
 ]

@@ -58,6 +58,10 @@ function getPaymentIcon(method: string) {
       return <CreditCard className="h-4 w-4" />
     case "giftcard":
       return <Gift className="h-4 w-4" />
+    case "classpass":
+      return (
+        <img src="/classpass_icon.png" alt="ClassPass" className="h-4 w-4" />
+      )
     default:
       return null
   }
@@ -71,6 +75,8 @@ function getPaymentName(method: string) {
       return "Credit Card"
     case "giftcard":
       return "Gift Card"
+    case "classpass":
+      return "ClassPass"
     default:
       return method
   }

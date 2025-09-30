@@ -42,17 +42,17 @@ export function DiscountSelector({
       } else {
         // 自定义折扣 - 根据 discount_type 判断类型
         setDiscountMode("custom")
-        setDiscountType(watchedDiscountType)
+        // 不要在这里设置 discountType，让第二个 useEffect 处理
       }
     }
-  }, [watchedDiscountValue, watchedDiscountType])
+  }, []) // 只在组件挂载时执行一次
 
   // 监听折扣类型变化
   useEffect(() => {
-    if (watchedDiscountType) {
+    if (watchedDiscountType && watchedDiscountType !== discountType) {
       setDiscountType(watchedDiscountType)
     }
-  }, [watchedDiscountType])
+  }, [watchedDiscountType, discountType])
 
   // 验证折扣值
   useEffect(() => {
@@ -83,9 +83,17 @@ export function DiscountSelector({
   }
 
   const handleDiscountTypeChange = (type: string) => {
+    // 如果传入空字符串，不要处理
+    if (!type || type === "") {
+      return
+    }
+
     setDiscountType(type)
     setValue("discount_type", type)
-    setValue("discount_value", "")
+    // 只有在用户主动改变类型时才清空值
+    if (discountType !== type) {
+      setValue("discount_value", "")
+    }
     clearErrors("discount_value")
   }
 
@@ -144,17 +152,27 @@ export function DiscountSelector({
           </Select>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
           <div className="flex items-center justify-between">
-            <Label htmlFor="discount-type">Discount Type</Label>
+            <div className="flex items-center gap-2">
+              <Label
+                htmlFor="discount-value"
+                className="font-medium text-blue-800"
+              >
+                Custom Discount
+              </Label>
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-600">
+                Custom Mode
+              </span>
+            </div>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+              className="h-8 px-3 text-blue-600 hover:bg-blue-100 hover:text-blue-800"
               onClick={switchToPresetMode}
             >
-              <X className="h-3 w-3" />
+              Exit
             </Button>
           </div>
 
@@ -164,9 +182,9 @@ export function DiscountSelector({
           >
             <SelectTrigger
               id="discount-type"
-              className="h-9 w-full bg-white py-1 text-base sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
+              className="h-9 w-full border-blue-300 bg-white py-1 text-base focus:border-blue-500 sm:text-lg [&_[data-slot=select-value]]:text-sm [&_[data-slot=select-value]]:sm:text-base"
             >
-              <SelectValue />
+              <SelectValue placeholder="Select discount type" />
             </SelectTrigger>
             <SelectContent>
               {DISCOUNT_TYPES.map((type) => (
@@ -185,13 +203,16 @@ export function DiscountSelector({
               step={discountType === "percentage" ? "0.1" : "0.01"}
               max={discountType === "percentage" ? "100" : undefined}
               placeholder={
-                discountType === "percentage"
-                  ? "Enter percentage (0-100)"
-                  : "Enter amount ($)"
+                !watchedDiscountType
+                  ? "Select discount type first"
+                  : discountType === "percentage"
+                    ? "Enter percentage (0-100)"
+                    : "Enter amount ($)"
               }
               value={watchedDiscountValue || ""}
               onChange={(e) => handleCustomValueChange(e.target.value)}
-              className="h-9 w-full bg-white py-1 pr-8 text-base placeholder:text-sm sm:text-lg sm:placeholder:text-base"
+              disabled={!watchedDiscountType}
+              className="h-9 w-full border-blue-300 bg-white py-1 pr-8 text-base placeholder:text-sm focus:border-blue-500 disabled:cursor-not-allowed disabled:bg-blue-100 sm:text-lg sm:placeholder:text-base"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
               {discountType === "percentage" ? "%" : "$"}
