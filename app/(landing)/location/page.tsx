@@ -41,7 +41,7 @@ export default function LocationPage() {
 
   return (
     <main>
-      <section className="container mx-auto px-4 py-32 lg:py-32">
+      <section className="container mx-auto px-4 py-40">
         <div className="mb-16 text-center">
           <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
             Visit Us

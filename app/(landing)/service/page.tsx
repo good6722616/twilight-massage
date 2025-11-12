@@ -3,7 +3,7 @@ import ServiceCards from "@/components/pages/service-cards"
 export default function ServicePage() {
   return (
     <main className="min-h-screen">
-      <div className="container mx-auto px-4 py-32 lg:py-32">
+      <div className="container mx-auto px-4 py-40">
         <div className="mb-16 text-center">
           <h1 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
             Our Services
