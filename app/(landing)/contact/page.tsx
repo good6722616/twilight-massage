@@ -47,9 +47,7 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center space-x-4">
                   <Clock className="h-6 w-6 text-orange-600" />
-                  <p className="text-gray-700">
-                    Mon-Sat: 9am-8pm, Sun: 10am-6pm
-                  </p>
+                  <p className="text-gray-700">Mon-Sat: 10am-9pm</p>
                 </div>
               </div>
             </CardContent>
