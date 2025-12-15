@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://twilightmassage.com
+
+# Sitemaps
+Sitemap: https://twilightmassage.com/sitemap.xml
+Sitemap: https://twilightmassage.com/server-sitemap.xml
