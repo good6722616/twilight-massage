@@ -12,6 +12,7 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
+  CellContext,
 } from "@tanstack/react-table"
 import {
   MassageRecord,
@@ -23,7 +24,7 @@ import {
   decodeDiscount,
 } from "@/lib/types/massage"
 import { useServices } from "@/hooks/useServices"
-import { Search, ChevronDown, ArrowUpDown, Funnel } from "lucide-react"
+import { Search, ChevronDown, ArrowUpDown, Funnel, Edit } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -71,6 +72,8 @@ import { format } from "date-fns"
 interface ServiceRecordsListProps {
   records: MassageRecord[]
   dateRange: { from: Date | undefined; to: Date | undefined }
+  onEdit?: (record: MassageRecord) => void
+  isAdmin?: boolean
 }
 
 function formatTimeSlot(timeSlot: string) {
@@ -97,6 +100,8 @@ function formatCurrency(amount: number) {
 export function ServiceRecordsList({
   records,
   dateRange,
+  onEdit,
+  isAdmin = false,
 }: ServiceRecordsListProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -429,8 +434,33 @@ export function ServiceRecordsList({
           )
         },
       },
+      ...(isAdmin && onEdit
+        ? [
+            {
+              id: "actions",
+              header: () => {
+                return <div className="w-16 px-4 py-2 text-right">Actions</div>
+              },
+              cell: ({ row }: CellContext<MassageRecord, unknown>) => {
+                return (
+                  <div className="flex justify-end px-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(row.original)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Edit record</span>
+                    </Button>
+                  </div>
+                )
+              },
+            },
+          ]
+        : []),
     ],
-    [serviceStaffIncomes, servicePrices]
+    [serviceStaffIncomes, servicePrices, isAdmin, onEdit]
   )
 
   const table = useReactTable({

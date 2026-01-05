@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@clerk/nextjs"
+import { toast } from "sonner"
 import { H1 } from "@/components/ui/typography"
-import { getDailyLogsByDate } from "@/services/dailyLogService"
+import { getDailyLogsByDate, updateDailyLog } from "@/services/dailyLogService"
 import { getGiftCardRecordsByDate } from "@/services/giftCardService"
 import { format, isSameDay, isValid, startOfToday } from "date-fns"
 import { DashboardStats } from "@/components/admin/dashboard/DashboardStats"
@@ -22,14 +23,31 @@ import {
   type MassageType,
   type Duration,
   type Addon,
+  type MassageRecord,
 } from "@/lib/types/massage"
 import { useServices } from "@/hooks/useServices"
+import { usePermissions } from "@/hooks/usePermissions"
+import { EditLogForm } from "@/components/admin/daily-log/EditLogForm"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 
 export default function DashboardPage() {
   const { getToken } = useAuth()
+  const queryClient = useQueryClient()
 
   // 使用动态服务数据
-  const { serviceDetails } = useServices()
+  const { serviceDetails, loading: servicesLoading } = useServices()
+
+  // 权限检查
+  const { userRole } = usePermissions()
+  const isAdmin = userRole === "admin"
+
+  // 编辑状态管理
+  const [editingRecord, setEditingRecord] = useState<MassageRecord | null>(null)
 
   // 默认区间为今天
   const today = startOfToday()
@@ -369,6 +387,46 @@ export default function DashboardPage() {
     totalTips,
   }
 
+  // Mutation to update a record
+  const updateRecordMutation = useMutation({
+    mutationFn: async ({
+      id,
+      record,
+    }: {
+      id: string
+      record: Omit<
+        MassageRecord,
+        "id" | "created_at" | "updated_at" | "user_id"
+      >
+    }) => {
+      const token = await getToken({ template: "supabase" })
+      if (!token) throw new Error("No authentication token")
+      return updateDailyLog(id, record, token)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dailyLogs"] })
+      setEditingRecord(null)
+      toast.success("Record updated successfully")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update record")
+    },
+  })
+
+  // Handle edit record
+  const handleEditRecord = (record: MassageRecord) => {
+    setEditingRecord(record)
+  }
+
+  // Handle update record
+  const handleUpdateRecord = (
+    record: Omit<MassageRecord, "id" | "created_at" | "updated_at" | "user_id">
+  ) => {
+    if (editingRecord) {
+      updateRecordMutation.mutate({ id: editingRecord.id, record })
+    }
+  }
+
   // 标题文案
   let rangeTitle = ""
   if (from && to) {
@@ -389,7 +447,7 @@ export default function DashboardPage() {
         <DateRangeSelector value={dateRange} onChange={setDateRange} />
       </div>
 
-      {isLoading || isLoadingGiftCards ? (
+      {servicesLoading || isLoading || isLoadingGiftCards ? (
         <LoadingSpinner />
       ) : (
         <>
@@ -412,7 +470,12 @@ export default function DashboardPage() {
                   : `Staff - ${format(dateRange.from!, "M/dd")} to ${format(dateRange.to!, "M/dd")}`
               }
             />
-            <ServiceRecordsList records={records} dateRange={dateRange} />
+            <ServiceRecordsList
+              records={records}
+              dateRange={dateRange}
+              onEdit={isAdmin ? handleEditRecord : undefined}
+              isAdmin={isAdmin}
+            />
           </div>
 
           {/* Desktop Layout */}
@@ -427,10 +490,42 @@ export default function DashboardPage() {
               className="xl:col-span-1"
             />
             <div className="xl:col-span-2">
-              <ServiceRecordsList records={records} dateRange={dateRange} />
+              <ServiceRecordsList
+                records={records}
+                dateRange={dateRange}
+                onEdit={isAdmin ? handleEditRecord : undefined}
+                isAdmin={isAdmin}
+              />
             </div>
           </div>
         </>
+      )}
+
+      {/* Edit Record Sheet */}
+      {isAdmin && (
+        <Sheet
+          open={!!editingRecord}
+          onOpenChange={(open) => !open && setEditingRecord(null)}
+        >
+          <SheetContent side="right" className="w-full p-0 sm:max-w-xl">
+            <div className="flex h-full flex-col">
+              <SheetHeader className="flex-shrink-0 border-b border-gray-200 px-6 py-4">
+                <SheetTitle>Edit Service Record</SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {editingRecord && (
+                  <EditLogForm
+                    record={editingRecord}
+                    onSubmit={handleUpdateRecord}
+                    onCancel={() => setEditingRecord(null)}
+                    isSubmitting={updateRecordMutation.isPending}
+                    isSuccess={updateRecordMutation.isSuccess}
+                  />
+                )}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       )}
     </div>
   )

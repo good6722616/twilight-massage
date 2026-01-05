@@ -31,6 +31,11 @@ const nextConfig = {
           "https://book.squareup.com/appointments/xe96ggmxltf5b6/location/L3RH0J52JYVYX/services",
         permanent: true,
       },
+      {
+        source: "/admin",
+        destination: "/admin/dashboard",
+        permanent: false, // 使用临时重定向，保留未来修改的灵活性
+      },
     ]
   },
 }

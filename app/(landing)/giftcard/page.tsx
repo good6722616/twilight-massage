@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { Sparkles, Leaf, Snowflake, Gift, CheckCircle } from "lucide-react"
+import { Sparkles, Heart, Gift, CheckCircle } from "lucide-react"
 
 const giftCards = [
   {
@@ -21,28 +21,28 @@ const giftCards = [
   {
     title: "Golden Glow",
     description:
-      "Vibrant amber hues that shimmer like holiday lights—treat someone extraordinary to deep relaxation.",
+      "Vibrant amber hues that shimmer with warmth—treat someone extraordinary to deep relaxation.",
     image: "/TM-Gift-Orange.jpg",
   },
 ]
 
 const highlights = [
   {
-    icon: Leaf,
-    title: "Thanksgiving Gratitude",
-    copy: "Send a restorative escape with your thanks. Our seasonal 10% savings mean appreciation goes even further.",
+    icon: Heart,
+    title: "Perfect for Any Occasion",
+    copy: "Send a restorative escape for birthdays, anniversaries, thank yous, or just because. A thoughtful way to show appreciation.",
   },
   {
-    icon: Snowflake,
-    title: "Christmas Cheer",
-    copy: "Deliver a warm reminder to pause and breathe. Digital cards arrive instantly with your custom holiday message.",
+    icon: Gift,
+    title: "Instant Delivery",
+    copy: "Deliver a warm reminder to pause and breathe. Digital cards arrive instantly with your custom message.",
   },
 ]
 
 const perks = [
-  "Automatic 10% savings on every card value at checkout—no code needed",
   "Flexible scheduling so your recipient can choose their ideal service and visit date",
   "Instant delivery via email or printable keepsake for last-minute gifting",
+  "No expiration date—they can use it whenever they're ready",
 ]
 
 export default function GiftCardPage() {
@@ -51,7 +51,7 @@ export default function GiftCardPage() {
   }
 
   return (
-    <main className="bg-[#FFF9F5]">
+    <main className="bg-[#FFF9F5] py-12">
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#4E3427] via-[#38251C] to-[#1F140F] py-40 text-white">
         <div className="pointer-events-none absolute inset-0">
@@ -62,23 +62,19 @@ export default function GiftCardPage() {
           <div className="max-w-2xl space-y-6">
             <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em]">
               <Sparkles className="h-4 w-4" />
-              Season of Gratitude & Joy
+              The Perfect Gift
             </div>
             <h1 className="font-serif text-4xl leading-tight md:text-5xl lg:text-6xl">
-              Celebrate Thanksgiving & Christmas with 10% Off Gift Cards
+              Gift Cards
             </h1>
-            <p className="text-lg text-white/80 md:text-xl">
-              Share a sanctuary of warmth and renewal. For a limited time, every
-              Twilight Massage & Spa gift card is 10% off—making it effortless
-              to spoil the people who deserve it most.
-            </p>
+
             <div className="flex flex-col gap-4 sm:flex-row">
               <Button
                 className="rounded-full bg-[#F5E6DA] px-8 py-4 text-base font-semibold text-[#3B2720] transition hover:bg-[#F1D8C1]"
                 size="lg"
                 onClick={handlePurchase}
               >
-                Purchase Gift Card (10% Off)
+                Purchase Gift Card
               </Button>
               <Button
                 variant="outline"
@@ -105,26 +101,23 @@ export default function GiftCardPage() {
               <div className="relative overflow-hidden rounded-2xl bg-white/90">
                 <Image
                   src="/TM_Gift_Pink.jpg"
-                  alt="Twilight Spa Holiday Gift Card"
+                  alt="Twilight Spa Gift Card"
                   width={420}
                   height={280}
                   className="h-full w-full object-cover"
                   priority
                 />
-                <div className="absolute left-4 top-4 rounded-full bg-[#A6644C] px-4 py-2 text-sm font-semibold uppercase tracking-widest text-white">
-                  10% Off
-                </div>
               </div>
               <div className="mt-4 space-y-2 text-sm text-white/80">
                 <p>Instant email delivery or printable card—your choice.</p>
-                <p>Discount applied automatically at checkout.</p>
+                <p>Redeemable for any service at Twilight Massage & Spa.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Seasonal Highlights */}
+      {/* Highlights */}
       <section className="container mx-auto grid gap-8 px-4 py-16 md:grid-cols-2">
         {highlights.map(({ icon: Icon, title, copy }) => (
           <div
@@ -151,7 +144,7 @@ export default function GiftCardPage() {
             </h2>
             <p className="mt-3 text-base text-[#6D6252] md:text-lg">
               Send serenity in minutes—ideal for hosts, teachers, team members,
-              and everyone who brightens your holidays.
+              and everyone who brightens your day.
             </p>
           </div>
 
@@ -159,11 +152,11 @@ export default function GiftCardPage() {
             {[
               {
                 title: "Choose Your Design",
-                copy: "Select the seasonal artwork that matches your recipient’s style. All values qualify for 10% off.",
+                copy: "Select the artwork that matches your recipient's style. Choose any value that fits your budget.",
               },
               {
                 title: "Personalize Your Note",
-                copy: "Add heartfelt Thanksgiving gratitude or festive Christmas wishes—they’ll read it instantly.",
+                copy: "Add a heartfelt message—they'll read it instantly when they receive their gift card.",
               },
               {
                 title: "Send or Print",
@@ -198,11 +191,11 @@ export default function GiftCardPage() {
             Choose Your Card
           </div>
           <h2 className="font-serif text-3xl text-[#342B20] md:text-4xl">
-            Seasonal Artwork, Same Relaxing Experience
+            Beautiful Designs, Same Relaxing Experience
           </h2>
           <p className="mt-4 text-base text-[#6D6252] md:text-lg">
             Every design arrives with a gentle reminder to pause, breathe, and
-            indulge. Pick the look that matches their celebration.
+            indulge. Pick the look that matches their style.
           </p>
         </div>
 
@@ -224,9 +217,6 @@ export default function GiftCardPage() {
                   className="object-contain p-6 transition duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                <div className="absolute right-4 top-4 rounded-full bg-[#A6644C] px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white shadow">
-                  Save 10%
-                </div>
               </div>
               <div className="space-y-4 p-6">
                 <h3 className="text-xl font-semibold text-[#342B20]">
@@ -237,7 +227,7 @@ export default function GiftCardPage() {
                   className="w-full rounded-full bg-[#A6644C] py-3 text-base font-semibold text-white transition hover:bg-[#8F553A]"
                   onClick={handlePurchase}
                 >
-                  Purchase with 10% Off
+                  Purchase Gift Card
                 </Button>
               </div>
             </motion.div>
@@ -250,11 +240,11 @@ export default function GiftCardPage() {
         <div className="container mx-auto flex flex-col items-center justify-between gap-8 px-4 text-center md:flex-row md:text-left">
           <div className="space-y-3">
             <h3 className="font-serif text-3xl">
-              Ready to wrap up the perfect holiday surprise?
+              Ready to give the perfect gift?
             </h3>
             <p className="text-white/80">
-              Stocking stuffer to full celebration—your gift arrives instantly,
-              complete with 10% savings.
+              From thoughtful gestures to grand surprises—your gift arrives
+              instantly, ready to bring relaxation and renewal.
             </p>
           </div>
           <Button

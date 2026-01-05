@@ -27,21 +27,6 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 z-50 w-full bg-[#FFF9F5] shadow-sm">
-      <div className="bg-[#A6644C]">
-        <div className="container mx-auto flex items-center justify-center gap-2 px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-white md:text-sm">
-          <span>
-            Holiday Gift Cards: Enjoy 10% off every purchase through December
-            24.
-          </span>
-          <Link
-            href="/giftcard"
-            className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white underline-offset-4 transition hover:bg-white/20 md:text-sm"
-          >
-            Shop Gift Cards
-          </Link>
-        </div>
-      </div>
-      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[#A6644C]" />
       <nav className="container relative mx-auto px-6">
         <div className="flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -88,7 +73,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {navbar && (
-        <div className="absolute inset-x-0 top-[7.5rem] bg-[#FFF9F5] p-6 shadow-lg md:hidden">
+        <div className="absolute inset-x-0 top-20 bg-[#FFF9F5] p-6 shadow-lg md:hidden">
           <ul className="space-y-4">
             {navLinks.map((link) => (
               <li key={link.route}>
