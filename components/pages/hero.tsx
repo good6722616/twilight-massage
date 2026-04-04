@@ -12,7 +12,7 @@ export default function HeroHeader() {
   }
 
   return (
-    <div className="relative mt-20">
+    <div className="relative mt-0">
       <section className="relative flex min-h-[85vh] w-full flex-col lg:h-[85vh] lg:flex-row">
         {/* Left half - Content */}
         <div className="flex w-full items-center bg-[#FFF9F5] px-6 py-16 lg:w-1/2 lg:px-16">
@@ -72,7 +72,7 @@ export default function HeroHeader() {
                 alt="Twilight Massage & Spa Logo"
                 width={600}
                 height={600}
-                className="h-auto w-[600px]"
+                className="h-auto w-full max-w-[min(100%,600px)]"
                 priority
               />
             </div>

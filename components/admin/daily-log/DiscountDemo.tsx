@@ -33,6 +33,7 @@ export function DiscountDemo() {
         cash: "",
         credit_card: "",
         giftcard: "",
+        spa_finder: "",
       },
       timeSlot: { from: "", to: "" },
     },

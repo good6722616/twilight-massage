@@ -351,6 +351,54 @@ export default function DashboardPage() {
           }, 0)
           return sum + price - discountAmount + addOnsTotal
         }, 0),
+      spa_finder: records
+        .filter((r) => {
+          if (typeof r.payment_method === "string") {
+            return r.payment_method === "spa_finder"
+          }
+          if (
+            typeof r.payment_method === "object" &&
+            r.payment_method !== null
+          ) {
+            if (
+              r.payment_method.spa_finder !== null &&
+              r.payment_method.spa_finder! > 0
+            ) {
+              return true
+            }
+            const methods = Object.keys(r.payment_method)
+            const amounts = Object.values(r.payment_method)
+            const hasAmounts = amounts.some(
+              (amount) => amount !== null && amount > 0
+            )
+            if (!hasAmounts && methods[0] === "spa_finder") {
+              return true
+            }
+          }
+          return false
+        })
+        .reduce((sum, r) => {
+          if (
+            typeof r.payment_method === "object" &&
+            r.payment_method !== null
+          ) {
+            const amount = r.payment_method.spa_finder
+            if (amount !== null && amount > 0) {
+              return sum + amount
+            }
+          }
+
+          const price = servicePrices[r.service_name]?.[r.duration] || 0
+          const discountAmount = calculateDiscountAmount(price, r.discount)
+          const addOnsTotal = (r.add_ons || []).reduce((addonSum, addon) => {
+            const addonPrice =
+              ADDONS.find(
+                (a: { name: string; price: number }) => a.name === addon
+              )?.price || 0
+            return addonSum + addonPrice
+          }, 0)
+          return sum + price - discountAmount + addOnsTotal
+        }, 0),
     }
   }, [records, servicePrices])
 

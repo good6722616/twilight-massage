@@ -71,6 +71,7 @@ export function calculatePaymentBreakdown(records: MassageRecord[]) {
     credit_card: getTotal("credit_card"),
     giftcard: getTotal("giftcard"),
     classpass: getTotal("classpass"),
+    spa_finder: getTotal("spa_finder"),
   }
 }
 

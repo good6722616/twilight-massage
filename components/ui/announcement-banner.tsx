@@ -3,24 +3,54 @@
 import { X } from "lucide-react"
 import { useState } from "react"
 
-export default function AnnouncementBanner() {
-  const [isVisible, setIsVisible] = useState(true)
+import { cn } from "@/lib/utils"
 
-  if (!isVisible) return null
+export type AnnouncementBannerProps = {
+  children: React.ReactNode
+  /** Tailwind classes for the bar: background, text color, borders, etc. */
+  className?: string
+  /** Tailwind classes for the text block (size, weight, tracking). */
+  contentClassName?: string
+}
+
+export default function AnnouncementBanner({
+  children,
+  className,
+  contentClassName,
+}: AnnouncementBannerProps) {
+  const [visible, setVisible] = useState(true)
+
+  if (!visible) return null
 
   return (
-    <div className="relative z-10 w-full bg-gradient-to-r from-pink-500 to-yellow-500 p-3 text-center text-white">
-      <p className="text-sm font-medium">
-        🎉 Exciting news! Our new massage parlor is opening soon. Stay tuned for
-        exclusive opening offers! 🎉
-      </p>
-      <button
-        onClick={() => setIsVisible(false)}
-        className="absolute right-2 top-1/2 -translate-y-1/2 transform"
-        aria-label="Close announcement"
+    // Outer clip: contains box-shadow / subpixel overflow so the bar never widens the page.
+    <div className="w-full min-w-0 max-w-full overflow-x-clip">
+      <div
+        role="status"
+        className={cn(
+          "box-border grid w-full min-w-0 max-w-full grid-cols-1 items-center border-b py-4 md:grid-cols-[minmax(0,1fr)_auto] md:gap-x-3 md:min-h-[4rem] md:py-5",
+          className
+        )}
       >
-        <X size={18} />
-      </button>
+        <div
+          className={cn(
+            "min-w-0 max-w-full whitespace-normal px-3 text-center [overflow-wrap:anywhere] md:px-6 md:pr-4",
+            "[&_p]:m-0 [&_p]:max-w-full [&_p]:whitespace-normal [&_p]:break-words",
+            "[&_strong]:font-semibold",
+            contentClassName
+          )}
+        >
+          {children}
+        </div>
+        <button
+          type="button"
+          onClick={() => setVisible(false)}
+          className="hidden h-11 w-11 shrink-0 items-center justify-center self-center rounded-md text-current transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 md:mr-3 md:flex"
+          aria-label="Close announcement"
+        >
+          <X className="h-7 w-7 shrink-0" strokeWidth={2.25} />
+        </button>
+      </div>
     </div>
   )
 }

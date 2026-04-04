@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, Gift, CreditCard, Wallet, Ticket } from "lucide-react"
+import {
+  DollarSign,
+  Gift,
+  CreditCard,
+  Wallet,
+  Ticket,
+} from "lucide-react"
 import React from "react"
 
 interface DashboardStatsProps {
@@ -21,6 +27,7 @@ interface DashboardStatsProps {
     credit_card: number
     giftcard: number
     classpass: number
+    spa_finder: number
   }
 }
 
@@ -37,6 +44,7 @@ export function DashboardStats({
   const giftCardUsedTotal = paymentBreakdown?.giftcard ?? 0
   const giftCardDiscount = giftCardUsedTotal * 0.15
   const profitExcludingGiftCardDiscount = netProfit - giftCardDiscount
+  const spaFinderDisplayed = (paymentBreakdown?.spa_finder ?? 0) * 0.8
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -151,9 +159,23 @@ export function DashboardStats({
               ${paymentBreakdown?.classpass?.toFixed(2) ?? "0.00"}
             </span>
           </div>
+          <div className="flex items-center justify-between text-sm text-gray-700">
+            <span className="flex items-center gap-1">
+              <img
+                src="/spafinder_icon.png"
+                alt="Spa Finder"
+                className="h-4 w-4"
+              />
+              Spa Finder
+            </span>
+            <span className="font-semibold">
+              ${spaFinderDisplayed.toFixed(2)}
+            </span>
+          </div>
           <div className="pt-2">
             <span className="block text-xs text-muted-foreground">
-              These values sum to total revenue.
+              Spa Finder is displayed at 80% of the gross amount logged for
+              that payment method.
             </span>
           </div>
         </CardContent>

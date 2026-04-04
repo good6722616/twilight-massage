@@ -7,10 +7,13 @@ export default function LandingLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <div className="flex min-h-0 min-w-0 w-full max-w-full flex-1 flex-col">
       <Navbar />
-      {children}
+      {/* Clip horizontal overflow from page content only; keep Navbar outside so fixed/sticky stays reliable. */}
+      <div className="min-w-0 w-full max-w-full flex-1 overflow-x-clip">
+        {children}
+      </div>
       <Footer />
-    </>
+    </div>
   )
 }

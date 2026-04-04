@@ -314,6 +314,7 @@ export type PaymentMethod =
   | "credit_card"
   | "giftcard"
   | "classpass"
+  | "spa_finder"
   | "custom"
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
@@ -321,5 +322,6 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
   "credit_card",
   "giftcard",
   "classpass",
+  "spa_finder",
   "custom",
 ]

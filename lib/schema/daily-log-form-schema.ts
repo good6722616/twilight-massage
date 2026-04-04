@@ -44,6 +44,7 @@ const baseSchema = {
       cash: z.string().optional(),
       credit_card: z.string().optional(),
       giftcard: z.string().optional(),
+      spa_finder: z.string().optional(),
     })
     .optional(),
   timeSlot: z

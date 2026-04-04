@@ -17,6 +17,11 @@ const PAYMENT_OPTIONS = [
   { id: "cash", label: "Cash", placeholder: "Enter cash amount" },
   { id: "credit_card", label: "Credit Card", placeholder: "Enter card amount" },
   { id: "giftcard", label: "Gift Card", placeholder: "Enter gift card amount" },
+  {
+    id: "spa_finder",
+    label: "Spa Finder",
+    placeholder: "Enter Spa Finder amount",
+  },
 ]
 
 export function CustomPaymentBreakdown({
@@ -30,6 +35,7 @@ export function CustomPaymentBreakdown({
   const customCash = watch("custom.cash")
   const customCard = watch("custom.credit_card")
   const customGiftCard = watch("custom.giftcard")
+  const customSpaFinder = watch("custom.spa_finder")
 
   // Initialize and maintain selectedMethods based on form values
   useEffect(() => {
@@ -45,16 +51,22 @@ export function CustomPaymentBreakdown({
     if (customGiftCard && String(customGiftCard).trim() !== "") {
       currentSelectedMethods.push("giftcard")
     }
+    if (customSpaFinder && String(customSpaFinder).trim() !== "") {
+      currentSelectedMethods.push("spa_finder")
+    }
 
     // Always update selectedMethods to match current form values
     setSelectedMethods(currentSelectedMethods)
-  }, [customCash, customCard, customGiftCard])
+  }, [customCash, customCard, customGiftCard, customSpaFinder])
 
   // Calculate total entered amount (only for selected methods)
   const totalEntered = [
     selectedMethods.includes("cash") ? parseFloat(customCash) || 0 : 0,
     selectedMethods.includes("credit_card") ? parseFloat(customCard) || 0 : 0,
     selectedMethods.includes("giftcard") ? parseFloat(customGiftCard) || 0 : 0,
+    selectedMethods.includes("spa_finder")
+      ? parseFloat(customSpaFinder) || 0
+      : 0,
   ].reduce((sum, amount) => sum + amount, 0)
 
   const isValid = Math.abs(totalEntered - expectedAmount) < 0.01

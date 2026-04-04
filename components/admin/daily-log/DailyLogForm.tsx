@@ -87,6 +87,7 @@ export function DailyLogForm({
         cash: "",
         credit_card: "",
         giftcard: "",
+        spa_finder: "",
       },
       timeSlot: { from: "", to: "" },
     },
@@ -108,6 +109,7 @@ export function DailyLogForm({
         cash: "",
         credit_card: "",
         giftcard: "",
+        spa_finder: "",
       },
       timeSlot: { from: "", to: "" },
     })
@@ -273,6 +275,7 @@ export function DailyLogForm({
           cash: parseFloat(values.custom.cash || "0") || null,
           credit_card: parseFloat(values.custom.credit_card || "0") || null,
           giftcard: parseFloat(values.custom.giftcard || "0") || null,
+          spa_finder: parseFloat(values.custom.spa_finder || "0") || null,
         }
         // Remove null values for cleaner storage
         Object.keys(finalPaymentMethod).forEach((key) => {
@@ -573,6 +576,7 @@ export function DailyLogForm({
                       {method === "credit_card" && "Credit Card"}
                       {method === "giftcard" && "Gift Card"}
                       {method === "classpass" && "ClassPass"}
+                      {method === "spa_finder" && "Spa Finder"}
                       {method === "custom" && "Custom Payment"}
                     </SelectItem>
                   ))}
