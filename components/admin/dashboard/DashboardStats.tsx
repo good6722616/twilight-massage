@@ -44,7 +44,7 @@ export function DashboardStats({
   const giftCardUsedTotal = paymentBreakdown?.giftcard ?? 0
   const giftCardDiscount = giftCardUsedTotal * 0.15
   const profitExcludingGiftCardDiscount = netProfit - giftCardDiscount
-  const spaFinderDisplayed = (paymentBreakdown?.spa_finder ?? 0) * 0.8
+  const spaFinderNetAmount = (paymentBreakdown?.spa_finder ?? 0) * 0.8
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -169,13 +169,13 @@ export function DashboardStats({
               Spa Finder
             </span>
             <span className="font-semibold">
-              ${spaFinderDisplayed.toFixed(2)}
+              ${paymentBreakdown?.spa_finder?.toFixed(2) ?? "0.00"}
             </span>
           </div>
           <div className="pt-2">
             <span className="block text-xs text-muted-foreground">
-              Spa Finder is displayed at 80% of the gross amount logged for
-              that payment method.
+              提示：Spa Finder 实际收取金额按原金额 x 0.8 计算，当前为 $
+              {spaFinderNetAmount.toFixed(2)}。
             </span>
           </div>
         </CardContent>

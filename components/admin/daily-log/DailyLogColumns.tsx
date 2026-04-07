@@ -5,7 +5,6 @@ import {
   CircleDollarSign,
   CreditCard,
   Gift,
-  Search,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -64,7 +63,9 @@ function getPaymentIcon(method: string) {
         <img src="/classpass_icon.png" alt="ClassPass" className="h-4 w-4" />
       )
     case "spa_finder":
-      return <Search className="h-4 w-4" />
+      return (
+        <img src="/spafinder_icon.png" alt="Spa Finder" className="h-4 w-4" />
+      )
     default:
       return null
   }
